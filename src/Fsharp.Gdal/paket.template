@@ -1,0 +1,25 @@
+type project
+title
+    Fsharp.Gdal
+owners
+    Domenico Masini
+authors 
+    Domenico Masini
+projectUrl
+    http://github.com/domasin/Fsharp.Gdal
+iconUrl
+    https://raw.githubusercontent.com/domasin/Fsharp.Gdal/master/docs/files/img/logo.png
+licenseUrl
+    http://github.com/domasin/Fsharp.Gdal/blob/master/LICENSE.txt
+requireLicenseAcceptance
+    false
+copyright
+    Copyright 2015
+tags
+    Fshap Gdal Geospatial Data
+summary
+    Geospatial Data in F#
+description
+    Geospatial Data in F#
+
+

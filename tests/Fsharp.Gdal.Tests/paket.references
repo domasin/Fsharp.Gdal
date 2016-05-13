@@ -1,0 +1,7 @@
+FSharp.Core
+MathNet.Numerics.FSharp.Signed
+GDAL.Native
+FsUnit
+group Test
+NUnit
+NUnit.Runners
