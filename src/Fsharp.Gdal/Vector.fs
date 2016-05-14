@@ -1,4 +1,4 @@
-﻿module Fsharp.Gdal.Vector
+﻿module FSharp.Gdal.Vector
 
 open OSGeo.OGR
 open System

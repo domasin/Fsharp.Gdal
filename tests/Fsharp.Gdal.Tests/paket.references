@@ -2,6 +2,7 @@ FSharp.Core
 MathNet.Numerics.FSharp.Signed
 GDAL.Native
 FsUnit
+GDAL
 group Test
 NUnit
 NUnit.Runners

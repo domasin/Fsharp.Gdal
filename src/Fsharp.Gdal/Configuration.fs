@@ -1,4 +1,4 @@
-module Fsharp.Gdal.GdalConfiguration
+module FSharp.Gdal.Configuration
 
 
 (*** hide ***)
@@ -54,7 +54,7 @@ If we work in the intercative shell, the executing assembly is the FSharp.Compil
 FSharp.Compiler.Service dll.)
 *)
 
-let Configure() = 
+let Init() = 
     
     if not !configured then
 

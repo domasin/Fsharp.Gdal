@@ -1,6 +1,6 @@
-module Fsharp.Gdal.Tests
+module FSharp.Gdal.Tests
 
-open Fsharp.Gdal
+open FSharp.Gdal
 open NUnit.Framework
 
 [<Test>]

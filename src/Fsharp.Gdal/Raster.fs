@@ -1,4 +1,4 @@
-﻿module FGis.Raster
+﻿module FSharp.Gdal.Raster
 
 open OSGeo.GDAL
 open System

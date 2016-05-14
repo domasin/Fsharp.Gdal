@@ -1,4 +1,4 @@
-﻿namespace Fsharp.Gdal
+﻿namespace FSharp.Gdal
 
 open System
 open System.IO
@@ -11,8 +11,8 @@ open System.Text.RegularExpressions
 open OSGeo.OGR
 open OSGeo.GDAL
 open OSGeo.OSR
-open Fsharp.Gdal.Vector
-open Fsharp.Gdal
+open FSharp.Gdal.Vector
+open FSharp.Gdal
 
 // Simple type wrapping vector data
 type VectorFile(filename) =
@@ -45,24 +45,42 @@ type VectorFile(filename) =
         ] |> Seq.ofList
 
     let values = 
-        let mutable globalIndex = 0
-        [
-            for feature in features -> 
-                globalIndex <- globalIndex + 1
-                [globalIndex, "Geometry", feature.GetGeometryRef() :> obj]
+        features
+        |> List.mapi (fun i feature -> 
+                [i, "Geometry", feature.GetGeometryRef() :> obj]
                 |> List.append 
-                    [
-                        for fdIndex,fdName,fdType in fields ->
-                            if fdType.Equals(FieldType.OFTString) then
-                                globalIndex, fdName, feature.GetFieldAsString(fdIndex) :> obj
-                            elif fdType.Equals(FieldType.OFTInteger) then
-                                globalIndex, fdName, feature.GetFieldAsInteger(fdIndex) :> obj
-                            elif fdType.Equals(FieldType.OFTReal) then
-                                globalIndex, fdName, feature.GetFieldAsDouble(fdIndex) :> obj
-                            else
-                                globalIndex, fdName, "" :> obj
-                    ] 
-        ] |> List.concat
+                        [
+                            for fdIndex,fdName,fdType in fields ->
+                                if fdType.Equals(FieldType.OFTString) then
+                                    i, fdName, feature.GetFieldAsString(fdIndex) :> obj
+                                elif fdType.Equals(FieldType.OFTInteger) then
+                                    i, fdName, feature.GetFieldAsInteger(fdIndex) :> obj
+                                elif fdType.Equals(FieldType.OFTReal) then
+                                    i, fdName, feature.GetFieldAsDouble(fdIndex) :> obj
+                                else
+                                    i, fdName, "" :> obj
+                        ] 
+            )
+        |> List.concat
+
+//        let mutable globalIndex = 0
+//        [
+//            for feature in features -> 
+//                globalIndex <- globalIndex + 1
+//                [globalIndex, "Geometry", feature.GetGeometryRef() :> obj]
+//                |> List.append 
+//                    [
+//                        for fdIndex,fdName,fdType in fields ->
+//                            if fdType.Equals(FieldType.OFTString) then
+//                                globalIndex, fdName, feature.GetFieldAsString(fdIndex) :> obj
+//                            elif fdType.Equals(FieldType.OFTInteger) then
+//                                globalIndex, fdName, feature.GetFieldAsInteger(fdIndex) :> obj
+//                            elif fdType.Equals(FieldType.OFTReal) then
+//                                globalIndex, fdName, feature.GetFieldAsDouble(fdIndex) :> obj
+//                            else
+//                                globalIndex, fdName, "" :> obj
+//                    ] 
+//        ] |> List.concat
 
     member __.Features = data
     member __.Values = values
@@ -73,7 +91,7 @@ type public OgrTypeProvider(cfg:TypeProviderConfig) as this =
 
     // Get the assembly and namespace used to house the provided types.
     let asm = System.Reflection.Assembly.GetExecutingAssembly()
-    let ns = "FGis"
+    let ns = "FSharp.Gdal"
 
     // Create the main provided type.
     let shpFlTy = ProvidedTypeDefinition(asm, ns, "OgrTypeProvider", Some(typeof<obj>))
@@ -82,7 +100,7 @@ type public OgrTypeProvider(cfg:TypeProviderConfig) as this =
     let filename = ProvidedStaticParameter("filename", typeof<string>)
     do shpFlTy.DefineStaticParameters([filename], fun tyName [| :? string as filename |] ->
 
-        GdalConfiguration.Configure()
+        Configuration.Init()
 
         // Resolve the filename relative to the resolution folder.
         let resolvedFilename = Path.Combine(cfg.ResolutionFolder, filename)

@@ -1,7 +1,6 @@
 (*** hide ***)
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
-#I "../../bin"
 
 (**
 Fsharp.Gdal
@@ -9,7 +8,7 @@ Fsharp.Gdal
 
 Documentation
 
-<div class="row">
+<!--<div class="row">
   <div class="span1"></div>
   <div class="span6">
     <div class="well well-small" id="nuget">
@@ -18,7 +17,7 @@ Documentation
     </div>
   </div>
   <div class="span1"></div>
-</div>
+</div>-->
 
 Example
 -------
@@ -26,10 +25,23 @@ Example
 This example demonstrates using a function defined in this sample library.
 
 *)
-#r "Fsharp.Gdal.dll"
-open Fsharp.Gdal
 
-printfn "hello = %i" <| Library.hello 0
+#I "../../src/Fsharp.Gdal/bin/Debug"
+
+#r "Fsharp.Gdal.dll"
+#r "gdal_csharp.dll"
+#r "gdalconst_csharp.dll"
+#r "ogr_csharp.dll"
+#r "osr_csharp.dll"
+
+open FSharp.Gdal
+open OSGeo
+
+Configuration.Init() |> ignore
+
+let point = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+point.AddPoint(1198054.34, 648493.09,0.)
+printfn "%A" (point.ExportToWkt())
 
 (**
 Some more info
@@ -38,10 +50,17 @@ Samples & documentation
 -----------------------
 
 The library comes with comprehensible documentation. 
-It can include tutorials automatically generated from `*.fsx` files in [the content folder][content]. 
+It can include tutorials automatically generated from `*.fsx` files in [the content folder][content] 
+and documents generated with FsLab Journal Template in the project named "Journal". 
 The API reference is automatically generated from Markdown comments in the library implementation.
 
- * [Tutorial](tutorial.html) contains a further explanation of this sample library.
+ * FSharp Gdal CookBook: an equivalent of Python Gdal / Ogr Cookbook
+    - [Geometry](geometry.html) 
+ * [F# Gdal Type Provider](gdal-type-provider.html): an experimenta gdal type provider
+ * Applications: 
+    - [Extimated Walk Time](extimated-walk-time.html): calculate an extimated time for hiking
+    - [Land Cover in Valgrande](land-cover.html): land cover analysis in the [Val Grande National Park](https://en.wikipedia.org/wiki/Val_Grande_National_Park)
+    - Crimes in San Francisco: TODO
 
  * [API Reference](reference/index.html) contains automatically generated documentation for all types, modules
    and functions in the library. This includes additional brief samples on using most of the
@@ -59,9 +78,9 @@ The library is available under Public Domain license, which allows modification 
 redistribution for both commercial and non-commercial purposes. For more information see the 
 [License file][license] in the GitHub repository. 
 
-  [content]: https://github.com/fsprojects/Fsharp.Gdal/tree/master/docs/content
-  [gh]: https://github.com/fsprojects/Fsharp.Gdal
-  [issues]: https://github.com/fsprojects/Fsharp.Gdal/issues
-  [readme]: https://github.com/fsprojects/Fsharp.Gdal/blob/master/README.md
-  [license]: https://github.com/fsprojects/Fsharp.Gdal/blob/master/LICENSE.txt
+  [content]: https://github.com/domasin/Fsharp.Gdal/tree/master/docs/content
+  [gh]: https://github.com/domasin/Fsharp.Gdal
+  [issues]: https://github.com/domasin/Fsharp.Gdal/issues
+  [readme]: https://github.com/domasin/Fsharp.Gdal/blob/master/README.md
+  [license]: https://github.com/domasin/Fsharp.Gdal/blob/master/LICENSE.txt
 *)

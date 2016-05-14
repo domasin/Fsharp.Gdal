@@ -3,6 +3,7 @@ source https://nuget.org/api/v2
 nuget FSharp.Core redirects: force
 nuget FSharp.TypeProviders.StarterPack
 nuget FsUnit 1.4.1
+nuget GDAL
 nuget GDAL.Native
 nuget MathNet.Numerics.FSharp.Signed
 
