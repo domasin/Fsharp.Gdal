@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!--
+      The Extimate walk time for routes stored in shape file parameters will be replaced with the
+      document title extracted from the <h1> element or
+      file name, if there is no <h1> heading
+    -->
+    <title>Extimate walk time for routes stored in shape file</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="styles/style.css" />
+    <link type="text/css" rel="stylesheet" href="styles/deedle.css" />
+    <script src="styles/tips.js" type="text/javascript"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1.1", { packages: ["corechart", "annotationchart", "calendar", "gauge", "geochart", "map", "sankey", "table", "timeline", "treemap"] })
+    </script>
+    <script language="javascript" type="text/javascript">
+          function init()
+          {
+            try {
+              websocket = new WebSocket("ws://localhost:8088/websocket");
+              websocket.onmessage = function(evt) { location.reload(); };
+            } catch (e) {
+              //silently ignore lack of websockets
+            }
+          }
+          window.addEventListener("load", init, false);
+    </script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+            <ul class="nav nav-pills pull-right">
+                <li><a href="http://fsharp.org/">fsharp.org</a></li>
+                <li><a href="http://fslab.org">fslab.org</a></li>
+                <li><a href="http://github.com/domasin/Fsharp.Gdal">github page</a></li>
+            </ul>
+            <h3 class="muted"><a href="http://domasin.github.io/Fsharp.Gdal/index.html">Fsharp.Gdal</a></h3>
+        </div>
+      <hr />
+	  </div>
+      <div class="row" style="margin-top:30px">
+        <div class="span1"></div>
+		<div class="span1"></div>
+        <div class="span10" id="main">
+          <h1>Extimate walk time for routes stored in shape file</h1>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="prep">#r</span> <span class="s">&quot;Fsharp.Gdal.dll&quot;</span>
+<span class="prep">#r</span> <span class="s">&quot;gdal_csharp.dll&quot;</span>
+<span class="prep">#r</span> <span class="s">&quot;gdalconst_csharp.dll&quot;</span>
+<span class="prep">#r</span> <span class="s">&quot;ogr_csharp.dll&quot;</span>
+<span class="prep">#r</span> <span class="s">&quot;osr_csharp.dll&quot;</span>
+
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">System</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 2)" onmouseover="showTip(event, 'fs1', 2)" class="i">System</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs2', 3)" onmouseover="showTip(event, 'fs2', 3)" class="i">Collections</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 4)" onmouseover="showTip(event, 'fs1', 4)" class="i">System</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs2', 5)" onmouseover="showTip(event, 'fs2', 5)" class="i">Collections</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs3', 6)" onmouseover="showTip(event, 'fs3', 6)" class="i">Generic</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 7)" onmouseover="showTip(event, 'fs1', 7)" class="i">System</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 8)" onmouseover="showTip(event, 'fs4', 8)" class="i">IO</span>
+
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs5', 9)" onmouseover="showTip(event, 'fs5', 9)" class="i">FSharp</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 10)" onmouseover="showTip(event, 'fs6', 10)" class="i">Charting</span>
+
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs7', 11)" onmouseover="showTip(event, 'fs7', 11)" class="i">OSGeo</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 12)" onmouseover="showTip(event, 'fs8', 12)" class="i">OGR</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs7', 13)" onmouseover="showTip(event, 'fs7', 13)" class="i">OSGeo</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs9', 14)" onmouseover="showTip(event, 'fs9', 14)" class="i">GDAL</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs7', 15)" onmouseover="showTip(event, 'fs7', 15)" class="i">OSGeo</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 16)" onmouseover="showTip(event, 'fs10', 16)" class="i">OSR</span>
+
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs5', 17)" onmouseover="showTip(event, 'fs5', 17)" class="i">FSharp</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 18)" onmouseover="showTip(event, 'fs11', 18)" class="i">Gdal</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs5', 19)" onmouseover="showTip(event, 'fs5', 19)" class="i">FSharp</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 20)" onmouseover="showTip(event, 'fs11', 20)" class="i">Gdal</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 21)" onmouseover="showTip(event, 'fs12', 21)" class="i">UM</span>
+</code></pre></td>
+</tr>
+</table>
+<p>In this section I want to access the data of a shape file using the methods provided by the
+Gdal Library. Fsharp.Gdal now contains a module that cofigures the path needed by gdal and registers
+all its provider.</p>
+<p>To do this just call the <code>GdalConfiguration.Configure</code> method:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs13', 22)" onmouseover="showTip(event, 'fs13', 22)" class="t">Configuration</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 23)" onmouseover="showTip(event, 'fs14', 23)" class="f">Init</span>() <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs15', 24)" onmouseover="showTip(event, 'fs15', 24)" class="f">ignore</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Extract my favourite paths in the bigvalley.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs16', 25)" onmouseover="showTip(event, 'fs16', 25)" class="i">dataset</span> <span class="o">=</span>  <span onmouseout="hideTip(event, 'fs17', 26)" onmouseover="showTip(event, 'fs17', 26)" class="t">Ogr</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 27)" onmouseover="showTip(event, 'fs18', 27)" class="f">OpenShared</span>(<span class="k">__SOURCE_DIRECTORY__</span> <span class="o">+</span> <span class="s">@&quot;.\data\itinerari.shp&quot;</span>,<span class="n">1</span>)
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs19', 28)" onmouseover="showTip(event, 'fs19', 28)" class="i">vlay</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs16', 29)" onmouseover="showTip(event, 'fs16', 29)" class="i">dataset</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 30)" onmouseover="showTip(event, 'fs20', 30)" class="f">GetLayerByIndex</span>(<span class="n">0</span>)
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 31)" onmouseover="showTip(event, 'fs21', 31)" class="i">features</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs19', 32)" onmouseover="showTip(event, 'fs19', 32)" class="i">vlay</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs22', 33)" onmouseover="showTip(event, 'fs22', 33)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 34)" onmouseover="showTip(event, 'fs23', 34)" class="f">features</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs24', 35)" onmouseover="showTip(event, 'fs24', 35)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs25', 36)" onmouseover="showTip(event, 'fs25', 36)" class="f">filter</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs26', 37)" onmouseover="showTip(event, 'fs26', 37)" class="i">f</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs26', 38)" onmouseover="showTip(event, 'fs26', 38)" class="i">f</span> <span class="o">&lt;&gt;</span> <span class="k">null</span>)
+</code></pre></td>
+</tr>
+</table>
+<p>Let's see the fields of shape file.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs27', 39)" onmouseover="showTip(event, 'fs27', 39)" class="i">fields</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs19', 40)" onmouseover="showTip(event, 'fs19', 40)" class="i">vlay</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs22', 41)" onmouseover="showTip(event, 'fs22', 41)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs28', 42)" onmouseover="showTip(event, 'fs28', 42)" class="f">fields</span>
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td><pre><code>[(0, "ID", OFTInteger); (1, "CODE", OFTInteger); (2, "SUBCODE", OFTString);
+ (3, "TITLE", OFTString); (4, "TIME", OFTReal); (5, "REV_TIME", OFTReal);
+ (6, "TOT_TIME", OFTReal); (7, "ASCEND", OFTInteger); (8, "DESCEND", OFTInteger);
+ (9, "DISLIVELLO", OFTInteger)]</code></pre></td></tr></table>
+<p>Take the Cima Sasso feature (Cima Sasso = Stone Peak)</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs29', 43)" onmouseover="showTip(event, 'fs29', 43)" class="i">cimaSasso</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs21', 44)" onmouseover="showTip(event, 'fs21', 44)" class="i">features</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs24', 45)" onmouseover="showTip(event, 'fs24', 45)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 46)" onmouseover="showTip(event, 'fs30', 46)" class="f">where</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs26', 47)" onmouseover="showTip(event, 'fs26', 47)" class="i">f</span> <span class="k">-&gt;</span> 
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs31', 48)" onmouseover="showTip(event, 'fs31', 48)" class="i">title</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs26', 49)" onmouseover="showTip(event, 'fs26', 49)" class="i">f</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs32', 50)" onmouseover="showTip(event, 'fs32', 50)" class="f">GetFieldAsString</span>(<span class="n">3</span>)
+        <span onmouseout="hideTip(event, 'fs31', 51)" onmouseover="showTip(event, 'fs31', 51)" class="i">title</span> <span class="o">=</span> <span class="s">&quot;Cima Sasso&quot;</span>)
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs24', 52)" onmouseover="showTip(event, 'fs24', 52)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 53)" onmouseover="showTip(event, 'fs33', 53)" class="f">head</span>
+</code></pre></td>
+</tr>
+</table>
+<p>I know that my vector lines don't have elevation information.
+So let's open an elevation raster of the bigvalley.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs34', 54)" onmouseover="showTip(event, 'fs34', 54)" class="i">rDataset</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs35', 55)" onmouseover="showTip(event, 'fs35', 55)" class="t">Gdal</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 56)" onmouseover="showTip(event, 'fs36', 56)" class="f">OpenShared</span>(<span class="k">__SOURCE_DIRECTORY__</span> <span class="o">+</span> <span class="s">@&quot;.\data\dem20_valg.tif&quot;</span>, <span onmouseout="hideTip(event, 'fs37', 57)" onmouseover="showTip(event, 'fs37', 57)" class="t">Access</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs38', 58)" onmouseover="showTip(event, 'fs38', 58)" class="i">GA_ReadOnly</span>)
+
+<span class="k">let</span> <span class="k">mutable</span> (<span onmouseout="hideTip(event, 'fs39', 59)" onmouseover="showTip(event, 'fs39', 59)" class="v">geotransform</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs40', 60)" onmouseover="showTip(event, 'fs40', 60)" class="t">float</span>[]) <span class="o">=</span> [|<span class="n">0.</span>;<span class="n">0.</span>;<span class="n">0.</span>;<span class="n">0.</span>;<span class="n">0.</span>;<span class="n">0.</span>|]
+<span onmouseout="hideTip(event, 'fs34', 61)" onmouseover="showTip(event, 'fs34', 61)" class="i">rDataset</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs41', 62)" onmouseover="showTip(event, 'fs41', 62)" class="f">GetGeoTransform</span>(<span onmouseout="hideTip(event, 'fs39', 63)" onmouseover="showTip(event, 'fs39', 63)" class="v">geotransform</span>)
+</code></pre></td>
+</tr>
+</table>
+<p>Now I extract points from my track and calculate information</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+<span class="l">21: </span>
+<span class="l">22: </span>
+<span class="l">23: </span>
+<span class="l">24: </span>
+<span class="l">25: </span>
+<span class="l">26: </span>
+<span class="l">27: </span>
+<span class="l">28: </span>
+<span class="l">29: </span>
+<span class="l">30: </span>
+<span class="l">31: </span>
+<span class="l">32: </span>
+<span class="l">33: </span>
+<span class="l">34: </span>
+<span class="l">35: </span>
+<span class="l">36: </span>
+<span class="l">37: </span>
+<span class="l">38: </span>
+<span class="l">39: </span>
+<span class="l">40: </span>
+<span class="l">41: </span>
+<span class="l">42: </span>
+<span class="l">43: </span>
+<span class="l">44: </span>
+<span class="l">45: </span>
+<span class="l">46: </span>
+<span class="l">47: </span>
+<span class="l">48: </span>
+<span class="l">49: </span>
+<span class="l">50: </span>
+<span class="l">51: </span>
+<span class="l">52: </span>
+<span class="l">53: </span>
+<span class="l">54: </span>
+<span class="l">55: </span>
+<span class="l">56: </span>
+<span class="l">57: </span>
+<span class="l">58: </span>
+<span class="l">59: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span onmouseout="hideTip(event, 'fs42', 64)" onmouseover="showTip(event, 'fs42', 64)" class="t">InfoTrack</span> <span class="o">=</span> 
+    { 
+        <span onmouseout="hideTip(event, 'fs43', 65)" onmouseover="showTip(event, 'fs43', 65)" class="i">Point</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs44', 66)" onmouseover="showTip(event, 'fs44', 66)" class="t">Geometry</span>; 
+        <span onmouseout="hideTip(event, 'fs45', 67)" onmouseover="showTip(event, 'fs45', 67)" class="i">Elev</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs40', 68)" onmouseover="showTip(event, 'fs40', 68)" class="t">float</span>; 
+        <span onmouseout="hideTip(event, 'fs46', 69)" onmouseover="showTip(event, 'fs46', 69)" class="i">Distance</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs40', 70)" onmouseover="showTip(event, 'fs40', 70)" class="t">float</span>; 
+        <span onmouseout="hideTip(event, 'fs47', 71)" onmouseover="showTip(event, 'fs47', 71)" class="i">Slope</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs40', 72)" onmouseover="showTip(event, 'fs40', 72)" class="t">float</span>; 
+        <span onmouseout="hideTip(event, 'fs48', 73)" onmouseover="showTip(event, 'fs48', 73)" class="i">ExtimatedForwardVelocity</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs40', 74)" onmouseover="showTip(event, 'fs40', 74)" class="t">float</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs49', 75)" onmouseover="showTip(event, 'fs49', 75)" class="t">km</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs50', 76)" onmouseover="showTip(event, 'fs50', 76)" class="t">h</span><span class="o">&gt;</span>;
+        <span onmouseout="hideTip(event, 'fs51', 77)" onmouseover="showTip(event, 'fs51', 77)" class="i">ExtimatedForwardTime</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs40', 78)" onmouseover="showTip(event, 'fs40', 78)" class="t">float</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs52', 79)" onmouseover="showTip(event, 'fs52', 79)" class="t">s</span><span class="o">&gt;</span>;
+        <span onmouseout="hideTip(event, 'fs53', 80)" onmouseover="showTip(event, 'fs53', 80)" class="i">ExtimatedReverseVelocity</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs40', 81)" onmouseover="showTip(event, 'fs40', 81)" class="t">float</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs49', 82)" onmouseover="showTip(event, 'fs49', 82)" class="t">km</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs50', 83)" onmouseover="showTip(event, 'fs50', 83)" class="t">h</span><span class="o">&gt;</span>;
+        <span onmouseout="hideTip(event, 'fs54', 84)" onmouseover="showTip(event, 'fs54', 84)" class="i">ExtimatedReverseTime</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs40', 85)" onmouseover="showTip(event, 'fs40', 85)" class="t">float</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs52', 86)" onmouseover="showTip(event, 'fs52', 86)" class="t">s</span><span class="o">&gt;</span>; 
+    }
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs55', 87)" onmouseover="showTip(event, 'fs55', 87)" class="i">trackRecs</span> <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs56', 88)" onmouseover="showTip(event, 'fs56', 88)" class="i">geom</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs29', 89)" onmouseover="showTip(event, 'fs29', 89)" class="i">cimaSasso</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs57', 90)" onmouseover="showTip(event, 'fs57', 90)" class="f">GetGeometryRef</span>()
+    <span onmouseout="hideTip(event, 'fs56', 91)" onmouseover="showTip(event, 'fs56', 91)" class="i">geom</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs22', 92)" onmouseover="showTip(event, 'fs22', 92)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs58', 93)" onmouseover="showTip(event, 'fs58', 93)" class="f">points</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs24', 94)" onmouseover="showTip(event, 'fs24', 94)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs59', 95)" onmouseover="showTip(event, 'fs59', 95)" class="f">map</span> 
+        (
+            <span class="k">fun</span> (<span onmouseout="hideTip(event, 'fs60', 96)" onmouseover="showTip(event, 'fs60', 96)" class="i">p</span>) <span class="k">-&gt;</span> 
+                <span class="k">let</span> <span onmouseout="hideTip(event, 'fs61', 97)" onmouseover="showTip(event, 'fs61', 97)" class="i">x</span>,<span onmouseout="hideTip(event, 'fs62', 98)" onmouseover="showTip(event, 'fs62', 98)" class="i">y</span> <span class="o">=</span> (<span onmouseout="hideTip(event, 'fs60', 99)" onmouseover="showTip(event, 'fs60', 99)" class="i">p</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs63', 100)" onmouseover="showTip(event, 'fs63', 100)" class="f">GetX</span>(<span class="n">0</span>), <span onmouseout="hideTip(event, 'fs60', 101)" onmouseover="showTip(event, 'fs60', 101)" class="i">p</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs64', 102)" onmouseover="showTip(event, 'fs64', 102)" class="f">GetY</span>(<span class="n">0</span>))
+                <span class="k">let</span> <span onmouseout="hideTip(event, 'fs65', 103)" onmouseover="showTip(event, 'fs65', 103)" class="i">elev</span> <span class="o">=</span> 
+                    (<span onmouseout="hideTip(event, 'fs61', 104)" onmouseover="showTip(event, 'fs61', 104)" class="i">x</span>,<span onmouseout="hideTip(event, 'fs62', 105)" onmouseover="showTip(event, 'fs62', 105)" class="i">y</span>)
+                    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs66', 106)" onmouseover="showTip(event, 'fs66', 106)" class="t">Raster</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs67', 107)" onmouseover="showTip(event, 'fs67', 107)" class="f">groundToImage</span> <span onmouseout="hideTip(event, 'fs39', 108)" onmouseover="showTip(event, 'fs39', 108)" class="v">geotransform</span>
+                    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs66', 109)" onmouseover="showTip(event, 'fs66', 109)" class="t">Raster</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs68', 110)" onmouseover="showTip(event, 'fs68', 110)" class="f">getImgValue</span> <span onmouseout="hideTip(event, 'fs39', 111)" onmouseover="showTip(event, 'fs39', 111)" class="v">geotransform</span> <span onmouseout="hideTip(event, 'fs34', 112)" onmouseover="showTip(event, 'fs34', 112)" class="i">rDataset</span>
+                <span class="k">match</span> <span onmouseout="hideTip(event, 'fs65', 113)" onmouseover="showTip(event, 'fs65', 113)" class="i">elev</span> <span class="k">with</span>
+                | <span onmouseout="hideTip(event, 'fs69', 114)" onmouseover="showTip(event, 'fs69', 114)" class="p">Some</span>(<span onmouseout="hideTip(event, 'fs70', 115)" onmouseover="showTip(event, 'fs70', 115)" class="i">e</span>) <span class="k">-&gt;</span> (<span onmouseout="hideTip(event, 'fs60', 116)" onmouseover="showTip(event, 'fs60', 116)" class="i">p</span>, <span onmouseout="hideTip(event, 'fs70', 117)" onmouseover="showTip(event, 'fs70', 117)" class="i">e</span>)
+                | <span onmouseout="hideTip(event, 'fs71', 118)" onmouseover="showTip(event, 'fs71', 118)" class="p">None</span> <span class="k">-&gt;</span> (<span onmouseout="hideTip(event, 'fs60', 119)" onmouseover="showTip(event, 'fs60', 119)" class="i">p</span>, <span class="n">0.</span>)
+        )
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs24', 120)" onmouseover="showTip(event, 'fs24', 120)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs72', 121)" onmouseover="showTip(event, 'fs72', 121)" class="f">pairwise</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs24', 122)" onmouseover="showTip(event, 'fs24', 122)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs59', 123)" onmouseover="showTip(event, 'fs59', 123)" class="f">map</span> 
+        (
+            <span class="k">fun</span> ((<span onmouseout="hideTip(event, 'fs73', 124)" onmouseover="showTip(event, 'fs73', 124)" class="i">prevPoint</span>,<span onmouseout="hideTip(event, 'fs74', 125)" onmouseover="showTip(event, 'fs74', 125)" class="i">prevElev</span>),(<span onmouseout="hideTip(event, 'fs75', 126)" onmouseover="showTip(event, 'fs75', 126)" class="i">currPoint</span>,<span onmouseout="hideTip(event, 'fs76', 127)" onmouseover="showTip(event, 'fs76', 127)" class="i">currElev</span>)) <span class="k">-&gt;</span> 
+                <span class="k">let</span> <span onmouseout="hideTip(event, 'fs77', 128)" onmouseover="showTip(event, 'fs77', 128)" class="i">dx</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs75', 129)" onmouseover="showTip(event, 'fs75', 129)" class="i">currPoint</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs78', 130)" onmouseover="showTip(event, 'fs78', 130)" class="f">Distance</span>(<span onmouseout="hideTip(event, 'fs73', 131)" onmouseover="showTip(event, 'fs73', 131)" class="i">prevPoint</span>)
+                <span class="k">let</span> <span onmouseout="hideTip(event, 'fs79', 132)" onmouseover="showTip(event, 'fs79', 132)" class="i">dh</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs76', 133)" onmouseover="showTip(event, 'fs76', 133)" class="i">currElev</span> <span class="o">-</span> <span onmouseout="hideTip(event, 'fs74', 134)" onmouseover="showTip(event, 'fs74', 134)" class="i">prevElev</span>
+                <span class="k">let</span> <span onmouseout="hideTip(event, 'fs80', 135)" onmouseover="showTip(event, 'fs80', 135)" class="i">slope</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs79', 136)" onmouseover="showTip(event, 'fs79', 136)" class="i">dh</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs77', 137)" onmouseover="showTip(event, 'fs77', 137)" class="i">dx</span>
+                <span class="c">// tobbler&#39;s hiking function</span>
+                <span class="k">let</span> <span onmouseout="hideTip(event, 'fs81', 138)" onmouseover="showTip(event, 'fs81', 138)" class="f">tobbler</span> <span onmouseout="hideTip(event, 'fs80', 139)" onmouseover="showTip(event, 'fs80', 139)" class="i">slope</span> <span class="o">=</span> (<span class="n">6.</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs82', 140)" onmouseover="showTip(event, 'fs82', 140)" class="t">Math</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs83', 141)" onmouseover="showTip(event, 'fs83', 141)" class="f">Exp</span>(<span class="o">-</span><span class="n">3.5</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs82', 142)" onmouseover="showTip(event, 'fs82', 142)" class="t">Math</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs84', 143)" onmouseover="showTip(event, 'fs84', 143)" class="f">Abs</span>(<span onmouseout="hideTip(event, 'fs80', 144)" onmouseover="showTip(event, 'fs80', 144)" class="i">slope</span> <span class="o">+</span> <span class="n">0.05</span>))) 
+                <span class="k">let</span> <span onmouseout="hideTip(event, 'fs85', 145)" onmouseover="showTip(event, 'fs85', 145)" class="i">extimatedForwardVel</span> <span class="o">=</span> 
+                    <span class="c">// floor the extimated velocity at 1.0 km/h as </span>
+                    <span class="c">// I saw from the experiments with gpx that works</span>
+                    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs86', 146)" onmouseover="showTip(event, 'fs86', 146)" class="i">v</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs82', 147)" onmouseover="showTip(event, 'fs82', 147)" class="t">Math</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs87', 148)" onmouseover="showTip(event, 'fs87', 148)" class="f">Max</span>(<span onmouseout="hideTip(event, 'fs81', 149)" onmouseover="showTip(event, 'fs81', 149)" class="f">tobbler</span> <span onmouseout="hideTip(event, 'fs80', 150)" onmouseover="showTip(event, 'fs80', 150)" class="i">slope</span>, <span class="n">1.0</span>)  
+                    <span onmouseout="hideTip(event, 'fs86', 151)" onmouseover="showTip(event, 'fs86', 151)" class="i">v</span> <span class="o">*</span> <span class="n">1.0</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs49', 152)" onmouseover="showTip(event, 'fs49', 152)" class="t">km</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs50', 153)" onmouseover="showTip(event, 'fs50', 153)" class="t">h</span><span class="o">&gt;</span>
+                <span class="k">let</span> <span onmouseout="hideTip(event, 'fs88', 154)" onmouseover="showTip(event, 'fs88', 154)" class="i">extimatedReverseVel</span> <span class="o">=</span> 
+                    <span class="c">// floor the extimated velocity at 1.0 km/h</span>
+                    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs86', 155)" onmouseover="showTip(event, 'fs86', 155)" class="i">v</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs82', 156)" onmouseover="showTip(event, 'fs82', 156)" class="t">Math</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs87', 157)" onmouseover="showTip(event, 'fs87', 157)" class="f">Max</span>(<span onmouseout="hideTip(event, 'fs81', 158)" onmouseover="showTip(event, 'fs81', 158)" class="f">tobbler</span> <span class="o">-</span><span onmouseout="hideTip(event, 'fs80', 159)" onmouseover="showTip(event, 'fs80', 159)" class="i">slope</span>, <span class="n">1.0</span>)  
+                    <span onmouseout="hideTip(event, 'fs86', 160)" onmouseover="showTip(event, 'fs86', 160)" class="i">v</span> <span class="o">*</span> <span class="n">1.0</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs49', 161)" onmouseover="showTip(event, 'fs49', 161)" class="t">km</span><span class="o">/</span><span onmouseout="hideTip(event, 'fs50', 162)" onmouseover="showTip(event, 'fs50', 162)" class="t">h</span><span class="o">&gt;</span>
+                <span class="k">let</span> <span onmouseout="hideTip(event, 'fs89', 163)" onmouseover="showTip(event, 'fs89', 163)" class="i">extimatedForwardTime</span> <span class="o">=</span> (<span onmouseout="hideTip(event, 'fs77', 164)" onmouseover="showTip(event, 'fs77', 164)" class="i">dx</span> <span class="o">*</span> <span class="n">1.0</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs90', 165)" onmouseover="showTip(event, 'fs90', 165)" class="t">m</span><span class="o">&gt;</span>) <span class="o">/</span> (<span onmouseout="hideTip(event, 'fs85', 166)" onmouseover="showTip(event, 'fs85', 166)" class="i">extimatedForwardVel</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs91', 167)" onmouseover="showTip(event, 'fs91', 167)" class="f">kmphToMs</span>)
+                <span class="k">let</span> <span onmouseout="hideTip(event, 'fs92', 168)" onmouseover="showTip(event, 'fs92', 168)" class="i">extimatedReversTime</span> <span class="o">=</span> (<span onmouseout="hideTip(event, 'fs77', 169)" onmouseover="showTip(event, 'fs77', 169)" class="i">dx</span> <span class="o">*</span> <span class="n">1.0</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs90', 170)" onmouseover="showTip(event, 'fs90', 170)" class="t">m</span><span class="o">&gt;</span>) <span class="o">/</span> (<span onmouseout="hideTip(event, 'fs88', 171)" onmouseover="showTip(event, 'fs88', 171)" class="i">extimatedReverseVel</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs91', 172)" onmouseover="showTip(event, 'fs91', 172)" class="f">kmphToMs</span>)
+                { 
+                    <span class="i">Point</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs75', 173)" onmouseover="showTip(event, 'fs75', 173)" class="i">currPoint</span>; 
+                    <span class="i">Elev</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs76', 174)" onmouseover="showTip(event, 'fs76', 174)" class="i">currElev</span>; 
+                    <span class="i">Distance</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs77', 175)" onmouseover="showTip(event, 'fs77', 175)" class="i">dx</span>; 
+                    <span class="i">Slope</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs80', 176)" onmouseover="showTip(event, 'fs80', 176)" class="i">slope</span>; 
+                    <span class="i">ExtimatedForwardVelocity</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs85', 177)" onmouseover="showTip(event, 'fs85', 177)" class="i">extimatedForwardVel</span>;
+                    <span class="i">ExtimatedForwardTime</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs89', 178)" onmouseover="showTip(event, 'fs89', 178)" class="i">extimatedForwardTime</span>; 
+                    <span class="i">ExtimatedReverseVelocity</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs88', 179)" onmouseover="showTip(event, 'fs88', 179)" class="i">extimatedReverseVel</span>;
+                    <span class="i">ExtimatedReverseTime</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs92', 180)" onmouseover="showTip(event, 'fs92', 180)" class="i">extimatedReversTime</span>; 
+                }
+        )
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs93', 181)" onmouseover="showTip(event, 'fs93', 181)" class="i">extimatedTime</span> <span class="o">=</span> 
+    (<span onmouseout="hideTip(event, 'fs55', 182)" onmouseover="showTip(event, 'fs55', 182)" class="i">trackRecs</span>
+     <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs24', 183)" onmouseover="showTip(event, 'fs24', 183)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs94', 184)" onmouseover="showTip(event, 'fs94', 184)" class="f">fold</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs95', 185)" onmouseover="showTip(event, 'fs95', 185)" class="i">acc</span> <span onmouseout="hideTip(event, 'fs96', 186)" onmouseover="showTip(event, 'fs96', 186)" class="i">rc</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs95', 187)" onmouseover="showTip(event, 'fs95', 187)" class="i">acc</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs96', 188)" onmouseover="showTip(event, 'fs96', 188)" class="i">rc</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs51', 189)" onmouseover="showTip(event, 'fs51', 189)" class="i">ExtimatedForwardTime</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs96', 190)" onmouseover="showTip(event, 'fs96', 190)" class="i">rc</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs54', 191)" onmouseover="showTip(event, 'fs54', 191)" class="i">ExtimatedReverseTime</span>) <span class="n">0.</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs52', 192)" onmouseover="showTip(event, 'fs52', 192)" class="t">s</span><span class="o">&gt;</span>) <span class="o">*</span>
+    <span onmouseout="hideTip(event, 'fs97', 193)" onmouseover="showTip(event, 'fs97', 193)" class="i">secToHr</span>
+
+<span onmouseout="hideTip(event, 'fs98', 194)" onmouseover="showTip(event, 'fs98', 194)" class="f">printf</span> <span class="s">&quot;extimatedTime = </span><span class="pf">%f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs93', 195)" onmouseover="showTip(event, 'fs93', 195)" class="i">extimatedTime</span>
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td><pre><code>extimatedTime = 5.320105</code></pre></td></tr></table>
+<div class="tip" id="fs1">namespace System</div>
+<div class="tip" id="fs2">namespace System.Collections</div>
+<div class="tip" id="fs3">namespace System.Collections.Generic</div>
+<div class="tip" id="fs4">namespace System.IO</div>
+<div class="tip" id="fs5">Multiple items<br />namespace FSharp<br /><br />--------------------<br />namespace Microsoft.FSharp</div>
+<div class="tip" id="fs6">namespace FSharp.Charting</div>
+<div class="tip" id="fs7">namespace OSGeo</div>
+<div class="tip" id="fs8">namespace OSGeo.OGR</div>
+<div class="tip" id="fs9">namespace OSGeo.GDAL</div>
+<div class="tip" id="fs10">namespace OSGeo.OSR</div>
+<div class="tip" id="fs11">namespace FSharp.Gdal</div>
+<div class="tip" id="fs12">module UM<br /><br />from FSharp.Gdal</div>
+<div class="tip" id="fs13">Multiple items<br />module Configuration<br /><br />from FSharp.Gdal<br /><br />--------------------<br />namespace System.Configuration</div>
+<div class="tip" id="fs14">val Init : unit -&gt; unit<br /><br />Full name: FSharp.Gdal.Configuration.Init</div>
+<div class="tip" id="fs15">val ignore : value:&#39;T -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Operators.ignore</div>
+<div class="tip" id="fs16">val dataset : DataSource<br /><br />Full name: Extimated-walk-time.dataset</div>
+<div class="tip" id="fs17">Multiple items<br />type Ogr =<br />&#160;&#160;new : unit -&gt; Ogr<br />&#160;&#160;static val wkb25DBit : int<br />&#160;&#160;static val ogrZMarker : int<br />&#160;&#160;static val OGRNullFID : int<br />&#160;&#160;static val OGRUnsetMarker : int<br />&#160;&#160;static val OLCRandomRead : string<br />&#160;&#160;static val OLCSequentialWrite : string<br />&#160;&#160;static val OLCRandomWrite : string<br />&#160;&#160;static val OLCFastSpatialFilter : string<br />&#160;&#160;static val OLCFastFeatureCount : string<br />&#160;&#160;...<br />&#160;&#160;nested type GDALErrorHandlerDelegate<br />&#160;&#160;nested type GDALProgressFuncDelegate<br /><br />Full name: OSGeo.OGR.Ogr<br /><br />--------------------<br />Ogr() : unit</div>
+<div class="tip" id="fs18">Ogr.OpenShared(utf8_path: string, update: int) : DataSource</div>
+<div class="tip" id="fs19">val vlay : Layer<br /><br />Full name: Extimated-walk-time.vlay</div>
+<div class="tip" id="fs20">DataSource.GetLayerByIndex(index: int) : Layer</div>
+<div class="tip" id="fs21">val features : Feature list<br /><br />Full name: Extimated-walk-time.features</div>
+<div class="tip" id="fs22">module Vector<br /><br />from FSharp.Gdal</div>
+<div class="tip" id="fs23">val features : vlay:Layer -&gt; Feature list<br /><br />Full name: FSharp.Gdal.Vector.features</div>
+<div class="tip" id="fs24">Multiple items<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;new : unit -&gt; List&lt;&#39;T&gt; + 2 overloads<br />&#160;&#160;member Add : item:&#39;T -&gt; unit<br />&#160;&#160;member AddRange : collection:IEnumerable&lt;&#39;T&gt; -&gt; unit<br />&#160;&#160;member AsReadOnly : unit -&gt; ReadOnlyCollection&lt;&#39;T&gt;<br />&#160;&#160;member BinarySearch : item:&#39;T -&gt; int + 2 overloads<br />&#160;&#160;member Capacity : int with get, set<br />&#160;&#160;member Clear : unit -&gt; unit<br />&#160;&#160;member Contains : item:&#39;T -&gt; bool<br />&#160;&#160;member ConvertAll&lt;&#39;TOutput&gt; : converter:Converter&lt;&#39;T, &#39;TOutput&gt; -&gt; List&lt;&#39;TOutput&gt;<br />&#160;&#160;member CopyTo : array:&#39;T[] -&gt; unit + 2 overloads<br />&#160;&#160;...<br />&#160;&#160;nested type Enumerator<br /><br />Full name: System.Collections.Generic.List&lt;_&gt;<br /><br />--------------------<br />List() : unit<br />List(capacity: int) : unit<br />List(collection: IEnumerable&lt;&#39;T&gt;) : unit</div>
+<div class="tip" id="fs25">val filter : predicate:(&#39;T -&gt; bool) -&gt; list:&#39;T list -&gt; &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List.filter</div>
+<div class="tip" id="fs26">val f : Feature</div>
+<div class="tip" id="fs27">val fields : (int * string * FieldType) list<br /><br />Full name: Extimated-walk-time.fields</div>
+<div class="tip" id="fs28">val fields : vlay:Layer -&gt; (int * string * FieldType) list<br /><br />Full name: FSharp.Gdal.Vector.fields</div>
+<div class="tip" id="fs29">val cimaSasso : Feature<br /><br />Full name: Extimated-walk-time.cimaSasso</div>
+<div class="tip" id="fs30">val where : predicate:(&#39;T -&gt; bool) -&gt; list:&#39;T list -&gt; &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List.where</div>
+<div class="tip" id="fs31">val title : string</div>
+<div class="tip" id="fs32">Feature.GetFieldAsString(name: string) : string<br />Feature.GetFieldAsString(id: int) : string</div>
+<div class="tip" id="fs33">val head : list:&#39;T list -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Collections.List.head</div>
+<div class="tip" id="fs34">val rDataset : Dataset<br /><br />Full name: Extimated-walk-time.rDataset</div>
+<div class="tip" id="fs35">Multiple items<br />type Gdal =<br />&#160;&#160;new : unit -&gt; Gdal<br />&#160;&#160;static member AllRegister : unit -&gt; unit<br />&#160;&#160;static member ApplyGeoTransform : padfGeoTransform:float[] * dfPixel:float * dfLine:float * pdfGeoX:float * pdfGeoY:float -&gt; unit<br />&#160;&#160;static member AutoCreateWarpedVRT : src_ds:Dataset * src_wkt:string * dst_wkt:string * eResampleAlg:ResampleAlg * maxerror:float -&gt; Dataset<br />&#160;&#160;static member CPLBinaryToHex : nBytes:int * pabyData:nativeint -&gt; string<br />&#160;&#160;static member CPLHexToBinary : pszHex:string * pnBytes:int -&gt; nativeint<br />&#160;&#160;static member ComputeMedianCutPCT : red:Band * green:Band * blue:Band * num_colors:int * colors:ColorTable * callback:GDALProgressFuncDelegate * callback_data:string -&gt; int<br />&#160;&#160;static member ComputeProximity : srcBand:Band * proximityBand:Band * options:string[] * callback:GDALProgressFuncDelegate * callback_data:string -&gt; int<br />&#160;&#160;static member ContourGenerate : srcBand:Band * contourInterval:float * contourBase:float * fixedLevelCount:int * fixedLevels:float[] * useNoData:int * noDataValue:float * dstLayer:Layer * idField:int * elevField:int * callback:GDALProgressFuncDelegate * callback_data:string -&gt; int<br />&#160;&#160;static member DataTypeIsComplex : eDataType:DataType -&gt; int<br />&#160;&#160;...<br />&#160;&#160;nested type GDALErrorHandlerDelegate<br />&#160;&#160;nested type GDALProgressFuncDelegate<br /><br />Full name: OSGeo.GDAL.Gdal<br /><br />--------------------<br />Gdal() : unit</div>
+<div class="tip" id="fs36">Gdal.OpenShared(utf8_path: string, eAccess: Access) : Dataset</div>
+<div class="tip" id="fs37">type Access =<br />&#160;&#160;| GA_ReadOnly = 0<br />&#160;&#160;| GA_Update = 1<br /><br />Full name: OSGeo.GDAL.Access</div>
+<div class="tip" id="fs38">field Access.GA_ReadOnly = 0</div>
+<div class="tip" id="fs39">val mutable geotransform : float []<br /><br />Full name: Extimated-walk-time.geotransform</div>
+<div class="tip" id="fs40">Multiple items<br />val float : value:&#39;T -&gt; float (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.float<br /><br />--------------------<br />type float = Double<br /><br />Full name: Microsoft.FSharp.Core.float<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; = float<br /><br />Full name: Microsoft.FSharp.Core.float&lt;_&gt;</div>
+<div class="tip" id="fs41">Dataset.GetGeoTransform(argout: float []) : unit</div>
+<div class="tip" id="fs42">type InfoTrack =<br />&#160;&#160;{Point: Geometry;<br />&#160;&#160;&#160;Elev: float;<br />&#160;&#160;&#160;Distance: float;<br />&#160;&#160;&#160;Slope: float;<br />&#160;&#160;&#160;ExtimatedForwardVelocity: float&lt;km/h&gt;;<br />&#160;&#160;&#160;ExtimatedForwardTime: float&lt;s&gt;;<br />&#160;&#160;&#160;ExtimatedReverseVelocity: float&lt;km/h&gt;;<br />&#160;&#160;&#160;ExtimatedReverseTime: float&lt;s&gt;;}<br /><br />Full name: Extimated-walk-time.InfoTrack</div>
+<div class="tip" id="fs43">InfoTrack.Point: Geometry</div>
+<div class="tip" id="fs44">Multiple items<br />type Geometry =<br />&#160;&#160;new : type:wkbGeometryType -&gt; Geometry + 2 overloads<br />&#160;&#160;member AddGeometry : other:Geometry -&gt; int<br />&#160;&#160;member AddGeometryDirectly : other_disown:Geometry -&gt; int<br />&#160;&#160;member AddPoint : x:float * y:float * z:float -&gt; unit<br />&#160;&#160;member AddPoint_2D : x:float * y:float -&gt; unit<br />&#160;&#160;member Area : unit -&gt; float<br />&#160;&#160;member AssignSpatialReference : reference:SpatialReference -&gt; unit<br />&#160;&#160;member Boundary : unit -&gt; Geometry<br />&#160;&#160;member Buffer : distance:float * quadsecs:int -&gt; Geometry<br />&#160;&#160;member Centroid : unit -&gt; Geometry<br />&#160;&#160;...<br /><br />Full name: OSGeo.OGR.Geometry<br /><br />--------------------<br />Geometry(type: wkbGeometryType) : unit<br />Geometry(cPtr: nativeint, cMemoryOwn: bool, parent: obj) : unit<br />Geometry(type: wkbGeometryType, wkt: string, wkb: int, wkb_buf: nativeint, gml: string) : unit</div>
+<div class="tip" id="fs45">InfoTrack.Elev: float</div>
+<div class="tip" id="fs46">InfoTrack.Distance: float</div>
+<div class="tip" id="fs47">InfoTrack.Slope: float</div>
+<div class="tip" id="fs48">InfoTrack.ExtimatedForwardVelocity: float&lt;km/h&gt;</div>
+<div class="tip" id="fs49">[&lt;Measure&gt;]<br />type km<br /><br />Full name: FSharp.Gdal.UM.km</div>
+<div class="tip" id="fs50">[&lt;Measure&gt;]<br />type h<br /><br />Full name: FSharp.Gdal.UM.h</div>
+<div class="tip" id="fs51">InfoTrack.ExtimatedForwardTime: float&lt;s&gt;</div>
+<div class="tip" id="fs52">[&lt;Measure&gt;]<br />type s<br /><br />Full name: FSharp.Gdal.UM.s</div>
+<div class="tip" id="fs53">InfoTrack.ExtimatedReverseVelocity: float&lt;km/h&gt;</div>
+<div class="tip" id="fs54">InfoTrack.ExtimatedReverseTime: float&lt;s&gt;</div>
+<div class="tip" id="fs55">val trackRecs : InfoTrack list<br /><br />Full name: Extimated-walk-time.trackRecs</div>
+<div class="tip" id="fs56">val geom : Geometry</div>
+<div class="tip" id="fs57">Feature.GetGeometryRef() : Geometry</div>
+<div class="tip" id="fs58">val points : geom:Geometry -&gt; Geometry list<br /><br />Full name: FSharp.Gdal.Vector.points</div>
+<div class="tip" id="fs59">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; list:&#39;T list -&gt; &#39;U list<br /><br />Full name: Microsoft.FSharp.Collections.List.map</div>
+<div class="tip" id="fs60">val p : Geometry</div>
+<div class="tip" id="fs61">val x : float</div>
+<div class="tip" id="fs62">val y : float</div>
+<div class="tip" id="fs63">Geometry.GetX(point: int) : float</div>
+<div class="tip" id="fs64">Geometry.GetY(point: int) : float</div>
+<div class="tip" id="fs65">val elev : float option</div>
+<div class="tip" id="fs66">module Raster<br /><br />from FSharp.Gdal</div>
+<div class="tip" id="fs67">val groundToImage : geotransform:float [] -&gt; x:float * y:float -&gt; int * int<br /><br />Full name: FSharp.Gdal.Raster.groundToImage</div>
+<div class="tip" id="fs68">val getImgValue : geotransform:float [] -&gt; dataset:Dataset -&gt; xPixel:int * yLine:int -&gt; float option<br /><br />Full name: FSharp.Gdal.Raster.getImgValue</div>
+<div class="tip" id="fs69">union case Option.Some: Value: &#39;T -&gt; Option&lt;&#39;T&gt;</div>
+<div class="tip" id="fs70">val e : float</div>
+<div class="tip" id="fs71">union case Option.None: Option&lt;&#39;T&gt;</div>
+<div class="tip" id="fs72">val pairwise : list:&#39;T list -&gt; (&#39;T * &#39;T) list<br /><br />Full name: Microsoft.FSharp.Collections.List.pairwise</div>
+<div class="tip" id="fs73">val prevPoint : Geometry</div>
+<div class="tip" id="fs74">val prevElev : float</div>
+<div class="tip" id="fs75">val currPoint : Geometry</div>
+<div class="tip" id="fs76">val currElev : float</div>
+<div class="tip" id="fs77">val dx : float</div>
+<div class="tip" id="fs78">Geometry.Distance(other: Geometry) : float</div>
+<div class="tip" id="fs79">val dh : float</div>
+<div class="tip" id="fs80">val slope : float</div>
+<div class="tip" id="fs81">val tobbler : (float -&gt; float)</div>
+<div class="tip" id="fs82">type Math =<br />&#160;&#160;static val PI : float<br />&#160;&#160;static val E : float<br />&#160;&#160;static member Abs : value:sbyte -&gt; sbyte + 6 overloads<br />&#160;&#160;static member Acos : d:float -&gt; float<br />&#160;&#160;static member Asin : d:float -&gt; float<br />&#160;&#160;static member Atan : d:float -&gt; float<br />&#160;&#160;static member Atan2 : y:float * x:float -&gt; float<br />&#160;&#160;static member BigMul : a:int * b:int -&gt; int64<br />&#160;&#160;static member Ceiling : d:decimal -&gt; decimal + 1 overload<br />&#160;&#160;static member Cos : d:float -&gt; float<br />&#160;&#160;...<br /><br />Full name: System.Math</div>
+<div class="tip" id="fs83">Math.Exp(d: float) : float</div>
+<div class="tip" id="fs84">Math.Abs(value: decimal) : decimal<br />Math.Abs(value: float) : float<br />Math.Abs(value: float32) : float32<br />Math.Abs(value: int64) : int64<br />Math.Abs(value: int) : int<br />Math.Abs(value: int16) : int16<br />Math.Abs(value: sbyte) : sbyte</div>
+<div class="tip" id="fs85">val extimatedForwardVel : float&lt;km/h&gt;</div>
+<div class="tip" id="fs86">val v : float</div>
+<div class="tip" id="fs87">Math.Max(val1: decimal, val2: decimal) : decimal<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />Math.Max(val1: float, val2: float) : float<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />Math.Max(val1: float32, val2: float32) : float32<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />Math.Max(val1: uint64, val2: uint64) : uint64<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />Math.Max(val1: int64, val2: int64) : int64<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />Math.Max(val1: uint32, val2: uint32) : uint32<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />Math.Max(val1: int, val2: int) : int<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />Math.Max(val1: uint16, val2: uint16) : uint16<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />Math.Max(val1: int16, val2: int16) : int16<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />Math.Max(val1: byte, val2: byte) : byte<br />&#160;&#160;&#160;<em>(+0 other overloads)</em></div>
+<div class="tip" id="fs88">val extimatedReverseVel : float&lt;km/h&gt;</div>
+<div class="tip" id="fs89">val extimatedForwardTime : float&lt;s&gt;</div>
+<div class="tip" id="fs90">[&lt;Measure&gt;]<br />type m<br /><br />Full name: FSharp.Gdal.UM.m</div>
+<div class="tip" id="fs91">val kmphToMs : speed:float&lt;km/h&gt; -&gt; float&lt;m/s&gt;<br /><br />Full name: FSharp.Gdal.UM.kmphToMs</div>
+<div class="tip" id="fs92">val extimatedReversTime : float&lt;s&gt;</div>
+<div class="tip" id="fs93">val extimatedTime : float&lt;h&gt;<br /><br />Full name: Extimated-walk-time.extimatedTime</div>
+<div class="tip" id="fs94">val fold : folder:(&#39;State -&gt; &#39;T -&gt; &#39;State) -&gt; state:&#39;State -&gt; list:&#39;T list -&gt; &#39;State<br /><br />Full name: Microsoft.FSharp.Collections.List.fold</div>
+<div class="tip" id="fs95">val acc : float&lt;s&gt;</div>
+<div class="tip" id="fs96">val rc : InfoTrack</div>
+<div class="tip" id="fs97">val secToHr : float&lt;h/s&gt;<br /><br />Full name: FSharp.Gdal.UM.secToHr</div>
+<div class="tip" id="fs98">val printf : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printf</div>
+
+
+          
+        </div>
+
+        <div class="tip" id="fs1">namespace Fsharp.Gdal</div>
+        <div class="span3">
+            <img src="./img/logo.png" alt="F# Project" style="width:150px;margin:10px">
+            <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+                <li class="nav-header">Fsharp.Gdal</li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/index.html">Home page</a></li>
+                <li class="divider"></li>
+                <li><a href="http://nuget.org/packages/Fsharp.Gdal">Get Library via NuGet</a></li>
+                <li><a href="http://github.com/domasin/Fsharp.Gdal">Source Code on GitHub</a></li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/license.html">License</a></li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/release-notes.html">Release Notes</a></li>
+
+                <li class="nav-header">Getting started</li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/tutorial.html">Sample tutorial</a></li>
+
+                <li class="nav-header">Documentation</li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/reference/index.html">API Reference</a></li>
+            </ul>
+        </div>
+        <a href="http://github.com/domasin/Fsharp.Gdal"><img style="position: absolute; top: 0; right: 0; border: 0;" src="./img/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+    </div>
+    <hr style="margin-top:50px;" />
+      <footer class="footer" style="text-align:center">
+        Build with FsLab Journal
+      </footer>
+    </div>
+  </body>
+</html>

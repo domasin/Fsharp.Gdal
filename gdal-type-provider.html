@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!--
+      The Gdal type provider parameters will be replaced with the
+      document title extracted from the <h1> element or
+      file name, if there is no <h1> heading
+    -->
+    <title>Gdal type provider</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="styles/style.css" />
+    <link type="text/css" rel="stylesheet" href="styles/deedle.css" />
+    <script src="styles/tips.js" type="text/javascript"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1.1", { packages: ["corechart", "annotationchart", "calendar", "gauge", "geochart", "map", "sankey", "table", "timeline", "treemap"] })
+    </script>
+    <script language="javascript" type="text/javascript">
+          function init()
+          {
+            try {
+              websocket = new WebSocket("ws://localhost:8088/websocket");
+              websocket.onmessage = function(evt) { location.reload(); };
+            } catch (e) {
+              //silently ignore lack of websockets
+            }
+          }
+          window.addEventListener("load", init, false);
+    </script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+            <ul class="nav nav-pills pull-right">
+                <li><a href="http://fsharp.org/">fsharp.org</a></li>
+                <li><a href="http://fslab.org">fslab.org</a></li>
+                <li><a href="http://github.com/domasin/Fsharp.Gdal">github page</a></li>
+            </ul>
+            <h3 class="muted"><a href="http://domasin.github.io/Fsharp.Gdal/index.html">Fsharp.Gdal</a></h3>
+        </div>
+      <hr />
+	  </div>
+      <div class="row" style="margin-top:30px">
+        <div class="span1"></div>
+		<div class="span1"></div>
+        <div class="span10" id="main">
+          <h1>Gdal type provider</h1>
+<p>This is a starting point in developing a type provider for geospatial data files managed with the gdal library</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+<span class="l">9: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">FSharp</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs2', 2)" onmouseover="showTip(event, 'fs2', 2)" class="i">Gdal</span>
+
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="i">OSGeo</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs3', 4)" onmouseover="showTip(event, 'fs3', 4)" class="i">OSGeo</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 5)" onmouseover="showTip(event, 'fs4', 5)" class="i">GDAL</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs3', 6)" onmouseover="showTip(event, 'fs3', 6)" class="i">OSGeo</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs5', 7)" onmouseover="showTip(event, 'fs5', 7)" class="i">OGR</span>
+
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs6', 8)" onmouseover="showTip(event, 'fs6', 8)" class="i">Deedle</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 9)" onmouseover="showTip(event, 'fs1', 9)" class="i">FSharp</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="i">Data</span>
+<span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 11)" onmouseover="showTip(event, 'fs1', 11)" class="i">FSharp</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs8', 12)" onmouseover="showTip(event, 'fs8', 12)" class="i">Charting</span>
+</code></pre></td>
+</tr>
+</table>
+<p>To get the data from a file we can just call the type provider constructor giving
+the file path as the type parameter of the provider. Internally the provider calls
+the logic needed to configure the gdal library on the system and to initialize all
+the gdal data providers:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 13)" onmouseover="showTip(event, 'fs9', 13)" class="i">vLayer</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs10', 14)" onmouseover="showTip(event, 'fs10', 14)" class="t">OgrTypeProvider</span><span class="o">&lt;</span><span class="s">&quot;G:/Data/itinerari.shp&quot;</span><span class="o">&gt;</span>()
+</code></pre></td>
+</tr>
+</table>
+<p>The type provider provides two properties:</p>
+<p><code>Values</code> which we can convert directly
+to a deedle frame to explore immediately the data in the vector:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs11', 15)" onmouseover="showTip(event, 'fs11', 15)" class="i">fmData</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs9', 16)" onmouseover="showTip(event, 'fs9', 16)" class="i">vLayer</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 17)" onmouseover="showTip(event, 'fs12', 17)" class="i">Values</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs13', 18)" onmouseover="showTip(event, 'fs13', 18)" class="t">Frame</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 19)" onmouseover="showTip(event, 'fs14', 19)" class="f">ofValues</span>
+</code></pre></td>
+</tr>
+</table>
+<div class="deedleframe">
+
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th><p>ID</p></th>
+<th><p>CODE</p></th>
+<th><p>SUBCODE</p></th>
+<th><p> ... </p></th>
+<th><p>DESCEND</p></th>
+<th><p>DISLIVELLO</p></th>
+<th><p>Geometry</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>285</p></td>
+<td><p>1180</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>1</p></td>
+<td><p>4</p></td>
+<td><p>4</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>728</p></td>
+<td><p>1556</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>b</p></td>
+<td><p> ... </p></td>
+<td><p>1717</p></td>
+<td><p>0</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>3</p></td>
+<td><p>3</p></td>
+<td><p>3</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>526</p></td>
+<td><p>619</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>4</p></td>
+<td><p>5</p></td>
+<td><p>5</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>319</p></td>
+<td><p>1376</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>5</p></td>
+<td><p>6</p></td>
+<td><p>6</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>480</p></td>
+<td><p>1543</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>6</p></td>
+<td><p>12</p></td>
+<td><p>12</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>836</p></td>
+<td><p>847</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>7</p></td>
+<td><p>7</p></td>
+<td><p>7</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>441</p></td>
+<td><p>1796</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+</tr>
+<tr class="even">
+<td><p>14</p></td>
+<td><p>15</p></td>
+<td><p>15</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>311</p></td>
+<td><p>1093</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>15</p></td>
+<td><p>16</p></td>
+<td><p>16</p></td>
+<td><p>b</p></td>
+<td><p> ... </p></td>
+<td><p>639</p></td>
+<td><p>1482</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>16</p></td>
+<td><p>17</p></td>
+<td><p>17</p></td>
+<td><p>a</p></td>
+<td><p> ... </p></td>
+<td><p>610</p></td>
+<td><p>1157</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>17</p></td>
+<td><p>17</p></td>
+<td><p>17</p></td>
+<td><p>b</p></td>
+<td><p> ... </p></td>
+<td><p>1010</p></td>
+<td><p>1331</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+<p>and <code>Features</code> which we can iterate to get, for each feature, attributes and geometry
+converted in dinamically created types that match the type of geometry and attributes
+and come up directly with the intellisense in the iteractive editor:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">for</span> <span onmouseout="hideTip(event, 'fs15', 20)" onmouseover="showTip(event, 'fs15', 20)" class="i">feat</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs9', 21)" onmouseover="showTip(event, 'fs9', 21)" class="i">vLayer</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 22)" onmouseover="showTip(event, 'fs16', 22)" class="i">Features</span> <span class="k">do</span>
+    <span onmouseout="hideTip(event, 'fs17', 23)" onmouseover="showTip(event, 'fs17', 23)" class="f">printfn</span> <span class="s">&quot;Geomtry type = </span><span class="pf">%A</span><span class="s"></span><span class="e">\t</span><span class="s">ID = </span><span class="pf">%i</span><span class="s"></span><span class="e">\t</span><span class="s">TITLE = </span><span class="pf">%s</span><span class="s"></span><span class="e">\t</span><span class="s">&quot;</span> 
+        (<span onmouseout="hideTip(event, 'fs15', 24)" onmouseover="showTip(event, 'fs15', 24)" class="i">feat</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 25)" onmouseover="showTip(event, 'fs18', 25)" class="i">Geometry</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs19', 26)" onmouseover="showTip(event, 'fs19', 26)" class="f">GetGeometryType</span>()) <span onmouseout="hideTip(event, 'fs15', 27)" onmouseover="showTip(event, 'fs15', 27)" class="i">feat</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 28)" onmouseover="showTip(event, 'fs20', 28)" class="i">ID</span> <span onmouseout="hideTip(event, 'fs15', 29)" onmouseover="showTip(event, 'fs15', 29)" class="i">feat</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs21', 30)" onmouseover="showTip(event, 'fs21', 30)" class="i">TITLE</span>
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td><pre><code>Geomtry type = wkbLineString	ID = 1	TITLE = Cima Sasso	
+Geomtry type = wkbLineString	ID = 4	TITLE = Pizzo Proman	
+Geomtry type = wkbLineString	ID = 2	TITLE = Monte Faie	
+Geomtry type = wkbLineString	ID = 3	TITLE = Cima Corte Lorenzo	
+Geomtry type = wkbLineString	ID = 5	TITLE = Cima Saler	
+Geomtry type = wkbLineString	ID = 6	TITLE = Pizzo delle Pecore	
+Geomtry type = wkbLineString	ID = 12	TITLE = Cima Pedum	
+Geomtry type = wkbLineString	ID = 7	TITLE = Punta Pozzolo	
+Geomtry type = wkbLineString	ID = 8	TITLE = Pizzo Tignolino	
+Geomtry type = wkbLineString	ID = 9	TITLE = Monte Togano	
+Geomtry type = wkbLineString	ID = 10	TITLE = Pizzo Nona	
+Geomtry type = wkbLineString	ID = 11	TITLE = Cima della Laurasca	
+Geomtry type = wkbLineString	ID = 13	TITLE = Cimone di Cortechiuso	
+Geomtry type = wkbLineString	ID = 14	TITLE = Monte Torrione	
+Geomtry type = wkbLineString	ID = 15	TITLE = La Piota	
+Geomtry type = wkbLineString	ID = 16	TITLE = Monte Zeda da Falmenta	
+Geomtry type = wkbLineString	ID = 17	TITLE = Pizzo Marona dall'Alpe Pala	
+Geomtry type = wkbLineString	ID = 17	TITLE = Pizzo Marona da Cicogna</code></pre></td></tr></table>
+<p>With the deedle frame and gdal methods at hand we can do some calculations based on geometries.
+The data file contains hiking paths in the Big Valley
+and we can for example get the lenght of each with the gdal library methods
+and use the deedle functions to aggregate them.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 31)" onmouseover="showTip(event, 'fs22', 31)" class="i">fmLengths</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">vLayer</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 33)" onmouseover="showTip(event, 'fs16', 33)" class="i">Features</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 34)" onmouseover="showTip(event, 'fs23', 34)" class="t">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs24', 35)" onmouseover="showTip(event, 'fs24', 35)" class="f">mapi</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs25', 36)" onmouseover="showTip(event, 'fs25', 36)" class="i">i</span> <span onmouseout="hideTip(event, 'fs15', 37)" onmouseover="showTip(event, 'fs15', 37)" class="i">feat</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs25', 38)" onmouseover="showTip(event, 'fs25', 38)" class="i">i</span>, <span class="s">&quot;Length&quot;</span>, <span onmouseout="hideTip(event, 'fs15', 39)" onmouseover="showTip(event, 'fs15', 39)" class="i">feat</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 40)" onmouseover="showTip(event, 'fs18', 40)" class="i">Geometry</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 41)" onmouseover="showTip(event, 'fs26', 41)" class="f">Length</span>())
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs13', 42)" onmouseover="showTip(event, 'fs13', 42)" class="t">Frame</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 43)" onmouseover="showTip(event, 'fs14', 43)" class="f">ofValues</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs27', 44)" onmouseover="showTip(event, 'fs27', 44)" class="i">fmWithLengths</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 45)" onmouseover="showTip(event, 'fs11', 45)" class="i">fmData</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs28', 46)" onmouseover="showTip(event, 'fs28', 46)" class="f">Join</span>(<span onmouseout="hideTip(event, 'fs22', 47)" onmouseover="showTip(event, 'fs22', 47)" class="i">fmLengths</span>)
+</code></pre></td>
+</tr>
+</table>
+<div class="deedleframe">
+
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th><p>ID</p></th>
+<th><p>CODE</p></th>
+<th><p>SUBCODE</p></th>
+<th><p> ... </p></th>
+<th><p>DISLIVELLO</p></th>
+<th><p>Geometry</p></th>
+<th><p>Length</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>1180</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>5417</p></td>
+</tr>
+<tr class="even">
+<td><p>1</p></td>
+<td><p>4</p></td>
+<td><p>4</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>1556</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>9408</p></td>
+</tr>
+<tr class="odd">
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>b</p></td>
+<td><p> ... </p></td>
+<td><p>0</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>1,087E+04</p></td>
+</tr>
+<tr class="even">
+<td><p>3</p></td>
+<td><p>3</p></td>
+<td><p>3</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>619</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>4960</p></td>
+</tr>
+<tr class="odd">
+<td><p>4</p></td>
+<td><p>5</p></td>
+<td><p>5</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>1376</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>5198</p></td>
+</tr>
+<tr class="even">
+<td><p>5</p></td>
+<td><p>6</p></td>
+<td><p>6</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>1543</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>7861</p></td>
+</tr>
+<tr class="odd">
+<td><p>6</p></td>
+<td><p>12</p></td>
+<td><p>12</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>847</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>8060</p></td>
+</tr>
+<tr class="even">
+<td><p>7</p></td>
+<td><p>7</p></td>
+<td><p>7</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>1796</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>7393</p></td>
+</tr>
+<tr class="odd">
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+</tr>
+<tr class="even">
+<td><p>14</p></td>
+<td><p>15</p></td>
+<td><p>15</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p>1093</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>6286</p></td>
+</tr>
+<tr class="odd">
+<td><p>15</p></td>
+<td><p>16</p></td>
+<td><p>16</p></td>
+<td><p>b</p></td>
+<td><p> ... </p></td>
+<td><p>1482</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>9070</p></td>
+</tr>
+<tr class="even">
+<td><p>16</p></td>
+<td><p>17</p></td>
+<td><p>17</p></td>
+<td><p>a</p></td>
+<td><p> ... </p></td>
+<td><p>1157</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>8288</p></td>
+</tr>
+<tr class="odd">
+<td><p>17</p></td>
+<td><p>17</p></td>
+<td><p>17</p></td>
+<td><p>b</p></td>
+<td><p> ... </p></td>
+<td><p>1331</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+<td><p>9117</p></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+<p>And just to do an aggregation:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs29', 48)" onmouseover="showTip(event, 'fs29', 48)" class="i">sumLenghts</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs27', 49)" onmouseover="showTip(event, 'fs27', 49)" class="i">fmWithLengths</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 50)" onmouseover="showTip(event, 'fs30', 50)" class="f">Sum</span>()<span class="o">?</span><span class="i">Length</span>
+
+<span onmouseout="hideTip(event, 'fs31', 51)" onmouseover="showTip(event, 'fs31', 51)" class="f">printf</span> <span class="s">&quot;sumLenghts = </span><span class="pf">%f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs29', 52)" onmouseover="showTip(event, 'fs29', 52)" class="i">sumLenghts</span>
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td><pre><code>sumLenghts = 138959.383896</code></pre></td></tr></table>
+<div class="tip" id="fs1">Multiple items<br />namespace FSharp<br /><br />--------------------<br />namespace Microsoft.FSharp</div>
+<div class="tip" id="fs2">namespace FSharp.Gdal</div>
+<div class="tip" id="fs3">namespace OSGeo</div>
+<div class="tip" id="fs4">namespace OSGeo.GDAL</div>
+<div class="tip" id="fs5">namespace OSGeo.OGR</div>
+<div class="tip" id="fs6">namespace Deedle</div>
+<div class="tip" id="fs7">Multiple items<br />namespace FSharp.Data<br /><br />--------------------<br />namespace Microsoft.FSharp.Data</div>
+<div class="tip" id="fs8">namespace FSharp.Charting</div>
+<div class="tip" id="fs9">val vLayer : OgrTypeProvider&lt;...&gt;<br /><br />Full name: Gdal-type-provider.vLayer</div>
+<div class="tip" id="fs10">type OgrTypeProvider<br /><br />Full name: FSharp.Gdal.OgrTypeProvider</div>
+<div class="tip" id="fs11">val fmData : Frame&lt;int,string&gt;<br /><br />Full name: Gdal-type-provider.fmData</div>
+<div class="tip" id="fs12">property OgrTypeProvider&lt;...&gt;.Values: List&lt;int * string * obj&gt;</div>
+<div class="tip" id="fs13">Multiple items<br />module Frame<br /><br />from Deedle<br /><br />--------------------<br />type Frame =<br />&#160;&#160;static member ReadReader : reader:IDataReader -&gt; Frame&lt;int,string&gt;<br />&#160;&#160;static member CustomExpanders : Dictionary&lt;Type,Func&lt;obj,seq&lt;string * Type * obj&gt;&gt;&gt;<br />&#160;&#160;static member NonExpandableInterfaces : List&lt;Type&gt;<br />&#160;&#160;static member NonExpandableTypes : HashSet&lt;Type&gt;<br /><br />Full name: Deedle.Frame<br /><br />--------------------<br />type Frame&lt;&#39;TRowKey,&#39;TColumnKey (requires equality and equality)&gt; =<br />&#160;&#160;interface IDynamicMetaObjectProvider<br />&#160;&#160;interface INotifyCollectionChanged<br />&#160;&#160;interface IFsiFormattable<br />&#160;&#160;interface IFrame<br />&#160;&#160;new : names:seq&lt;&#39;TColumnKey&gt; * columns:seq&lt;ISeries&lt;&#39;TRowKey&gt;&gt; -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />&#160;&#160;new : rowIndex:IIndex&lt;&#39;TRowKey&gt; * columnIndex:IIndex&lt;&#39;TColumnKey&gt; * data:IVector&lt;IVector&gt; * indexBuilder:IIndexBuilder * vectorBuilder:IVectorBuilder -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />&#160;&#160;member AddColumn : column:&#39;TColumnKey * series:ISeries&lt;&#39;TRowKey&gt; -&gt; unit<br />&#160;&#160;member AddColumn : column:&#39;TColumnKey * series:seq&lt;&#39;V&gt; -&gt; unit<br />&#160;&#160;member AddColumn : column:&#39;TColumnKey * series:ISeries&lt;&#39;TRowKey&gt; * lookup:Lookup -&gt; unit<br />&#160;&#160;member AddColumn : column:&#39;TColumnKey * series:seq&lt;&#39;V&gt; * lookup:Lookup -&gt; unit<br />&#160;&#160;...<br /><br />Full name: Deedle.Frame&lt;_,_&gt;<br /><br />--------------------<br />new : names:seq&lt;&#39;TColumnKey&gt; * columns:seq&lt;ISeries&lt;&#39;TRowKey&gt;&gt; -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />new : rowIndex:Indices.IIndex&lt;&#39;TRowKey&gt; * columnIndex:Indices.IIndex&lt;&#39;TColumnKey&gt; * data:IVector&lt;IVector&gt; * indexBuilder:Indices.IIndexBuilder * vectorBuilder:Vectors.IVectorBuilder -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;</div>
+<div class="tip" id="fs14">static member Frame.ofValues : values:seq&lt;&#39;R * &#39;C * &#39;V&gt; -&gt; Frame&lt;&#39;R,&#39;C&gt; (requires equality and equality)</div>
+<div class="tip" id="fs15">val feat : OgrTypeProvider&lt;...&gt;.Feature</div>
+<div class="tip" id="fs16">property OgrTypeProvider&lt;...&gt;.Features: System.Collections.Generic.IEnumerable&lt;OgrTypeProvider&lt;...&gt;.Feature&gt;</div>
+<div class="tip" id="fs17">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
+<div class="tip" id="fs18">property OgrTypeProvider&lt;...&gt;.Feature.Geometry: Geometry</div>
+<div class="tip" id="fs19">Geometry.GetGeometryType() : wkbGeometryType</div>
+<div class="tip" id="fs20">property OgrTypeProvider&lt;...&gt;.Feature.ID: int</div>
+<div class="tip" id="fs21">property OgrTypeProvider&lt;...&gt;.Feature.TITLE: string</div>
+<div class="tip" id="fs22">val fmLengths : Frame&lt;int,string&gt;<br /><br />Full name: Gdal-type-provider.fmLengths</div>
+<div class="tip" id="fs23">module Seq<br /><br />from Microsoft.FSharp.Collections</div>
+<div class="tip" id="fs24">val mapi : mapping:(int -&gt; &#39;T -&gt; &#39;U) -&gt; source:seq&lt;&#39;T&gt; -&gt; seq&lt;&#39;U&gt;<br /><br />Full name: Microsoft.FSharp.Collections.Seq.mapi</div>
+<div class="tip" id="fs25">val i : int</div>
+<div class="tip" id="fs26">Geometry.Length() : float</div>
+<div class="tip" id="fs27">val fmWithLengths : Frame&lt;int,string&gt;<br /><br />Full name: Gdal-type-provider.fmWithLengths</div>
+<div class="tip" id="fs28">member Frame.Join : otherFrame:Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt; -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : colKey:&#39;TColumnKey * series:Series&lt;&#39;TRowKey,&#39;V&gt; -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : otherFrame:Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt; * kind:JoinKind -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : colKey:&#39;TColumnKey * series:Series&lt;&#39;TRowKey,&#39;V&gt; * kind:JoinKind -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : otherFrame:Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt; * kind:JoinKind * lookup:Lookup -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : colKey:&#39;TColumnKey * series:Series&lt;&#39;TRowKey,&#39;V&gt; * kind:JoinKind * lookup:Lookup -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;</div>
+<div class="tip" id="fs29">val sumLenghts : float<br /><br />Full name: Gdal-type-provider.sumLenghts</div>
+<div class="tip" id="fs30">static member FrameExtensions.Sum : frame:Frame&lt;&#39;R,&#39;C&gt; -&gt; Series&lt;&#39;C,float&gt; (requires equality and equality)</div>
+<div class="tip" id="fs31">val printf : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printf</div>
+
+
+          
+        </div>
+
+        <div class="tip" id="fs1">namespace Fsharp.Gdal</div>
+        <div class="span3">
+            <img src="./img/logo.png" alt="F# Project" style="width:150px;margin:10px">
+            <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+                <li class="nav-header">Fsharp.Gdal</li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/index.html">Home page</a></li>
+                <li class="divider"></li>
+                <li><a href="http://nuget.org/packages/Fsharp.Gdal">Get Library via NuGet</a></li>
+                <li><a href="http://github.com/domasin/Fsharp.Gdal">Source Code on GitHub</a></li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/license.html">License</a></li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/release-notes.html">Release Notes</a></li>
+
+                <li class="nav-header">Getting started</li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/tutorial.html">Sample tutorial</a></li>
+
+                <li class="nav-header">Documentation</li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/reference/index.html">API Reference</a></li>
+            </ul>
+        </div>
+        <a href="http://github.com/domasin/Fsharp.Gdal"><img style="position: absolute; top: 0; right: 0; border: 0;" src="./img/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+    </div>
+    <hr style="margin-top:50px;" />
+      <footer class="footer" style="text-align:center">
+        Build with FsLab Journal
+      </footer>
+    </div>
+  </body>
+</html>
