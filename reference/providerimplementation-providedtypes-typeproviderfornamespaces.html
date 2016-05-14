@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>TypeProviderForNamespaces - Fsharp.Gdal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content=""/>
+    <meta name="author" content="Domenico Masini"/>
+
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet"/>
+
+    <link type="text/css" rel="stylesheet" href="/Fsharp.Gdal/content/style.css" />
+    <script type="text/javascript" src="/Fsharp.Gdal/content/tips.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li><a href="http://fsharp.org">fsharp.org</a></li>
+          <li><a href="http://github.com/domasin/Fsharp.Gdal">github page</a></li>
+        </ul>
+        <h3 class="muted"><a href="/Fsharp.Gdal/index.html">Fsharp.Gdal</a></h3>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="span9" id="main">
+          
+
+
+
+<h1>TypeProviderForNamespaces</h1>
+<p>
+  <span>Namespace: ProviderImplementation.ProvidedTypes</span><br />
+</p>
+<div class="xmldoc">
+<p>A base type providing default implementations of type provider functionality when all provided
+types are of type ProvidedTypeDefinition.</p>
+
+</div>
+  <h3>Constructors</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Constructor</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '157', 157)" onmouseover="showTip(event, '157', 157)">
+            new()
+          </code>
+          <div class="tip" id="157">
+            <strong>Signature:</strong> unit -&gt; TypeProviderForNamespaces<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2578-2578" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Initializes a type provider</p>
+
+
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '158', 158)" onmouseover="showTip(event, '158', 158)">
+            new(namespaceName, types)
+          </code>
+          <div class="tip" id="158">
+            <strong>Signature:</strong> (namespaceName:string * types:ProvidedTypeDefinition list) -&gt; TypeProviderForNamespaces<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2577-2577" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Initializes a type provider to provide the types in the given namespace.</p>
+
+
+              <p>CompiledName: <code>.ctor</code></p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Instance members</h3>
+  <table class="table table-bordered member-list">
+    <thead>
+      <tr><td>Instance member</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '159', 159)" onmouseover="showTip(event, '159', 159)">
+            add_Disposing(arg1)
+          </code>
+          <div class="tip" id="159">
+            <strong>Signature:</strong> EventHandler -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2581-2581" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '160', 160)" onmouseover="showTip(event, '160', 160)">
+            AddNamespace(namespaceName, types)
+          </code>
+          <div class="tip" id="160">
+            <strong>Signature:</strong> (namespaceName:string * types:ProvidedTypeDefinition list) -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2616-2616" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Invoked by the type provider to add a namespace of provided types in the specification of the type provider.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '161', 161)" onmouseover="showTip(event, '161', 161)">
+            ApplyStaticArgumentsForMethod(...)
+          </code>
+          <div class="tip" id="161">
+            <strong>Signature:</strong> (MethodBase * string * obj []) -&gt; MethodBase<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2629-2629" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Invoked by the host of the type provider to apply the static argumetns for a method.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '162', 162)" onmouseover="showTip(event, '162', 162)">
+            Disposing
+          </code>
+          <div class="tip" id="162">
+            <strong>Signature:</strong> IEvent&lt;EventHandler,EventArgs&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2581-2581" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+              <p>CompiledName: <code>get_Disposing</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '163', 163)" onmouseover="showTip(event, '163', 163)">
+            GetStaticParametersForMethod(arg1)
+          </code>
+          <div class="tip" id="163">
+            <strong>Signature:</strong> MethodBase -&gt; ParameterInfo []<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2623-2623" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Invoked by the host of the type provider to get the static parameters for a method.</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '164', 164)" onmouseover="showTip(event, '164', 164)">
+            Invalidate()
+          </code>
+          <div class="tip" id="164">
+            <strong>Signature:</strong> unit -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2621-2621" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Invoked by the type provider to invalidate the information provided by the provider</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '165', 165)" onmouseover="showTip(event, '165', 165)">
+            Namespaces
+          </code>
+          <div class="tip" id="165">
+            <strong>Signature:</strong> seq&lt;string * ProvidedTypeDefinition list&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2619-2619" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Invoked by the type provider to get all provided namespaces with their provided types.</p>
+
+
+              <p>CompiledName: <code>get_Namespaces</code></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '166', 166)" onmouseover="showTip(event, '166', 166)">
+            RegisterProbingFolder(folder)
+          </code>
+          <div class="tip" id="166">
+            <strong>Signature:</strong> folder:string -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2600-2600" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Registers custom probing path that can be used for probing assemblies</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '167', 167)" onmouseover="showTip(event, '167', 167)">
+            RegisterRuntimeAssemblyLocationAsProbingFolder(...)
+          </code>
+          <div class="tip" id="167">
+            <strong>Signature:</strong> config:TypeProviderConfig -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2605-2605" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Registers location of RuntimeAssembly (from TypeProviderConfig) as probing folder</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '168', 168)" onmouseover="showTip(event, '168', 168)">
+            remove_Disposing(arg1)
+          </code>
+          <div class="tip" id="168">
+            <strong>Signature:</strong> EventHandler -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2581-2581" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '169', 169)" onmouseover="showTip(event, '169', 169)">
+            ResolveAssembly(arg1)
+          </code>
+          <div class="tip" id="169">
+            <strong>Signature:</strong> ResolveEventArgs -&gt; Assembly<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L2588-2588" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>AssemblyResolve handler. Default implementation searches <assemblyname>.dll file in registered folders</p>
+
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+        </div>
+        <div class="span3">
+          <img src="/Fsharp.Gdal/img/logo.png" alt="F# Project" style="width:150px;margin:10px" />  
+          <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+            <li class="nav-header">Fsharp.Gdal</li>
+            <li><a href="/Fsharp.Gdal/index.html">Home page</a></li>
+            <li class="divider"></li>
+            <li><a href="http://nuget.org/packages/Fsharp.Gdal">Get Library via NuGet</a></li>
+            <li><a href="http://github.com/domasin/Fsharp.Gdal">Source Code on GitHub</a></li>
+            <li><a href="/Fsharp.Gdal/license.html">License</a></li>
+            <li><a href="/Fsharp.Gdal/release-notes.html">Release Notes</a></li>
+            
+            <li class="nav-header">Getting started</li>
+            <li><a href="/Fsharp.Gdal/tutorial.html">Sample tutorial</a></li>
+
+            <li class="nav-header">Documentation</li>
+            <li><a href="/Fsharp.Gdal/reference/index.html">API Reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <a href="http://github.com/domasin/Fsharp.Gdal"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"/></a>
+  </body>
+  </html>
