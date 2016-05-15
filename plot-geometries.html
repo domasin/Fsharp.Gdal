@@ -170,9 +170,11 @@ so in this case we just calculate a margin based on the coordinate's magnitude.<
 </table>
 <p>Now we can define a <code>plotAt</code> function that plots the geometry at a specified
 <code>zoom</code>.</p>
-<p>Geomteries can be simple or compund. If <code>geom</code>is compound we need
-to calculate a <code>cs</code> list containing a <code>chart</code> element for each of its components.
-If it is simple we still calculate a list but containing just one <code>chart</code> element.</p>
+<p>Geomteries can be simple or compund. If <code>geom</code>is compound we need to recursively
+traverse its structure till its simple components and populate a <code>charts</code>
+list for each using the <code>createChart</code> function defined above.</p>
+<p>The recursive part is made by the inner <code>createCharts</code> function taking advantage
+of the functional nature of F#.</p>
 <p>At the end we can <code>Chart.Combine</code> all the elements of the chart list setting the
 cartesian plan's space at the proper size.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
@@ -190,26 +192,22 @@ cartesian plan's space at the proper size.</p>
 <span class="l">13: </span>
 <span class="l">14: </span>
 <span class="l">15: </span>
-<span class="l">16: </span>
-<span class="l">17: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">/// Plots a geometry at a specified zoom</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs37', 104)" onmouseover="showTip(event, 'fs37', 104)" class="f">plotAt</span> <span onmouseout="hideTip(event, 'fs27', 105)" onmouseover="showTip(event, 'fs27', 105)" class="i">zoom</span> (<span onmouseout="hideTip(event, 'fs5', 106)" onmouseover="showTip(event, 'fs5', 106)" class="i">geom</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 107)" onmouseover="showTip(event, 'fs6', 107)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 108)" onmouseover="showTip(event, 'fs7', 108)" class="t">Geometry</span>) <span class="o">=</span> 
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs38', 109)" onmouseover="showTip(event, 'fs38', 109)" class="i">gCount</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 110)" onmouseover="showTip(event, 'fs5', 110)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs39', 111)" onmouseover="showTip(event, 'fs39', 111)" class="f">GetGeometryCount</span>()
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs40', 112)" onmouseover="showTip(event, 'fs40', 112)" class="i">cs</span> <span class="o">=</span> 
-        <span class="k">if</span> <span onmouseout="hideTip(event, 'fs38', 113)" onmouseover="showTip(event, 'fs38', 113)" class="i">gCount</span> <span class="o">=</span> <span class="n">0</span> <span class="k">then</span>
-            <span class="k">let</span> <span onmouseout="hideTip(event, 'fs41', 114)" onmouseover="showTip(event, 'fs41', 114)" class="i">chart</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 115)" onmouseover="showTip(event, 'fs5', 115)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs13', 116)" onmouseover="showTip(event, 'fs13', 116)" class="f">createChart</span>
-            [<span onmouseout="hideTip(event, 'fs41', 117)" onmouseover="showTip(event, 'fs41', 117)" class="i">chart</span>]
-        <span class="k">else</span>
-            [
-                <span class="k">for</span> <span onmouseout="hideTip(event, 'fs10', 118)" onmouseover="showTip(event, 'fs10', 118)" class="i">i</span> <span class="k">in</span> <span class="n">0..</span>(<span onmouseout="hideTip(event, 'fs38', 119)" onmouseover="showTip(event, 'fs38', 119)" class="i">gCount</span><span class="o">-</span><span class="n">1</span>) <span class="k">-&gt;</span> 
-                    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs41', 120)" onmouseover="showTip(event, 'fs41', 120)" class="i">chart</span> <span class="o">=</span> (<span onmouseout="hideTip(event, 'fs5', 121)" onmouseover="showTip(event, 'fs5', 121)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs42', 122)" onmouseover="showTip(event, 'fs42', 122)" class="f">GetGeometryRef</span>(<span onmouseout="hideTip(event, 'fs10', 123)" onmouseover="showTip(event, 'fs10', 123)" class="i">i</span>)) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs13', 124)" onmouseover="showTip(event, 'fs13', 124)" class="f">createChart</span>
-                    <span onmouseout="hideTip(event, 'fs41', 125)" onmouseover="showTip(event, 'fs41', 125)" class="i">chart</span>
-            ]
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs43', 126)" onmouseover="showTip(event, 'fs43', 126)" class="i">spaceSize</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 127)" onmouseover="showTip(event, 'fs5', 127)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs22', 128)" onmouseover="showTip(event, 'fs22', 128)" class="f">env</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs26', 129)" onmouseover="showTip(event, 'fs26', 129)" class="f">resize</span> <span onmouseout="hideTip(event, 'fs27', 130)" onmouseover="showTip(event, 'fs27', 130)" class="i">zoom</span>
-    <span onmouseout="hideTip(event, 'fs19', 131)" onmouseover="showTip(event, 'fs19', 131)" class="t">Chart</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs44', 132)" onmouseover="showTip(event, 'fs44', 132)" class="f">Combine</span>(<span onmouseout="hideTip(event, 'fs40', 133)" onmouseover="showTip(event, 'fs40', 133)" class="i">cs</span>)
-        <span class="o">.</span><span class="f">WithXAxis</span>(<span class="i">Max</span><span class="o">=</span><span onmouseout="hideTip(event, 'fs43', 134)" onmouseover="showTip(event, 'fs43', 134)" class="i">spaceSize</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 135)" onmouseover="showTip(event, 'fs30', 135)" class="i">MaxX</span>,<span class="i">Min</span><span class="o">=</span><span onmouseout="hideTip(event, 'fs43', 136)" onmouseover="showTip(event, 'fs43', 136)" class="i">spaceSize</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 137)" onmouseover="showTip(event, 'fs31', 137)" class="i">MinX</span>)
-        <span class="o">.</span><span class="f">WithYAxis</span>(<span class="i">Max</span><span class="o">=</span><span onmouseout="hideTip(event, 'fs43', 138)" onmouseover="showTip(event, 'fs43', 138)" class="i">spaceSize</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 139)" onmouseover="showTip(event, 'fs33', 139)" class="i">MaxY</span>,<span class="i">Min</span><span class="o">=</span><span onmouseout="hideTip(event, 'fs43', 140)" onmouseover="showTip(event, 'fs43', 140)" class="i">spaceSize</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 141)" onmouseover="showTip(event, 'fs34', 141)" class="i">MinY</span>)
+    <span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs38', 109)" onmouseover="showTip(event, 'fs38', 109)" class="f">createCharts</span> <span onmouseout="hideTip(event, 'fs39', 110)" onmouseover="showTip(event, 'fs39', 110)" class="i">xs</span> (<span onmouseout="hideTip(event, 'fs5', 111)" onmouseover="showTip(event, 'fs5', 111)" class="i">geom</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs6', 112)" onmouseover="showTip(event, 'fs6', 112)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs7', 113)" onmouseover="showTip(event, 'fs7', 113)" class="t">Geometry</span>) <span class="o">=</span> 
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs40', 114)" onmouseover="showTip(event, 'fs40', 114)" class="i">count</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 115)" onmouseover="showTip(event, 'fs5', 115)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs41', 116)" onmouseover="showTip(event, 'fs41', 116)" class="f">GetGeometryCount</span>()
+        <span class="k">match</span> <span onmouseout="hideTip(event, 'fs40', 117)" onmouseover="showTip(event, 'fs40', 117)" class="i">count</span> <span class="k">with</span>
+        | <span onmouseout="hideTip(event, 'fs40', 118)" onmouseover="showTip(event, 'fs40', 118)" class="i">count</span> <span class="k">when</span> <span onmouseout="hideTip(event, 'fs40', 119)" onmouseover="showTip(event, 'fs40', 119)" class="i">count</span> <span class="o">=</span> <span class="n">0</span> <span class="k">-&gt;</span> [(<span onmouseout="hideTip(event, 'fs5', 120)" onmouseover="showTip(event, 'fs5', 120)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs13', 121)" onmouseover="showTip(event, 'fs13', 121)" class="f">createChart</span>)]<span class="o">@</span><span onmouseout="hideTip(event, 'fs39', 122)" onmouseover="showTip(event, 'fs39', 122)" class="i">xs</span>
+        | _ <span class="k">-&gt;</span> 
+            [<span class="k">for</span> <span onmouseout="hideTip(event, 'fs10', 123)" onmouseover="showTip(event, 'fs10', 123)" class="i">i</span> <span class="k">in</span> <span class="n">0..</span>(<span onmouseout="hideTip(event, 'fs40', 124)" onmouseover="showTip(event, 'fs40', 124)" class="i">count</span><span class="o">-</span><span class="n">1</span>) <span class="k">-&gt;</span> 
+                (<span onmouseout="hideTip(event, 'fs5', 125)" onmouseover="showTip(event, 'fs5', 125)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs42', 126)" onmouseover="showTip(event, 'fs42', 126)" class="f">GetGeometryRef</span>(<span onmouseout="hideTip(event, 'fs10', 127)" onmouseover="showTip(event, 'fs10', 127)" class="i">i</span>)) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs38', 128)" onmouseover="showTip(event, 'fs38', 128)" class="f">createCharts</span> <span onmouseout="hideTip(event, 'fs39', 129)" onmouseover="showTip(event, 'fs39', 129)" class="i">xs</span>
+            ] <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs43', 130)" onmouseover="showTip(event, 'fs43', 130)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs44', 131)" onmouseover="showTip(event, 'fs44', 131)" class="f">concat</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs45', 132)" onmouseover="showTip(event, 'fs45', 132)" class="i">charts</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 133)" onmouseover="showTip(event, 'fs5', 133)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs38', 134)" onmouseover="showTip(event, 'fs38', 134)" class="f">createCharts</span> []
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs46', 135)" onmouseover="showTip(event, 'fs46', 135)" class="i">spaceSize</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs5', 136)" onmouseover="showTip(event, 'fs5', 136)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs22', 137)" onmouseover="showTip(event, 'fs22', 137)" class="f">env</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs26', 138)" onmouseover="showTip(event, 'fs26', 138)" class="f">resize</span> <span onmouseout="hideTip(event, 'fs27', 139)" onmouseover="showTip(event, 'fs27', 139)" class="i">zoom</span>
+    <span onmouseout="hideTip(event, 'fs19', 140)" onmouseover="showTip(event, 'fs19', 140)" class="t">Chart</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs47', 141)" onmouseover="showTip(event, 'fs47', 141)" class="f">Combine</span>(<span onmouseout="hideTip(event, 'fs45', 142)" onmouseover="showTip(event, 'fs45', 142)" class="i">charts</span>)
+        <span class="o">.</span><span class="f">WithXAxis</span>(<span class="i">Max</span><span class="o">=</span><span onmouseout="hideTip(event, 'fs46', 143)" onmouseover="showTip(event, 'fs46', 143)" class="i">spaceSize</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 144)" onmouseover="showTip(event, 'fs30', 144)" class="i">MaxX</span>,<span class="i">Min</span><span class="o">=</span><span onmouseout="hideTip(event, 'fs46', 145)" onmouseover="showTip(event, 'fs46', 145)" class="i">spaceSize</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 146)" onmouseover="showTip(event, 'fs31', 146)" class="i">MinX</span>)
+        <span class="o">.</span><span class="f">WithYAxis</span>(<span class="i">Max</span><span class="o">=</span><span onmouseout="hideTip(event, 'fs46', 147)" onmouseover="showTip(event, 'fs46', 147)" class="i">spaceSize</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs33', 148)" onmouseover="showTip(event, 'fs33', 148)" class="i">MaxY</span>,<span class="i">Min</span><span class="o">=</span><span onmouseout="hideTip(event, 'fs46', 149)" onmouseover="showTip(event, 'fs46', 149)" class="i">spaceSize</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 150)" onmouseover="showTip(event, 'fs34', 150)" class="i">MinY</span>)
 </code></pre></td>
 </tr>
 </table>
@@ -220,7 +218,7 @@ it each time:</p>
 <span class="l">2: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">/// Plots a geometry at a zoom of 80%</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs45', 142)" onmouseover="showTip(event, 'fs45', 142)" class="f">plot</span> <span class="o">=</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs46', 143)" onmouseover="showTip(event, 'fs46', 143)" class="i">g</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs46', 144)" onmouseover="showTip(event, 'fs46', 144)" class="i">g</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs37', 145)" onmouseover="showTip(event, 'fs37', 145)" class="f">plotAt</span> <span class="n">0.8</span>)
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs48', 151)" onmouseover="showTip(event, 'fs48', 151)" class="f">plot</span> <span class="o">=</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs49', 152)" onmouseover="showTip(event, 'fs49', 152)" class="i">g</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs49', 153)" onmouseover="showTip(event, 'fs49', 153)" class="i">g</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs37', 154)" onmouseover="showTip(event, 'fs37', 154)" class="f">plotAt</span> <span class="n">0.8</span>)
 </code></pre></td>
 </tr>
 </table>
@@ -261,15 +259,18 @@ it each time:</p>
 <div class="tip" id="fs35">val xMargin : float</div>
 <div class="tip" id="fs36">val yMargin : float</div>
 <div class="tip" id="fs37">val plotAt : zoom:float -&gt; geom:OGR.Geometry -&gt; ChartTypes.GenericChart<br /><br />Full name: Plot-geometries.plotAt<br /><em><br /><br />&#160;Plots a geometry at a specified zoom</em></div>
-<div class="tip" id="fs38">val gCount : int</div>
-<div class="tip" id="fs39">OGR.Geometry.GetGeometryCount() : int</div>
-<div class="tip" id="fs40">val cs : ChartTypes.GenericChart list</div>
-<div class="tip" id="fs41">val chart : ChartTypes.GenericChart</div>
+<div class="tip" id="fs38">val createCharts : (ChartTypes.GenericChart list -&gt; OGR.Geometry -&gt; ChartTypes.GenericChart list)</div>
+<div class="tip" id="fs39">val xs : ChartTypes.GenericChart list</div>
+<div class="tip" id="fs40">val count : int</div>
+<div class="tip" id="fs41">OGR.Geometry.GetGeometryCount() : int</div>
 <div class="tip" id="fs42">OGR.Geometry.GetGeometryRef(geom: int) : OGR.Geometry</div>
-<div class="tip" id="fs43">val spaceSize : OGR.Envelope</div>
-<div class="tip" id="fs44">static member Chart.Combine : charts:seq&lt;ChartTypes.GenericChart&gt; -&gt; ChartTypes.GenericChart</div>
-<div class="tip" id="fs45">val plot : g:OGR.Geometry -&gt; ChartTypes.GenericChart<br /><br />Full name: Plot-geometries.plot<br /><em><br /><br />&#160;Plots a geometry at a zoom of 80%</em></div>
-<div class="tip" id="fs46">val g : OGR.Geometry</div>
+<div class="tip" id="fs43">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
+<div class="tip" id="fs44">val concat : lists:seq&lt;&#39;T list&gt; -&gt; &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List.concat</div>
+<div class="tip" id="fs45">val charts : ChartTypes.GenericChart list</div>
+<div class="tip" id="fs46">val spaceSize : OGR.Envelope</div>
+<div class="tip" id="fs47">static member Chart.Combine : charts:seq&lt;ChartTypes.GenericChart&gt; -&gt; ChartTypes.GenericChart</div>
+<div class="tip" id="fs48">val plot : g:OGR.Geometry -&gt; ChartTypes.GenericChart<br /><br />Full name: Plot-geometries.plot<br /><em><br /><br />&#160;Plots a geometry at a zoom of 80%</em></div>
+<div class="tip" id="fs49">val g : OGR.Geometry</div>
 
 
           
