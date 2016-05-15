@@ -2,14 +2,12 @@
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
 #load "packages/FsLab/FsLab.fsx"
+#load "plot-geometries.fsx"
+open ``Plot-geometries``
 
 //#I "../bin/Fsharp.Gdal"
 #I "../src/Fsharp.Gdal/bin/Debug"
 
-(**
-Extimate walk time for routes stored in shape file
-========================
-*)
 #r "System.Xml.Linq"
 #r "Fsharp.Gdal.dll"
 #r "gdal_csharp.dll"
@@ -34,6 +32,11 @@ open OSGeo.OSR
 
 open FSharp.Gdal
 open FSharp.Gdal.UM
+
+(**
+Extimate walk time for routes stored in shape file
+========================
+*)
 
 (**
 In this section I want to explore a gpx trace of a trekking I made on 
@@ -86,8 +89,7 @@ for trkpt in gpx.Trks.[0].Trksegs.[0].Trkpts do
     line.AddPoint(trkpt.Lon |> float, trkpt.Lat |> float, trkpt.Ele |> float)
 
 (** 
-Gpx stores points in EPSG:4326 but is better to convert them in 
-EPSG:32632 to get lenghts in meters from gdal library
+Gpx stores points in EPSG:4326 but is better to convert in EPSG:32632 to get lenghts in meters from gdal library
 *)
 
 // input SpatialReference
@@ -101,50 +103,102 @@ outSpatialRef.ImportFromEPSG(32632)
 line.AssignSpatialReference(inSpatialRef)
 let _ = line.TransformTo(outSpatialRef)
 
+(** 
+With the gpx track converted in a line string we can obtain its length with the 
+Gdal's functions:
+*)
+
 let length = line.Length()
+(*** include-value:length ***)
 
 (** 
-We can plot it in a graphical visualization:
+And taking advantage of the function `plot` defined in [Plot Geometries](plot-geometries.html) 
+we can graphically visualize its shape:
 *)
 
 (*** define-output:chartLineString ***)
-let env = 
-    let res = new OGR.Envelope()
-    line.GetEnvelope(res)
-    res
-
-let coordinates = 
-    let last = line.GetPointCount() - 1
-    [
-        for i in 0..last ->
-            let p = [|0.;0.|]
-            line.GetPoint(i,p)
-            (p.[0], p.[1])
-    ]
-
-Chart.Line(coordinates)
-    .WithXAxis(Max=env.MaxX,Min=env.MinX)
-    .WithYAxis(Max=env.MaxY,Min=env.MinY)
+line |> plot
 (*** include-it:chartLineString ***)
 
 (**
-Now I need to extract the following metrics for 
-each trakcpoint: elevation, distance from previous point, 
+The length of the path is an important variable to calculate an extimation of the 
+walk time but anohter important variabile is its elevation profile.
+
+Infact, normally a person walks at about 5 km/h in plain but the velocity decreases both 
+ascending and descending on a steep path like the one in object. 
+
+It is usefull to extract the elevation profile of the track. 
+
+For this first we combine the distance from the start of the track with the current elevation
+*)
+
+let rec distanceElev (geom:OGR.Geometry) = 
+    let mutable distance = 0.<m>
+    let last = geom.GetPointCount() - 1
+    [
+        for i in 0..last ->
+            let point = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+            point.AddPoint(geom.GetX(i) |> float, geom.GetY(i) |> float, geom.GetZ(i) |> float)
+            point.AssignSpatialReference(outSpatialRef)
+            point
+    ]
+    |> List.pairwise
+    |> List.map
+        (
+            fun (prev,curr) -> 
+                distance <- distance + prev.Distance(curr) * 1.<m>
+                distance,curr.GetZ(0) * 1.<m>
+        )
+
+(**
+and then we plot the tuples on a chart:
+*)
+
+(*** define-output:elevationProfile ***)
+let xy = line |> distanceElev
+Chart.Line([for (x,y) in xy -> (x, y)], "Elevation Profile")
+(*** include-it:elevationProfile ***)
+
+(**
+So knowing the elevation of each point, how we can predict at which velocity a normal 
+person will walk at each and the calculate the total time multiplying this 
+velocity with the distance walked from the previous point? 
+
+Well an attempt to answer this question was given by Trobbler with its "hiking function": 
+*)
+
+let trobblersHikingFunction slope = 
+    6. * Math.Exp(-3.5 * Math.Abs(slope + 0.05))
+
+(**
+Trobbler's hiking function calculates an expected velocity based on the slope 
+of the hiking and extimates a maximum velocity at 5% descendind slope which 
+decreases for increasing slopes both descending or ascending.
+
+We can plot the function to visualize its curve:
+*)
+
+(*** define-output:trobbler ***)
+Chart.Line([for x in -70.0 .. 70.0 -> (x, (trobblersHikingFunction (x/100.)))])
+(*** include-it:trobbler ***)
+
+(**
+I want to use this function and extract the following metrics for 
+each point in the track: elevation, distance from previous point, 
 total distance, slope, track time, duration from previous point, 
 actual velocity, extimated velocity based on trobbler's hiking 
 function.
 
-The linestring is not really convenient because I loose the information 
-of the time associated to each track point.
+The linestring is not really convenient because looses the information 
+of the time associated to each track point and it does not give me 
+fields to store every information.
 
-I need a more structured Data Type:
+So I define a more structured Data Type:
 *)
 
 type Info = 
     {
-        Lat : float<g> 
-        Lon : float<g>
-        Elev : float<m>
+        Geom : OGR.Geometry
         Distance : float<m>
         Slope : float
         TrackTime : System.DateTime
@@ -154,12 +208,11 @@ type Info =
         ExtimatedDuration : float<s>
     }
 
-(** Then I populate a collection of Infos.*)
+(** 
+and populate a collection of elements of this type:
+*)
 
 type Point = {Geom : Geometry; Time : DateTime}
-
-let trobblersHikingFunction slope = 
-    6. * Math.Exp(-3.5 * Math.Abs(slope + 0.05))
 
 let infos = 
     gpx.Trks.[0].Trksegs.[0].Trkpts
@@ -187,9 +240,7 @@ let infos =
                     v * 1.0<km/h>
                 let extimatedDuration = dx / (extimatedVel |> kmphToMs)
                 {
-                    Lat                  = curr.Geom.GetX(0) * 1.<g>
-                    Lon                  = curr.Geom.GetY(0) * 1.<g>
-                    Elev                 = curr.Geom.GetZ(0) * 1.<m>
+                    Geom                 = curr.Geom
                     Distance             = dx
                     Slope                = slope
                     TrackTime            = curr.Time
@@ -226,41 +277,7 @@ The total length is still equivalent to that calculated for the linestring.
 *)
 
 (**
-and just for fun we can also visualize the eleveation profile:
-*)
-
-(*** define-output:elevationProfile ***)
-let rec distanceElev acc (ys:(float<m> * float<m>) list) xs = 
-    match xs with
-    | [] -> ys
-    | p::tail -> 
-        let length = p.Distance + acc
-        tail |> distanceElev length ([length, p.Elev]@ys)
-
-let xy = infos |> distanceElev 0.<m> []
-Chart.Line([for (x,y) in xy -> (x, y)], "Elevation Profile")
-
-(*** include-it:elevationProfile ***)
-
-(**
-Now as for the main subject of this section we want to compare 
-the actual duration of the trecking with an extimation based 
-on the trobbler's hiking function.
-
-Trobbler's hiking function calculates an expected velocity based on the slope 
-of the hiking and extimates a maximum velocity at 5% descendind slope which 
-decreases for increasing slopes both descending or ascending.
-
-We can plot the function to visualize its curve:
-*)
-
-(*** define-output:trobbler ***)
-Chart.Line([for x in -70.0 .. 70.0 -> (x, (trobblersHikingFunction (x/100.)))])
-(*** include-it:trobbler ***)
-
-(**
-The chart shows velocity on the y axis depending from the slope on x axis.
-Let's plot the actual velocity from the gpx points:
+Let's plot the actual velocity for each point:
 *)
 
 (*** define-output:trackmetricsChart ***)
@@ -276,7 +293,7 @@ Chart.Point([for p in (infos |> List.where(fun x -> Math.Abs(x.Slope) < 2.)) -> 
 (*** include-it:trackmetricsFiltered ***)
 
 (**
-It looks better and we can combine it with the plot of the function to see the correlation:
+It looks better and we can combine it with the plot of the trobbler's hiking function to see the correlation:
 *)
 
 (*** define-output:combined ***)
@@ -288,7 +305,8 @@ Chart.Combine
 (*** include-it:combined ***)
 
 (**
-And finally compare the actual duratio with the extimated one:
+Finally compare the actual duration with the extimated one and see that the extimation 
+is really similar to the actual time of the track.
 *)
 
 (*** define-output:actualVsExtimated ***)
@@ -299,54 +317,23 @@ printfn "Actual Duration = %f\nExtimated Duration = %f" actualDuration extimated
 (*** include-output:actualVsExtimated ***)
 
 (**
-To generlize the subject now I will calculate an extimation time for all the 
+To generlize the subject now I will calculate an extimated time for all the 
 foot paths stored in a shape file.
 
-To access the data of a shape file we'll use the methods provided by the 
-Gdal Library. Fsharp.Gdal now contains a module that cofigures the path needed by gdal and registers 
-all its provider.
+The shapefile valgrande_tracks_crosa_lenz.shp stores the paths to the valgrande peaks with the 
+time extimated by the book "Valgrande National Park - Paths, history and nature" 
+by Paolo Crosa Lenz. The time is probably calculated in an empirical way so will 
+be a good term of comparison for our calculation.
 
+To access the data I will use the `OgrTypeProvider` defined in FSharp.Gdal
 *)
 
-(**
-Extract my favourite paths in the bigvalley.
-*)
-
-let dataset =  Ogr.OpenShared(__SOURCE_DIRECTORY__ + @".\data\itinerari.shp",1)
-
-let vlay = dataset.GetLayerByIndex(0)
-
-vlay.GetSpatialRef().__str__()
-
-let features = 
-    vlay
-    |> Vector.features
-    |> List.filter (fun f -> f <> null)
+let valgrandeTracks = new OgrTypeProvider<"G:/Data/valgrande_tracks_crosa_lenz.shp">()
+let fmData = valgrandeTracks.Values |> Frame.ofValues
+(*** include-value:fmData ***)
 
 (**
-Let's see the fields of shape file.
-*)
-
-let fields = 
-    vlay
-    |> Vector.fields
-
-(*** include-value:fields ***)
-
-(**
-Take the Cima Sasso feature (Cima Sasso = Stone Peak)
-*)
-
-let cimaSasso = 
-    features
-    |> List.where (fun f -> 
-        let title = f.GetFieldAsString(3)
-        title = "Cima Sasso")
-    |> List.head
-
-(**
-I know that my vector lines don't have elevation information.
-So let's open an elevation raster of the bigvalley.
+The geometries in this shape file don't store elevation so we'll get this information from a dem raster file:
 *)
 
 let rDataset = Gdal.OpenShared(__SOURCE_DIRECTORY__ + @".\data\dem20_valg.tif", Access.GA_ReadOnly)
@@ -355,10 +342,15 @@ let mutable (geotransform:float[]) = [|0.;0.;0.;0.;0.;0.|]
 rDataset.GetGeoTransform(geotransform)
 
 (**
-Now I extract points from my track and calculate information
+The function `extractMetrics` below caluclates all the metrics we need in a way similar to that 
+we used above to populate the `infos` collection from the gpx file but it also extracts 
+from the dem file the elevation information with the FSharp.Gdal functions 
+`Raster.groundToImage` and `Raster.getImgValue`. The return type of the function is 
+a collection of `PointMetrics` (defined below) for each point in the linestrings of the 
+paths:
 *)
 
-type InfoTrack = 
+type PointMetrics = 
     { 
         Point:Geometry; 
         Elev:float; 
@@ -370,8 +362,7 @@ type InfoTrack =
         ExtimatedReverseTime:float<s>; 
     }
 
-let trackRecs = 
-    let geom = cimaSasso.GetGeometryRef()
+let extractMetrics (geom:OGR.Geometry) = 
     geom
     |> Vector.points
     |> List.map 
@@ -418,11 +409,48 @@ let trackRecs =
                 }
         )
 
-(*** define-output:extimatedTime ***)
-let extimatedTime = 
-    (trackRecs
-     |> List.fold (fun acc rc -> acc + rc.ExtimatedForwardTime + rc.ExtimatedReverseTime) 0.<s>) *
-    secToHr
+(**
+`sumTime` aggregates the extimated elapsed forward time of each point 
+to finally calculate the total extimated time given a collection of `PointMetrics`
+*)
 
-printf "extimatedTime = %f" extimatedTime
-(*** include-output:extimatedTime ***)
+let sumTime trackMetrics = 
+    let value = 
+        (
+            trackMetrics
+            |> List.fold (fun acc rc -> acc + rc.ExtimatedForwardTime) 0.<s>
+        ) * secToHr / 1.<h>
+    Math.Round(value, 2)
+
+(**
+Given theese functions we can populate a new deedle frame with our extimated time:
+*)
+
+let fmMyExtimatedTime = 
+    valgrandeTracks.Features
+    |> Seq.mapi (fun i feat -> 
+        i, 
+        "MYTIME", 
+        (feat.Geometry |> extractMetrics |> sumTime))
+    |> Frame.ofValues
+(*** include-value:fmMyExtimatedTime ***)
+
+(**
+and join the two frames to compare the values calculating a delta percentage:
+*)
+
+let fmWithExtimatedTime = fmData.Join(fmMyExtimatedTime)
+
+fmWithExtimatedTime?``Delta %`` <- 
+    let delta = (fmWithExtimatedTime?MYTIME - fmWithExtimatedTime?TIME) / fmWithExtimatedTime?TIME * 100.
+    delta |> Series.map(fun k v -> Math.Round(v))
+(*** include-value:fmWithExtimatedTime ***)
+
+let avgDelta = fmWithExtimatedTime.Sum()?``Delta %`` / 16.
+(*** include-value:avgDelta ***)
+
+(**
+The worst result is on "Cima Saler" track: my extimation is half of that reported by the book and 
+should be investigated. Anyway the other results seem good enough: my extimation is just about 20% 
+more optimistic than the empirical one.
+*)

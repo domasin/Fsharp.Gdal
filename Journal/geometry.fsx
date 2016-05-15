@@ -240,9 +240,9 @@ geomcol.AddGeometry(line3)
 let _,geomcolWkt = geomcol.ExportToWkt()
 (*** include-value:geomcolWkt ***)
 
-(*** define-output:plotMultiPloygon ***)
+(*** define-output:plotGeometryCollection ***)
 geomcol |> plot
-(*** include-it:plotMultiPloygon ***)
+(*** include-it:plotGeometryCollection ***)
 
 (**
 Create Geometry from WKT
@@ -265,41 +265,41 @@ Create Geometry from GeoJSON
 ------------------------
 *)
 
-(*** define-output:createFromWKT ***)
+(*** define-output:createFromGeoJSON ***)
 let geojson = """{"type":"Point","coordinates":[108420.33,753808.59]}"""
 let point6 = OGR.Ogr.CreateGeometryFromJson(geojson)
 
 printfn "%f,%f" (point6.GetX(0)) (point6.GetY(0))
-(*** include-output:createFromWKT ***)
+(*** include-output:createFromGeoJSON ***)
 
-(*** define-output:plotFromWKT ***)
+(*** define-output:plotFromGeoJSON ***)
 point6 |> plot
-(*** include-it:plotFromWKT ***)
+(*** include-it:plotFromGeoJSON ***)
 
 (**
 Create Geometry from GML
 ------------------------
 *)
 
-(*** define-output:createFromWKT ***)
+(*** define-output:createFromGML ***)
 let gml = """<gml:Point xmlns:gml="http://www.opengis.net/gml"><gml:coordinates>108420.33,753808.59</gml:coordinates></gml:Point>"""
 let point7 = OGR.Ogr.CreateGeometryFromGML(gml)
 
 printfn "%f,%f" (point7.GetX(0)) (point7.GetY(0))
-(*** include-output:createFromWKT ***)
+(*** include-output:createFromGML ***)
 
-(*** define-output:plotFromWKT ***)
+(*** define-output:plotFromGML ***)
 point7 |> plot
-(*** include-it:plotFromWKT ***)
+(*** include-it:plotFromGML ***)
 
-//(**
-//Get the bounding box
-//*)
-//
-//let env = 
-//    let res = new OGR.Envelope()
-//    line.GetEnvelope(res)
-//    res
+////(**
+////Get the bounding box
+////*)
+////
+////let env = 
+////    let res = new OGR.Envelope()
+////    line.GetEnvelope(res)
+////    res
 
 
 
