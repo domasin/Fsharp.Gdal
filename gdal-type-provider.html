@@ -80,6 +80,8 @@
 </code></pre></td>
 </tr>
 </table>
+<p>The shape file <code>itinerari.shp</code> contains the foot paths to the main peaks in the
+<a href="https://en.wikipedia.org/wiki/Val_Grande_National_Park">Val Grande National Park</a>.</p>
 <p>To get the data from a file we can just call the type provider constructor giving
 the file path as the type parameter of the provider. Internally the provider calls
 the logic needed to configure the gdal library on the system and to initialize all
@@ -281,6 +283,27 @@ Geomtry type = wkbLineString	ID = 15	TITLE = La Piota
 Geomtry type = wkbLineString	ID = 16	TITLE = Monte Zeda da Falmenta	
 Geomtry type = wkbLineString	ID = 17	TITLE = Pizzo Marona dall'Alpe Pala	
 Geomtry type = wkbLineString	ID = 17	TITLE = Pizzo Marona da Cicogna</code></pre></td></tr></table>
+<p>We can also graphically visualize the features geometries using the <code>plot</code> function
+which is described in the <a href="plot-geometries.html">Plot Geometries</a> appendix:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 31)" onmouseover="showTip(event, 'fs22', 31)" class="i">footPaths</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs5', 32)" onmouseover="showTip(event, 'fs5', 32)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 33)" onmouseover="showTip(event, 'fs23', 33)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs5', 34)" onmouseover="showTip(event, 'fs5', 34)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs24', 35)" onmouseover="showTip(event, 'fs24', 35)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs25', 36)" onmouseover="showTip(event, 'fs25', 36)" class="i">wkbMultiLineString</span>)
+
+<span class="k">for</span> <span onmouseout="hideTip(event, 'fs15', 37)" onmouseover="showTip(event, 'fs15', 37)" class="i">feat</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs9', 38)" onmouseover="showTip(event, 'fs9', 38)" class="i">vLayer</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 39)" onmouseover="showTip(event, 'fs16', 39)" class="i">Features</span> <span class="k">do</span>
+    <span class="k">let</span> _ <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 40)" onmouseover="showTip(event, 'fs22', 40)" class="i">footPaths</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 41)" onmouseover="showTip(event, 'fs26', 41)" class="f">AddGeometry</span>(<span onmouseout="hideTip(event, 'fs15', 42)" onmouseover="showTip(event, 'fs15', 42)" class="i">feat</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 43)" onmouseover="showTip(event, 'fs18', 43)" class="i">Geometry</span>)
+    ()
+
+<span onmouseout="hideTip(event, 'fs22', 44)" onmouseover="showTip(event, 'fs22', 44)" class="i">footPaths</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs27', 45)" onmouseover="showTip(event, 'fs27', 45)" class="f">plot</span>
+</code></pre></td>
+</tr>
+</table>
+<p><img src="./img/chart7.png" alt="" /></p>
 <p>With the deedle frame and gdal methods at hand we can do some calculations based on geometries.
 The data file contains hiking paths in the Big Valley
 and we can for example get the lenght of each with the gdal library methods
@@ -292,12 +315,12 @@ and use the deedle functions to aggregate them.</p>
 <span class="l">5: </span>
 <span class="l">6: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 31)" onmouseover="showTip(event, 'fs22', 31)" class="i">fmLengths</span> <span class="o">=</span> 
-    <span onmouseout="hideTip(event, 'fs9', 32)" onmouseover="showTip(event, 'fs9', 32)" class="i">vLayer</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 33)" onmouseover="showTip(event, 'fs16', 33)" class="i">Features</span>
-    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 34)" onmouseover="showTip(event, 'fs23', 34)" class="t">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs24', 35)" onmouseover="showTip(event, 'fs24', 35)" class="f">mapi</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs25', 36)" onmouseover="showTip(event, 'fs25', 36)" class="i">i</span> <span onmouseout="hideTip(event, 'fs15', 37)" onmouseover="showTip(event, 'fs15', 37)" class="i">feat</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs25', 38)" onmouseover="showTip(event, 'fs25', 38)" class="i">i</span>, <span class="s">&quot;Length&quot;</span>, <span onmouseout="hideTip(event, 'fs15', 39)" onmouseover="showTip(event, 'fs15', 39)" class="i">feat</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 40)" onmouseover="showTip(event, 'fs18', 40)" class="i">Geometry</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 41)" onmouseover="showTip(event, 'fs26', 41)" class="f">Length</span>())
-    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs13', 42)" onmouseover="showTip(event, 'fs13', 42)" class="t">Frame</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 43)" onmouseover="showTip(event, 'fs14', 43)" class="f">ofValues</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs28', 46)" onmouseover="showTip(event, 'fs28', 46)" class="i">fmLengths</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs9', 47)" onmouseover="showTip(event, 'fs9', 47)" class="i">vLayer</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 48)" onmouseover="showTip(event, 'fs16', 48)" class="i">Features</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs29', 49)" onmouseover="showTip(event, 'fs29', 49)" class="t">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 50)" onmouseover="showTip(event, 'fs30', 50)" class="f">mapi</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs31', 51)" onmouseover="showTip(event, 'fs31', 51)" class="i">i</span> <span onmouseout="hideTip(event, 'fs15', 52)" onmouseover="showTip(event, 'fs15', 52)" class="i">feat</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs31', 53)" onmouseover="showTip(event, 'fs31', 53)" class="i">i</span>, <span class="s">&quot;Length&quot;</span>, <span onmouseout="hideTip(event, 'fs15', 54)" onmouseover="showTip(event, 'fs15', 54)" class="i">feat</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 55)" onmouseover="showTip(event, 'fs18', 55)" class="i">Geometry</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs32', 56)" onmouseover="showTip(event, 'fs32', 56)" class="f">Length</span>())
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs13', 57)" onmouseover="showTip(event, 'fs13', 57)" class="t">Frame</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 58)" onmouseover="showTip(event, 'fs14', 58)" class="f">ofValues</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs27', 44)" onmouseover="showTip(event, 'fs27', 44)" class="i">fmWithLengths</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 45)" onmouseover="showTip(event, 'fs11', 45)" class="i">fmData</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs28', 46)" onmouseover="showTip(event, 'fs28', 46)" class="f">Join</span>(<span onmouseout="hideTip(event, 'fs22', 47)" onmouseover="showTip(event, 'fs22', 47)" class="i">fmLengths</span>)
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs33', 59)" onmouseover="showTip(event, 'fs33', 59)" class="i">fmWithLengths</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 60)" onmouseover="showTip(event, 'fs11', 60)" class="i">fmData</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 61)" onmouseover="showTip(event, 'fs34', 61)" class="f">Join</span>(<span onmouseout="hideTip(event, 'fs28', 62)" onmouseover="showTip(event, 'fs28', 62)" class="i">fmLengths</span>)
 </code></pre></td>
 </tr>
 </table>
@@ -457,9 +480,9 @@ and use the deedle functions to aggregate them.</p>
 <span class="l">2: </span>
 <span class="l">3: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs29', 48)" onmouseover="showTip(event, 'fs29', 48)" class="i">sumLenghts</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs27', 49)" onmouseover="showTip(event, 'fs27', 49)" class="i">fmWithLengths</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 50)" onmouseover="showTip(event, 'fs30', 50)" class="f">Sum</span>()<span class="o">?</span><span class="i">Length</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 63)" onmouseover="showTip(event, 'fs35', 63)" class="i">sumLenghts</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs33', 64)" onmouseover="showTip(event, 'fs33', 64)" class="i">fmWithLengths</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 65)" onmouseover="showTip(event, 'fs36', 65)" class="f">Sum</span>()<span class="o">?</span><span class="i">Length</span>
 
-<span onmouseout="hideTip(event, 'fs31', 51)" onmouseover="showTip(event, 'fs31', 51)" class="f">printf</span> <span class="s">&quot;sumLenghts = </span><span class="pf">%f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs29', 52)" onmouseover="showTip(event, 'fs29', 52)" class="i">sumLenghts</span>
+<span onmouseout="hideTip(event, 'fs37', 66)" onmouseover="showTip(event, 'fs37', 66)" class="f">printf</span> <span class="s">&quot;sumLenghts = </span><span class="pf">%f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs35', 67)" onmouseover="showTip(event, 'fs35', 67)" class="i">sumLenghts</span>
 </code></pre></td>
 </tr>
 </table>
@@ -485,16 +508,22 @@ and use the deedle functions to aggregate them.</p>
 <div class="tip" id="fs19">Geometry.GetGeometryType() : wkbGeometryType</div>
 <div class="tip" id="fs20">property OgrTypeProvider&lt;...&gt;.Feature.ID: int</div>
 <div class="tip" id="fs21">property OgrTypeProvider&lt;...&gt;.Feature.TITLE: string</div>
-<div class="tip" id="fs22">val fmLengths : Frame&lt;int,string&gt;<br /><br />Full name: Gdal-type-provider.fmLengths</div>
-<div class="tip" id="fs23">module Seq<br /><br />from Microsoft.FSharp.Collections</div>
-<div class="tip" id="fs24">val mapi : mapping:(int -&gt; &#39;T -&gt; &#39;U) -&gt; source:seq&lt;&#39;T&gt; -&gt; seq&lt;&#39;U&gt;<br /><br />Full name: Microsoft.FSharp.Collections.Seq.mapi</div>
-<div class="tip" id="fs25">val i : int</div>
-<div class="tip" id="fs26">Geometry.Length() : float</div>
-<div class="tip" id="fs27">val fmWithLengths : Frame&lt;int,string&gt;<br /><br />Full name: Gdal-type-provider.fmWithLengths</div>
-<div class="tip" id="fs28">member Frame.Join : otherFrame:Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt; -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : colKey:&#39;TColumnKey * series:Series&lt;&#39;TRowKey,&#39;V&gt; -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : otherFrame:Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt; * kind:JoinKind -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : colKey:&#39;TColumnKey * series:Series&lt;&#39;TRowKey,&#39;V&gt; * kind:JoinKind -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : otherFrame:Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt; * kind:JoinKind * lookup:Lookup -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : colKey:&#39;TColumnKey * series:Series&lt;&#39;TRowKey,&#39;V&gt; * kind:JoinKind * lookup:Lookup -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;</div>
-<div class="tip" id="fs29">val sumLenghts : float<br /><br />Full name: Gdal-type-provider.sumLenghts</div>
-<div class="tip" id="fs30">static member FrameExtensions.Sum : frame:Frame&lt;&#39;R,&#39;C&gt; -&gt; Series&lt;&#39;C,float&gt; (requires equality and equality)</div>
-<div class="tip" id="fs31">val printf : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printf</div>
+<div class="tip" id="fs22">val footPaths : Geometry<br /><br />Full name: Gdal-type-provider.footPaths</div>
+<div class="tip" id="fs23">Multiple items<br />type Geometry =<br />&#160;&#160;new : type:wkbGeometryType -&gt; Geometry + 2 overloads<br />&#160;&#160;member AddGeometry : other:Geometry -&gt; int<br />&#160;&#160;member AddGeometryDirectly : other_disown:Geometry -&gt; int<br />&#160;&#160;member AddPoint : x:float * y:float * z:float -&gt; unit<br />&#160;&#160;member AddPoint_2D : x:float * y:float -&gt; unit<br />&#160;&#160;member Area : unit -&gt; float<br />&#160;&#160;member AssignSpatialReference : reference:SpatialReference -&gt; unit<br />&#160;&#160;member Boundary : unit -&gt; Geometry<br />&#160;&#160;member Buffer : distance:float * quadsecs:int -&gt; Geometry<br />&#160;&#160;member Centroid : unit -&gt; Geometry<br />&#160;&#160;...<br /><br />Full name: OSGeo.OGR.Geometry<br /><br />--------------------<br />Geometry(type: wkbGeometryType) : unit<br />Geometry(cPtr: nativeint, cMemoryOwn: bool, parent: obj) : unit<br />Geometry(type: wkbGeometryType, wkt: string, wkb: int, wkb_buf: nativeint, gml: string) : unit</div>
+<div class="tip" id="fs24">type wkbGeometryType =<br />&#160;&#160;| wkbUnknown = 0<br />&#160;&#160;| wkbPoint = 1<br />&#160;&#160;| wkbLineString = 2<br />&#160;&#160;| wkbPolygon = 3<br />&#160;&#160;| wkbMultiPoint = 4<br />&#160;&#160;| wkbMultiLineString = 5<br />&#160;&#160;| wkbMultiPolygon = 6<br />&#160;&#160;| wkbGeometryCollection = 7<br />&#160;&#160;| wkbNone = 100<br />&#160;&#160;| wkbLinearRing = 101<br />&#160;&#160;...<br /><br />Full name: OSGeo.OGR.wkbGeometryType</div>
+<div class="tip" id="fs25">field wkbGeometryType.wkbMultiLineString = 5</div>
+<div class="tip" id="fs26">Geometry.AddGeometry(other: Geometry) : int</div>
+<div class="tip" id="fs27">val plot : g:Geometry -&gt; ChartTypes.GenericChart<br /><br />Full name: Plot-geometries.plot<br /><em><br /><br />&#160;Plots a geometry at a zoom of 80%</em></div>
+<div class="tip" id="fs28">val fmLengths : Frame&lt;int,string&gt;<br /><br />Full name: Gdal-type-provider.fmLengths</div>
+<div class="tip" id="fs29">module Seq<br /><br />from Microsoft.FSharp.Collections</div>
+<div class="tip" id="fs30">val mapi : mapping:(int -&gt; &#39;T -&gt; &#39;U) -&gt; source:seq&lt;&#39;T&gt; -&gt; seq&lt;&#39;U&gt;<br /><br />Full name: Microsoft.FSharp.Collections.Seq.mapi</div>
+<div class="tip" id="fs31">val i : int</div>
+<div class="tip" id="fs32">Geometry.Length() : float</div>
+<div class="tip" id="fs33">val fmWithLengths : Frame&lt;int,string&gt;<br /><br />Full name: Gdal-type-provider.fmWithLengths</div>
+<div class="tip" id="fs34">member Frame.Join : otherFrame:Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt; -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : colKey:&#39;TColumnKey * series:Series&lt;&#39;TRowKey,&#39;V&gt; -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : otherFrame:Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt; * kind:JoinKind -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : colKey:&#39;TColumnKey * series:Series&lt;&#39;TRowKey,&#39;V&gt; * kind:JoinKind -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : otherFrame:Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt; * kind:JoinKind * lookup:Lookup -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />member Frame.Join : colKey:&#39;TColumnKey * series:Series&lt;&#39;TRowKey,&#39;V&gt; * kind:JoinKind * lookup:Lookup -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;</div>
+<div class="tip" id="fs35">val sumLenghts : float<br /><br />Full name: Gdal-type-provider.sumLenghts</div>
+<div class="tip" id="fs36">static member FrameExtensions.Sum : frame:Frame&lt;&#39;R,&#39;C&gt; -&gt; Series&lt;&#39;C,float&gt; (requires equality and equality)</div>
+<div class="tip" id="fs37">val printf : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printf</div>
 
 
           

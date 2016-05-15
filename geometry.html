@@ -57,7 +57,9 @@
 		<div class="span1"></div>
         <div class="span10" id="main">
           <h1>Geometry</h1>
-<p>This is the equivalent of the Python GDAL/OGR Cookbook's Geomtry page for Fsharp.Gdal</p>
+<p>This is the equivalent of the Python GDAL/OGR Cookbook's Geomtry page for Fsharp.Gdal.
+To show the shape of geometries we use the <code>plot</code> function which is described in the
+<a href="plot-geometries.html">Plot Geometries</a> appendix.</p>
 <h2>Configure gdal</h2>
 <p>Call <code>Configuration.Init()</code> to configure the library</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
@@ -93,6 +95,13 @@
 </table>
 <table class="pre"><tr><td><pre><code>Result = 0
 Well Known Text = POINT (1198054.34 648493.09 0)</code></pre></td></tr></table>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs8', 25)" onmouseover="showTip(event, 'fs8', 25)" class="i">point</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs18', 26)" onmouseover="showTip(event, 'fs18', 26)" class="f">plot</span>
+</code></pre></td>
+</tr>
+</table>
+<p><img src="./img/chart8.png" alt="" /></p>
 <h2>Create a LineString</h2>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
@@ -104,20 +113,123 @@ Well Known Text = POINT (1198054.34 648493.09 0)</code></pre></td></tr></table>
 <span class="l">8: </span>
 <span class="l">9: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 25)" onmouseover="showTip(event, 'fs18', 25)" class="i">line</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs9', 26)" onmouseover="showTip(event, 'fs9', 26)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 27)" onmouseover="showTip(event, 'fs10', 27)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs9', 28)" onmouseover="showTip(event, 'fs9', 28)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 29)" onmouseover="showTip(event, 'fs11', 29)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs19', 30)" onmouseover="showTip(event, 'fs19', 30)" class="i">wkbLineString</span>)
-<span onmouseout="hideTip(event, 'fs18', 31)" onmouseover="showTip(event, 'fs18', 31)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 32)" onmouseover="showTip(event, 'fs13', 32)" class="f">AddPoint</span>(<span class="n">1116651.439379124</span>, <span class="n">637392.6969887456</span>, <span class="n">0.</span>)
-<span onmouseout="hideTip(event, 'fs18', 33)" onmouseover="showTip(event, 'fs18', 33)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 34)" onmouseover="showTip(event, 'fs13', 34)" class="f">AddPoint</span>(<span class="n">1188804.0108498496</span>, <span class="n">652655.7409537067</span>, <span class="n">0.</span>)
-<span onmouseout="hideTip(event, 'fs18', 35)" onmouseover="showTip(event, 'fs18', 35)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 36)" onmouseover="showTip(event, 'fs13', 36)" class="f">AddPoint</span>(<span class="n">1226730.3625203592</span>, <span class="n">634155.0816022386</span>, <span class="n">0.</span>)
-<span onmouseout="hideTip(event, 'fs18', 37)" onmouseover="showTip(event, 'fs18', 37)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 38)" onmouseover="showTip(event, 'fs13', 38)" class="f">AddPoint</span>(<span class="n">1281307.30760719</span>, <span class="n">636467.6640211721</span>, <span class="n">0.</span>)
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs19', 27)" onmouseover="showTip(event, 'fs19', 27)" class="i">line</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs9', 28)" onmouseover="showTip(event, 'fs9', 28)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 29)" onmouseover="showTip(event, 'fs10', 29)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs9', 30)" onmouseover="showTip(event, 'fs9', 30)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 31)" onmouseover="showTip(event, 'fs11', 31)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs20', 32)" onmouseover="showTip(event, 'fs20', 32)" class="i">wkbLineString</span>)
+<span onmouseout="hideTip(event, 'fs19', 33)" onmouseover="showTip(event, 'fs19', 33)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 34)" onmouseover="showTip(event, 'fs13', 34)" class="f">AddPoint</span>(<span class="n">1116651.439379124</span>, <span class="n">637392.6969887456</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs19', 35)" onmouseover="showTip(event, 'fs19', 35)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 36)" onmouseover="showTip(event, 'fs13', 36)" class="f">AddPoint</span>(<span class="n">1188804.0108498496</span>, <span class="n">652655.7409537067</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs19', 37)" onmouseover="showTip(event, 'fs19', 37)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 38)" onmouseover="showTip(event, 'fs13', 38)" class="f">AddPoint</span>(<span class="n">1226730.3625203592</span>, <span class="n">634155.0816022386</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs19', 39)" onmouseover="showTip(event, 'fs19', 39)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 40)" onmouseover="showTip(event, 'fs13', 40)" class="f">AddPoint</span>(<span class="n">1281307.30760719</span>, <span class="n">636467.6640211721</span>, <span class="n">0.</span>)
 
-<span class="k">let</span> _,<span onmouseout="hideTip(event, 'fs20', 39)" onmouseover="showTip(event, 'fs20', 39)" class="i">lineStringWkt</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs18', 40)" onmouseover="showTip(event, 'fs18', 40)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 41)" onmouseover="showTip(event, 'fs16', 41)" class="f">ExportToWkt</span>()
+<span class="k">let</span> _,<span onmouseout="hideTip(event, 'fs21', 41)" onmouseover="showTip(event, 'fs21', 41)" class="i">lineStringWkt</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs19', 42)" onmouseover="showTip(event, 'fs19', 42)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 43)" onmouseover="showTip(event, 'fs16', 43)" class="f">ExportToWkt</span>()
 
-<span onmouseout="hideTip(event, 'fs17', 42)" onmouseover="showTip(event, 'fs17', 42)" class="f">printfn</span> <span class="s">&quot;Well Known Text = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs20', 43)" onmouseover="showTip(event, 'fs20', 43)" class="i">lineStringWkt</span>
+<span onmouseout="hideTip(event, 'fs17', 44)" onmouseover="showTip(event, 'fs17', 44)" class="f">printfn</span> <span class="s">&quot;Well Known Text = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs21', 45)" onmouseover="showTip(event, 'fs21', 45)" class="i">lineStringWkt</span>
 </code></pre></td>
 </tr>
 </table>
 <table class="pre"><tr><td><pre><code>Well Known Text = LINESTRING (1116651.439379124 637392.69698874559 0,1188804.0108498496 652655.74095370667 0,1226730.3625203592 634155.08160223858 0,1281307.30760719 636467.6640211721 0)</code></pre></td></tr></table>
-<p>... and just to visualize it:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs19', 46)" onmouseover="showTip(event, 'fs19', 46)" class="i">line</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs18', 47)" onmouseover="showTip(event, 'fs18', 47)" class="f">plot</span>
+</code></pre></td>
+</tr>
+</table>
+<p><img src="./img/chart9.png" alt="" /></p>
+<h2>Create a Polygon</h2>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create ring</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 48)" onmouseover="showTip(event, 'fs22', 48)" class="i">ring</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs9', 49)" onmouseover="showTip(event, 'fs9', 49)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 50)" onmouseover="showTip(event, 'fs10', 50)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs9', 51)" onmouseover="showTip(event, 'fs9', 51)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 52)" onmouseover="showTip(event, 'fs11', 52)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 53)" onmouseover="showTip(event, 'fs23', 53)" class="i">wkbLinearRing</span>)
+<span onmouseout="hideTip(event, 'fs22', 54)" onmouseover="showTip(event, 'fs22', 54)" class="i">ring</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 55)" onmouseover="showTip(event, 'fs13', 55)" class="f">AddPoint</span>(<span class="n">1179091.1646903288</span>, <span class="n">712782.8838459781</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs22', 56)" onmouseover="showTip(event, 'fs22', 56)" class="i">ring</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 57)" onmouseover="showTip(event, 'fs13', 57)" class="f">AddPoint</span>(<span class="n">1161053.0218226474</span>, <span class="n">667456.2684348812</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs22', 58)" onmouseover="showTip(event, 'fs22', 58)" class="i">ring</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 59)" onmouseover="showTip(event, 'fs13', 59)" class="f">AddPoint</span>(<span class="n">1214704.933941905</span>, <span class="n">641092.8288590391</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs22', 60)" onmouseover="showTip(event, 'fs22', 60)" class="i">ring</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 61)" onmouseover="showTip(event, 'fs13', 61)" class="f">AddPoint</span>(<span class="n">1228580.428455506</span>, <span class="n">682719.3123998424</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs22', 62)" onmouseover="showTip(event, 'fs22', 62)" class="i">ring</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 63)" onmouseover="showTip(event, 'fs13', 63)" class="f">AddPoint</span>(<span class="n">1218405.0658121984</span>, <span class="n">721108.1805541387</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs22', 64)" onmouseover="showTip(event, 'fs22', 64)" class="i">ring</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 65)" onmouseover="showTip(event, 'fs13', 65)" class="f">AddPoint</span>(<span class="n">1179091.1646903288</span>, <span class="n">712782.8838459781</span>, <span class="n">0.</span>)
+
+<span class="c">// Create Polygon</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs24', 66)" onmouseover="showTip(event, 'fs24', 66)" class="i">poly</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs9', 67)" onmouseover="showTip(event, 'fs9', 67)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 68)" onmouseover="showTip(event, 'fs10', 68)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs9', 69)" onmouseover="showTip(event, 'fs9', 69)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 70)" onmouseover="showTip(event, 'fs11', 70)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs25', 71)" onmouseover="showTip(event, 'fs25', 71)" class="i">wkbPolygon</span>)
+<span onmouseout="hideTip(event, 'fs24', 72)" onmouseover="showTip(event, 'fs24', 72)" class="i">poly</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 73)" onmouseover="showTip(event, 'fs26', 73)" class="f">AddGeometry</span>(<span onmouseout="hideTip(event, 'fs22', 74)" onmouseover="showTip(event, 'fs22', 74)" class="i">ring</span>)
+
+<span class="k">let</span> _,<span onmouseout="hideTip(event, 'fs27', 75)" onmouseover="showTip(event, 'fs27', 75)" class="i">polyStringWkt</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs19', 76)" onmouseover="showTip(event, 'fs19', 76)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 77)" onmouseover="showTip(event, 'fs16', 77)" class="f">ExportToWkt</span>()
+
+<span onmouseout="hideTip(event, 'fs17', 78)" onmouseover="showTip(event, 'fs17', 78)" class="f">printfn</span> <span class="s">&quot;Well Known Text = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs27', 79)" onmouseover="showTip(event, 'fs27', 79)" class="i">polyStringWkt</span>
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td><pre><code>Well Known Text = LINESTRING (1116651.439379124 637392.69698874559 0,1188804.0108498496 652655.74095370667 0,1226730.3625203592 634155.08160223858 0,1281307.30760719 636467.6640211721 0)</code></pre></td></tr></table>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs24', 80)" onmouseover="showTip(event, 'fs24', 80)" class="i">poly</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs18', 81)" onmouseover="showTip(event, 'fs18', 81)" class="f">plot</span>
+</code></pre></td>
+</tr>
+</table>
+<p><img src="./img/chart10.png" alt="" /></p>
+<p>Create Polygon with holes</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+<span class="l">17: </span>
+<span class="l">18: </span>
+<span class="l">19: </span>
+<span class="l">20: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Create outer ring</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs28', 82)" onmouseover="showTip(event, 'fs28', 82)" class="i">outRing</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs9', 83)" onmouseover="showTip(event, 'fs9', 83)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 84)" onmouseover="showTip(event, 'fs10', 84)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs9', 85)" onmouseover="showTip(event, 'fs9', 85)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 86)" onmouseover="showTip(event, 'fs11', 86)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 87)" onmouseover="showTip(event, 'fs23', 87)" class="i">wkbLinearRing</span>)
+<span onmouseout="hideTip(event, 'fs28', 88)" onmouseover="showTip(event, 'fs28', 88)" class="i">outRing</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 89)" onmouseover="showTip(event, 'fs13', 89)" class="f">AddPoint</span>(<span class="n">1154115.274565847</span>, <span class="n">686419.4442701361</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs28', 90)" onmouseover="showTip(event, 'fs28', 90)" class="i">outRing</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 91)" onmouseover="showTip(event, 'fs13', 91)" class="f">AddPoint</span>(<span class="n">1154115.274565847</span>, <span class="n">653118.2574374934</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs28', 92)" onmouseover="showTip(event, 'fs28', 92)" class="i">outRing</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 93)" onmouseover="showTip(event, 'fs13', 93)" class="f">AddPoint</span>(<span class="n">1165678.1866605144</span>, <span class="n">653118.2574374934</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs28', 94)" onmouseover="showTip(event, 'fs28', 94)" class="i">outRing</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 95)" onmouseover="showTip(event, 'fs13', 95)" class="f">AddPoint</span>(<span class="n">1165678.1866605144</span>, <span class="n">686419.4442701361</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs28', 96)" onmouseover="showTip(event, 'fs28', 96)" class="i">outRing</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 97)" onmouseover="showTip(event, 'fs13', 97)" class="f">AddPoint</span>(<span class="n">1154115.274565847</span>, <span class="n">686419.4442701361</span>, <span class="n">0.</span>)
+
+<span class="c">// Create inner ring</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs29', 98)" onmouseover="showTip(event, 'fs29', 98)" class="i">innerRing</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs9', 99)" onmouseover="showTip(event, 'fs9', 99)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 100)" onmouseover="showTip(event, 'fs10', 100)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs9', 101)" onmouseover="showTip(event, 'fs9', 101)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 102)" onmouseover="showTip(event, 'fs11', 102)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 103)" onmouseover="showTip(event, 'fs23', 103)" class="i">wkbLinearRing</span>)
+<span onmouseout="hideTip(event, 'fs29', 104)" onmouseover="showTip(event, 'fs29', 104)" class="i">innerRing</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 105)" onmouseover="showTip(event, 'fs13', 105)" class="f">AddPoint</span>(<span class="n">1149490.1097279799</span>, <span class="n">691044.6091080031</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs29', 106)" onmouseover="showTip(event, 'fs29', 106)" class="i">innerRing</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 107)" onmouseover="showTip(event, 'fs13', 107)" class="f">AddPoint</span>(<span class="n">1149490.1097279799</span>, <span class="n">648030.5761158396</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs29', 108)" onmouseover="showTip(event, 'fs29', 108)" class="i">innerRing</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 109)" onmouseover="showTip(event, 'fs13', 109)" class="f">AddPoint</span>(<span class="n">1191579.1097525698</span>, <span class="n">648030.5761158396</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs29', 110)" onmouseover="showTip(event, 'fs29', 110)" class="i">innerRing</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 111)" onmouseover="showTip(event, 'fs13', 111)" class="f">AddPoint</span>(<span class="n">1191579.1097525698</span>, <span class="n">691044.6091080031</span>, <span class="n">0.</span>)
+<span onmouseout="hideTip(event, 'fs29', 112)" onmouseover="showTip(event, 'fs29', 112)" class="i">innerRing</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 113)" onmouseover="showTip(event, 'fs13', 113)" class="f">AddPoint</span>(<span class="n">1149490.1097279799</span>, <span class="n">691044.6091080031</span>, <span class="n">0.</span>)
+
+<span class="c">// Create polygon</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs30', 114)" onmouseover="showTip(event, 'fs30', 114)" class="i">polyWithHoles</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs9', 115)" onmouseover="showTip(event, 'fs9', 115)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 116)" onmouseover="showTip(event, 'fs10', 116)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs9', 117)" onmouseover="showTip(event, 'fs9', 117)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 118)" onmouseover="showTip(event, 'fs11', 118)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs25', 119)" onmouseover="showTip(event, 'fs25', 119)" class="i">wkbPolygon</span>)
+<span onmouseout="hideTip(event, 'fs30', 120)" onmouseover="showTip(event, 'fs30', 120)" class="i">polyWithHoles</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 121)" onmouseover="showTip(event, 'fs26', 121)" class="f">AddGeometry</span>(<span onmouseout="hideTip(event, 'fs28', 122)" onmouseover="showTip(event, 'fs28', 122)" class="i">outRing</span>)
+<span onmouseout="hideTip(event, 'fs30', 123)" onmouseover="showTip(event, 'fs30', 123)" class="i">polyWithHoles</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 124)" onmouseover="showTip(event, 'fs26', 124)" class="f">AddGeometry</span>(<span onmouseout="hideTip(event, 'fs29', 125)" onmouseover="showTip(event, 'fs29', 125)" class="i">innerRing</span>)
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs30', 126)" onmouseover="showTip(event, 'fs30', 126)" class="i">polyWithHoles</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs18', 127)" onmouseover="showTip(event, 'fs18', 127)" class="f">plot</span>
+</code></pre></td>
+</tr>
+</table>
+<p><img src="./img/chart11.png" alt="" /></p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
@@ -126,31 +238,15 @@ Well Known Text = POINT (1198054.34 648493.09 0)</code></pre></td></tr></table>
 <span class="l">6: </span>
 <span class="l">7: </span>
 <span class="l">8: </span>
-<span class="l">9: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 44)" onmouseover="showTip(event, 'fs21', 44)" class="i">coordinates</span> <span class="o">=</span> 
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 45)" onmouseover="showTip(event, 'fs22', 45)" class="i">last</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs18', 46)" onmouseover="showTip(event, 'fs18', 46)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs23', 47)" onmouseover="showTip(event, 'fs23', 47)" class="f">GetPointCount</span>() <span class="o">-</span> <span class="n">1</span>
-    [
-        <span class="k">for</span> <span onmouseout="hideTip(event, 'fs24', 48)" onmouseover="showTip(event, 'fs24', 48)" class="i">i</span> <span class="k">in</span> <span class="n">0..</span><span onmouseout="hideTip(event, 'fs22', 49)" onmouseover="showTip(event, 'fs22', 49)" class="i">last</span> <span class="k">-&gt;</span>
-            <span class="k">let</span> <span onmouseout="hideTip(event, 'fs25', 50)" onmouseover="showTip(event, 'fs25', 50)" class="i">p</span> <span class="o">=</span> [|<span class="n">0.</span>;<span class="n">0.</span>|]
-            <span onmouseout="hideTip(event, 'fs18', 51)" onmouseover="showTip(event, 'fs18', 51)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 52)" onmouseover="showTip(event, 'fs26', 52)" class="f">GetPoint</span>(<span onmouseout="hideTip(event, 'fs24', 53)" onmouseover="showTip(event, 'fs24', 53)" class="i">i</span>,<span onmouseout="hideTip(event, 'fs25', 54)" onmouseover="showTip(event, 'fs25', 54)" class="i">p</span>)
-            (<span onmouseout="hideTip(event, 'fs25', 55)" onmouseover="showTip(event, 'fs25', 55)" class="i">p</span><span class="o">.</span>[<span class="n">0</span>], <span onmouseout="hideTip(event, 'fs25', 56)" onmouseover="showTip(event, 'fs25', 56)" class="i">p</span><span class="o">.</span>[<span class="n">1</span>])
-    ]
-<span onmouseout="hideTip(event, 'fs27', 57)" onmouseover="showTip(event, 'fs27', 57)" class="t">Chart</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs28', 58)" onmouseover="showTip(event, 'fs28', 58)" class="f">Line</span>(<span onmouseout="hideTip(event, 'fs21', 59)" onmouseover="showTip(event, 'fs21', 59)" class="i">coordinates</span>)
-</code></pre></td>
-</tr>
-</table>
-<p><img src="./img/chart1.png" alt="" /></p>
-<p>Get the bounding box</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs29', 60)" onmouseover="showTip(event, 'fs29', 60)" class="i">env</span> <span class="o">=</span> 
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs30', 61)" onmouseover="showTip(event, 'fs30', 61)" class="i">res</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs9', 62)" onmouseover="showTip(event, 'fs9', 62)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 63)" onmouseover="showTip(event, 'fs31', 63)" class="t">Envelope</span>()
-    <span onmouseout="hideTip(event, 'fs18', 64)" onmouseover="showTip(event, 'fs18', 64)" class="i">line</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs32', 65)" onmouseover="showTip(event, 'fs32', 65)" class="f">GetEnvelope</span>(<span onmouseout="hideTip(event, 'fs30', 66)" onmouseover="showTip(event, 'fs30', 66)" class="i">res</span>)
-    <span onmouseout="hideTip(event, 'fs30', 67)" onmouseover="showTip(event, 'fs30', 67)" class="i">res</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">//(**</span>
+<span class="c">//Get the bounding box</span>
+<span class="c">//*)</span>
+<span class="c">//</span>
+<span class="c">//let env = </span>
+<span class="c">//    let res = new OGR.Envelope()</span>
+<span class="c">//    line.GetEnvelope(res)</span>
+<span class="c">//    res</span>
 </code></pre></td>
 </tr>
 </table>
@@ -171,21 +267,19 @@ Well Known Text = POINT (1198054.34 648493.09 0)</code></pre></td></tr></table>
 <div class="tip" id="fs15">val wkt : string<br /><br />Full name: Geometry.wkt</div>
 <div class="tip" id="fs16">OGR.Geometry.ExportToWkt(argout: byref&lt;string&gt;) : int</div>
 <div class="tip" id="fs17">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
-<div class="tip" id="fs18">val line : OGR.Geometry<br /><br />Full name: Geometry.line</div>
-<div class="tip" id="fs19">field OGR.wkbGeometryType.wkbLineString = 2</div>
-<div class="tip" id="fs20">val lineStringWkt : string<br /><br />Full name: Geometry.lineStringWkt</div>
-<div class="tip" id="fs21">val coordinates : (float * float) list<br /><br />Full name: Geometry.coordinates</div>
-<div class="tip" id="fs22">val last : int</div>
-<div class="tip" id="fs23">OGR.Geometry.GetPointCount() : int</div>
-<div class="tip" id="fs24">val i : int</div>
-<div class="tip" id="fs25">val p : float []</div>
-<div class="tip" id="fs26">OGR.Geometry.GetPoint(iPoint: int, argout: float []) : unit</div>
-<div class="tip" id="fs27">type Chart =<br />&#160;&#160;static member Area : data:seq&lt;#value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:Color * ?XTitle:string * ?YTitle:string -&gt; GenericChart<br />&#160;&#160;static member Area : data:seq&lt;#key * #value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:Color * ?XTitle:string * ?YTitle:string -&gt; GenericChart<br />&#160;&#160;static member Bar : data:seq&lt;#value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:Color * ?XTitle:string * ?YTitle:string -&gt; GenericChart<br />&#160;&#160;static member Bar : data:seq&lt;#key * #value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:Color * ?XTitle:string * ?YTitle:string -&gt; GenericChart<br />&#160;&#160;static member BoxPlotFromData : data:seq&lt;#key * #seq&lt;&#39;a2&gt;&gt; * ?Name:string * ?Title:string * ?Color:Color * ?XTitle:string * ?YTitle:string * ?Percentile:int * ?ShowAverage:bool * ?ShowMedian:bool * ?ShowUnusualValues:bool * ?WhiskerPercentile:int -&gt; GenericChart (requires &#39;a2 :&gt; value)<br />&#160;&#160;static member BoxPlotFromStatistics : data:seq&lt;#key * #value * #value * #value * #value * #value * #value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:Color * ?XTitle:string * ?YTitle:string * ?Percentile:int * ?ShowAverage:bool * ?ShowMedian:bool * ?ShowUnusualValues:bool * ?WhiskerPercentile:int -&gt; GenericChart<br />&#160;&#160;static member Bubble : data:seq&lt;#value * #value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:Color * ?XTitle:string * ?YTitle:string * ?BubbleMaxSize:int * ?BubbleMinSize:int * ?BubbleScaleMax:float * ?BubbleScaleMin:float * ?UseSizeForLabel:bool -&gt; GenericChart<br />&#160;&#160;static member Bubble : data:seq&lt;#key * #value * #value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:Color * ?XTitle:string * ?YTitle:string * ?BubbleMaxSize:int * ?BubbleMinSize:int * ?BubbleScaleMax:float * ?BubbleScaleMin:float * ?UseSizeForLabel:bool -&gt; GenericChart<br />&#160;&#160;static member Candlestick : data:seq&lt;#value * #value * #value * #value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:Color * ?XTitle:string * ?YTitle:string -&gt; CandlestickChart<br />&#160;&#160;static member Candlestick : data:seq&lt;#key * #value * #value * #value * #value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:Color * ?XTitle:string * ?YTitle:string -&gt; CandlestickChart<br />&#160;&#160;...<br /><br />Full name: FSharp.Charting.Chart</div>
-<div class="tip" id="fs28">static member Chart.Line : data:Deedle.Series&lt;&#39;K,#value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:System.Drawing.Color * ?XTitle:string * ?YTitle:string -&gt; ChartTypes.GenericChart (requires equality and &#39;K :&gt; key)<br />static member Chart.Line : data:seq&lt;#value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:System.Drawing.Color * ?XTitle:string * ?YTitle:string -&gt; ChartTypes.GenericChart<br />static member Chart.Line : data:seq&lt;#key * #value&gt; * ?Name:string * ?Title:string * ?Labels:#seq&lt;string&gt; * ?Color:System.Drawing.Color * ?XTitle:string * ?YTitle:string -&gt; ChartTypes.GenericChart</div>
-<div class="tip" id="fs29">val env : OGR.Envelope<br /><br />Full name: Geometry.env</div>
-<div class="tip" id="fs30">val res : OGR.Envelope</div>
-<div class="tip" id="fs31">Multiple items<br />type Envelope =<br />&#160;&#160;new : unit -&gt; Envelope + 1 overload<br />&#160;&#160;member Dispose : unit -&gt; unit<br />&#160;&#160;member MaxX : float with get, set<br />&#160;&#160;member MaxY : float with get, set<br />&#160;&#160;member MinX : float with get, set<br />&#160;&#160;member MinY : float with get, set<br />&#160;&#160;static member getCPtr : obj:Envelope -&gt; HandleRef<br />&#160;&#160;static member getCPtrAndDisown : obj:Envelope * parent:obj -&gt; HandleRef<br />&#160;&#160;static member getCPtrAndSetReference : obj:Envelope * parent:obj -&gt; HandleRef<br /><br />Full name: OSGeo.OGR.Envelope<br /><br />--------------------<br />OGR.Envelope() : unit<br />OGR.Envelope(cPtr: nativeint, cMemoryOwn: bool, parent: obj) : unit</div>
-<div class="tip" id="fs32">OGR.Geometry.GetEnvelope(env: OGR.Envelope) : unit</div>
+<div class="tip" id="fs18">val plot : g:OGR.Geometry -&gt; ChartTypes.GenericChart<br /><br />Full name: Plot-geometries.plot<br /><em><br /><br />&#160;Plots a geometry at a zoom of 80%</em></div>
+<div class="tip" id="fs19">val line : OGR.Geometry<br /><br />Full name: Geometry.line</div>
+<div class="tip" id="fs20">field OGR.wkbGeometryType.wkbLineString = 2</div>
+<div class="tip" id="fs21">val lineStringWkt : string<br /><br />Full name: Geometry.lineStringWkt</div>
+<div class="tip" id="fs22">val ring : OGR.Geometry<br /><br />Full name: Geometry.ring</div>
+<div class="tip" id="fs23">field OGR.wkbGeometryType.wkbLinearRing = 101</div>
+<div class="tip" id="fs24">val poly : OGR.Geometry<br /><br />Full name: Geometry.poly</div>
+<div class="tip" id="fs25">field OGR.wkbGeometryType.wkbPolygon = 3</div>
+<div class="tip" id="fs26">OGR.Geometry.AddGeometry(other: OGR.Geometry) : int</div>
+<div class="tip" id="fs27">val polyStringWkt : string<br /><br />Full name: Geometry.polyStringWkt</div>
+<div class="tip" id="fs28">val outRing : OGR.Geometry<br /><br />Full name: Geometry.outRing</div>
+<div class="tip" id="fs29">val innerRing : OGR.Geometry<br /><br />Full name: Geometry.innerRing</div>
+<div class="tip" id="fs30">val polyWithHoles : OGR.Geometry<br /><br />Full name: Geometry.polyWithHoles</div>
 
 
           
