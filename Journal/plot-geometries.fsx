@@ -96,9 +96,12 @@ let resize zoom (en:OGR.Envelope) =
 Now we can define a `plotAt` function that plots the geometry at a specified
 `zoom`.
  
-Geomteries can be simple or compund. If `geom`is compound we need 
-to calculate a `cs` list containing a `chart` element for each of its components. 
-If it is simple we still calculate a list but containing just one `chart` element.
+Geomteries can be simple or compund. If `geom`is compound we need to recursively 
+traverse its structure till its simple components and populate a `charts` 
+list for each using the `createChart` function defined above.
+
+The recursive part is made by the inner `createCharts` function taking advantage 
+of the functional nature of F#.
 
 At the end we can `Chart.Combine` all the elements of the chart list setting the 
 cartesian plan's space at the proper size.
@@ -106,19 +109,17 @@ cartesian plan's space at the proper size.
 
 /// Plots a geometry at a specified zoom
 let plotAt zoom (geom:OGR.Geometry) = 
-    let gCount = geom.GetGeometryCount()
-    let cs = 
-        if gCount = 0 then
-            let chart = geom |> createChart
-            [chart]
-        else
-            [
-                for i in 0..(gCount-1) -> 
-                    let chart = (geom.GetGeometryRef(i)) |> createChart
-                    chart
-            ]
+    let rec createCharts xs (geom:OGR.Geometry) = 
+        let count = geom.GetGeometryCount()
+        match count with
+        | count when count = 0 -> [(geom |> createChart)]@xs
+        | _ -> 
+            [for i in 0..(count-1) -> 
+                (geom.GetGeometryRef(i)) |> createCharts xs
+            ] |> List.concat
+    let charts = geom |> createCharts []
     let spaceSize = geom |> env |> resize zoom
-    Chart.Combine(cs)
+    Chart.Combine(charts)
         .WithXAxis(Max=spaceSize.MaxX,Min=spaceSize.MinX)
         .WithYAxis(Max=spaceSize.MaxY,Min=spaceSize.MinY)
 

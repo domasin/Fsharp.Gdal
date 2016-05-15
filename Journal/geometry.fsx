@@ -44,10 +44,10 @@ open OSGeo
 let point = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
 point.AddPoint(1198054.34, 648493.09,0.)
 
-let result, wkt = point.ExportToWkt()
+let result, wktPoint = point.ExportToWkt()
 
 printfn "Result = %i" result
-printfn "Well Known Text = %s" wkt
+printfn "Well Known Text = %s" wktPoint
 (*** include-output:createAPoint ***)
 
 (*** define-output:plotPoint ***)
@@ -59,7 +59,6 @@ Create a LineString
 ------------------------
 *)
 
-(*** define-output:createALineString ***)
 let line = new OGR.Geometry(OGR.wkbGeometryType.wkbLineString)
 line.AddPoint(1116651.439379124, 637392.6969887456, 0.)
 line.AddPoint(1188804.0108498496, 652655.7409537067, 0.)
@@ -67,9 +66,7 @@ line.AddPoint(1226730.3625203592, 634155.0816022386, 0.)
 line.AddPoint(1281307.30760719, 636467.6640211721, 0.)
 
 let _,lineStringWkt = line.ExportToWkt()
-
-printfn "Well Known Text = %s" lineStringWkt
-(*** include-output:createALineString ***)
+(*** include-value:lineStringWkt ***)
 
 (*** define-output:plotLine ***)
 line |> plot
@@ -80,7 +77,6 @@ Create a Polygon
 ------------------------
 *)
 
-(*** define-output:createAPolygon ***)
 // Create ring
 let ring = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
 ring.AddPoint(1179091.1646903288, 712782.8838459781, 0.)
@@ -94,10 +90,8 @@ ring.AddPoint(1179091.1646903288, 712782.8838459781, 0.)
 let poly = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
 poly.AddGeometry(ring)
 
-let _,polyStringWkt = line.ExportToWkt()
-
-printfn "Well Known Text = %s" polyStringWkt
-(*** include-output:createAPolygon ***)
+let _,polyStringWkt = poly.ExportToWkt()
+(*** include-value:polyStringWkt ***)
 
 (*** define-output:plotPoly ***)
 poly |> plot
@@ -128,9 +122,175 @@ let polyWithHoles = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
 polyWithHoles.AddGeometry(outRing)
 polyWithHoles.AddGeometry(innerRing)
 
+let _,polyWithHolesWkt = polyWithHoles.ExportToWkt()
+(*** include-value:polyWithHolesWkt ***)
+
 (*** define-output:plotPolyWithHoles ***)
 polyWithHoles |> plot
 (*** include-it:plotPolyWithHoles ***)
+
+(**
+Create a MultiPoint
+------------------------
+*)
+
+let multipoint = new OGR.Geometry(OGR.wkbGeometryType.wkbMultiPoint)
+
+let point1 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+point1.AddPoint(1251243.7361610543, 598078.7958668759, 0.)
+multipoint.AddGeometry(point1)
+
+let point2 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+point2.AddPoint(1240605.8570339603, 601778.9277371694, 0.)
+multipoint.AddGeometry(point2)
+
+let point3 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+point3.AddPoint(1250318.7031934808, 606404.0925750365, 0.)
+multipoint.AddGeometry(point3)
+
+let _,multipointWkt = multipoint.ExportToWkt()
+(*** include-value:multipointWkt ***)
+
+(*** define-output:plotMultiPoint ***)
+multipoint |> plot
+(*** include-it:plotMultiPoint ***)
+
+(**
+Create a MultiLineString
+------------------------
+*)
+
+let multiline = new OGR.Geometry(OGR.wkbGeometryType.wkbMultiLineString)
+
+let line1 = new OGR.Geometry(OGR.wkbGeometryType.wkbLineString)
+line1.AddPoint(1214242.4174581182, 617041.9717021306, 0.)
+line1.AddPoint(1234593.142744733, 629529.9167643716, 0.)
+multiline.AddGeometry(line1)
+
+let line2 = new OGR.Geometry(OGR.wkbGeometryType.wkbLineString)
+line2.AddPoint(1184641.3624957693, 626754.8178616514, 0.)
+line2.AddPoint(1219792.6152635587, 606866.6090588232, 0.)
+multiline.AddGeometry(line2)
+
+let _,multilineWkt = multiline.ExportToWkt()
+(*** include-value:multilineWkt ***)
+
+(*** define-output:plotMultiLineString ***)
+multiline |> plot
+(*** include-it:plotMultiLineString ***)
+
+(**
+Create a MultiPloygon
+------------------------
+*)
+
+let multipolygon = new OGR.Geometry(OGR.wkbGeometryType.wkbMultiPolygon)
+
+// Create ring #1
+let ring1 = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+ring1.AddPoint(1204067.0548148106, 634617.5980860253, 0.)
+ring1.AddPoint(1204067.0548148106, 620742.1035724243, 0.)
+ring1.AddPoint(1215167.4504256917, 620742.1035724243, 0.)
+ring1.AddPoint(1215167.4504256917, 634617.5980860253, 0.)
+ring1.AddPoint(1204067.0548148106, 634617.5980860253, 0.)
+
+// Create polygon #1
+let poly1 = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
+poly1.AddGeometry(ring1)
+multipolygon.AddGeometry(poly1)
+
+// Create ring #2
+let ring2 = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+ring2.AddPoint(1179553.6811741155, 647105.5431482664, 0.)
+ring2.AddPoint(1179553.6811741155, 626292.3013778647, 0.)
+ring2.AddPoint(1194354.20865529, 626292.3013778647, 0.)
+ring2.AddPoint(1194354.20865529, 647105.5431482664, 0.)
+ring2.AddPoint(1179553.6811741155, 647105.5431482664, 0.)
+
+// Create polygon #1
+let poly2 = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
+poly2.AddGeometry(ring2)
+multipolygon.AddGeometry(poly2)
+
+let _,multipolygonWkt = multipolygon.ExportToWkt()
+(*** include-value:multipolygonWkt ***)
+
+(*** define-output:plotMultiPloygon ***)
+multipolygon |> plot
+(*** include-it:plotMultiPloygon ***)
+
+(**
+Create a GeometryCollection
+------------------------
+*)
+
+let geomcol = new OGR.Geometry(OGR.wkbGeometryType.wkbGeometryCollection)
+
+// Add a point
+let point4 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+point.AddPoint(-122.23, 47.09, 0.)
+geomcol.AddGeometry(point)
+
+// Add a line
+let line3 = new OGR.Geometry(OGR.wkbGeometryType.wkbLineString)
+line3.AddPoint(-122.60, 47.14, 0.)
+line3.AddPoint(-122.48, 47.23, 0.)
+geomcol.AddGeometry(line3)
+
+let _,geomcolWkt = geomcol.ExportToWkt()
+(*** include-value:geomcolWkt ***)
+
+(*** define-output:plotMultiPloygon ***)
+geomcol |> plot
+(*** include-it:plotMultiPloygon ***)
+
+(**
+Create Geometry from WKT
+------------------------
+*)
+
+(*** define-output:createFromWKT ***)
+let wkt = ref "POINT (1120351.5712494177 741921.4223245403)"
+let point5 = OGR.Ogr.CreateGeometryFromWkt(wkt, null)
+
+printfn "%f,%f" (point5.GetX(0)) (point5.GetY(0))
+(*** include-output:createFromWKT ***)
+
+(*** define-output:plotFromWKT ***)
+point5 |> plot
+(*** include-it:plotFromWKT ***)
+
+(**
+Create Geometry from GeoJSON
+------------------------
+*)
+
+(*** define-output:createFromWKT ***)
+let geojson = """{"type":"Point","coordinates":[108420.33,753808.59]}"""
+let point6 = OGR.Ogr.CreateGeometryFromJson(geojson)
+
+printfn "%f,%f" (point6.GetX(0)) (point6.GetY(0))
+(*** include-output:createFromWKT ***)
+
+(*** define-output:plotFromWKT ***)
+point6 |> plot
+(*** include-it:plotFromWKT ***)
+
+(**
+Create Geometry from GML
+------------------------
+*)
+
+(*** define-output:createFromWKT ***)
+let gml = """<gml:Point xmlns:gml="http://www.opengis.net/gml"><gml:coordinates>108420.33,753808.59</gml:coordinates></gml:Point>"""
+let point7 = OGR.Ogr.CreateGeometryFromGML(gml)
+
+printfn "%f,%f" (point7.GetX(0)) (point7.GetY(0))
+(*** include-output:createFromWKT ***)
+
+(*** define-output:plotFromWKT ***)
+point7 |> plot
+(*** include-it:plotFromWKT ***)
 
 //(**
 //Get the bounding box
