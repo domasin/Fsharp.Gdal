@@ -55,8 +55,9 @@ and documents generated with FsLab Journal Template in the project named "Journa
 The API reference is automatically generated from Markdown comments in the library implementation.
 
  * FSharp Gdal CookBook: an equivalent of Python Gdal / Ogr Cookbook
-    - [Geometry](geometry.html) 
- * [F# Gdal Type Provider](gdal-type-provider.html): an experimenta gdal type provider
+    - [Geometry](geometry.html): working with geometries with `OGR` functions
+    - [Appendix A: Plot Geometries](plot-geometries.html): a rudimentary `plot` function for geometries
+    - [Appendix B: F# Gdal Type Provider](gdal-type-provider.html): an experimental gdal type provider
  * Applications: 
     - [Extimated Walk Time](extimated-walk-time.html): calculate an extimated time for hiking
     - [Land Cover in Valgrande](land-cover.html): land cover analysis in the [Val Grande National Park](https://en.wikipedia.org/wiki/Val_Grande_National_Park)

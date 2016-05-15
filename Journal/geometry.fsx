@@ -3,6 +3,8 @@
 // it to define helpers that you do not want to show in the documentation.
 #load "packages/FsLab/FsLab.fsx"
 open FSharp.Charting
+#load "plot-geometries.fsx"
+open ``Plot-geometries``
 
 //#I "../bin/Fsharp.Gdal"
 #I "../src/Fsharp.Gdal/bin/Debug"
@@ -18,7 +20,9 @@ open FSharp.Gdal
 (**
 Geometry
 ========================
-This is the equivalent of the Python GDAL/OGR Cookbook's Geomtry page for Fsharp.Gdal
+This is the equivalent of the Python GDAL/OGR Cookbook's Geomtry page for Fsharp.Gdal. 
+To show the shape of geometries we use the `plot` function which is described in the 
+[Plot Geometries](plot-geometries.html) appendix.
 *)
 
 (**
@@ -46,6 +50,10 @@ printfn "Result = %i" result
 printfn "Well Known Text = %s" wkt
 (*** include-output:createAPoint ***)
 
+(*** define-output:plotPoint ***)
+point |> plot
+(*** include-it:plotPoint ***)
+
 (**
 Create a LineString
 ------------------------
@@ -63,30 +71,75 @@ let _,lineStringWkt = line.ExportToWkt()
 printfn "Well Known Text = %s" lineStringWkt
 (*** include-output:createALineString ***)
 
-(**
-... and just to visualize it:
-*)
-
-(*** define-output:chartLineString ***)
-let coordinates = 
-    let last = line.GetPointCount() - 1
-    [
-        for i in 0..last ->
-            let p = [|0.;0.|]
-            line.GetPoint(i,p)
-            (p.[0], p.[1])
-    ]
-Chart.Line(coordinates)
-(*** include-it:chartLineString ***)
+(*** define-output:plotLine ***)
+line |> plot
+(*** include-it:plotLine ***)
 
 (**
-Get the bounding box
+Create a Polygon
+------------------------
 *)
 
-let env = 
-    let res = new OGR.Envelope()
-    line.GetEnvelope(res)
-    res
+(*** define-output:createAPolygon ***)
+// Create ring
+let ring = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+ring.AddPoint(1179091.1646903288, 712782.8838459781, 0.)
+ring.AddPoint(1161053.0218226474, 667456.2684348812, 0.)
+ring.AddPoint(1214704.933941905, 641092.8288590391, 0.)
+ring.AddPoint(1228580.428455506, 682719.3123998424, 0.)
+ring.AddPoint(1218405.0658121984, 721108.1805541387, 0.)
+ring.AddPoint(1179091.1646903288, 712782.8838459781, 0.)
+
+// Create Polygon
+let poly = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
+poly.AddGeometry(ring)
+
+let _,polyStringWkt = line.ExportToWkt()
+
+printfn "Well Known Text = %s" polyStringWkt
+(*** include-output:createAPolygon ***)
+
+(*** define-output:plotPoly ***)
+poly |> plot
+(*** include-it:plotPoly ***)
+
+(** 
+Create Polygon with holes
+*)
+
+// Create outer ring
+let outRing = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+outRing.AddPoint(1154115.274565847, 686419.4442701361, 0.)
+outRing.AddPoint(1154115.274565847, 653118.2574374934, 0.)
+outRing.AddPoint(1165678.1866605144, 653118.2574374934, 0.)
+outRing.AddPoint(1165678.1866605144, 686419.4442701361, 0.)
+outRing.AddPoint(1154115.274565847, 686419.4442701361, 0.)
+
+// Create inner ring
+let innerRing = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+innerRing.AddPoint(1149490.1097279799, 691044.6091080031, 0.)
+innerRing.AddPoint(1149490.1097279799, 648030.5761158396, 0.)
+innerRing.AddPoint(1191579.1097525698, 648030.5761158396, 0.)
+innerRing.AddPoint(1191579.1097525698, 691044.6091080031, 0.)
+innerRing.AddPoint(1149490.1097279799, 691044.6091080031, 0.)
+
+// Create polygon
+let polyWithHoles = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
+polyWithHoles.AddGeometry(outRing)
+polyWithHoles.AddGeometry(innerRing)
+
+(*** define-output:plotPolyWithHoles ***)
+polyWithHoles |> plot
+(*** include-it:plotPolyWithHoles ***)
+
+//(**
+//Get the bounding box
+//*)
+//
+//let env = 
+//    let res = new OGR.Envelope()
+//    line.GetEnvelope(res)
+//    res
 
 
 

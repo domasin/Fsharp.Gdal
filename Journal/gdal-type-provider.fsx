@@ -2,6 +2,8 @@
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
 #load "packages/FsLab/FsLab.fsx"
+#load "plot-geometries.fsx"
+open ``Plot-geometries``
 
 //#I "../bin/Fsharp.Gdal"
 #I "../src/Fsharp.Gdal/bin/Debug"
@@ -29,6 +31,9 @@ open FSharp.Data
 open FSharp.Charting
 
 (**
+The shape file `itinerari.shp` contains the foot paths to the main peaks in the 
+[Val Grande National Park](https://en.wikipedia.org/wiki/Val_Grande_National_Park).
+
 To get the data from a file we can just call the type provider constructor giving 
 the file path as the type parameter of the provider. Internally the provider calls 
 the logic needed to configure the gdal library on the system and to initialize all 
@@ -58,6 +63,21 @@ for feat in vLayer.Features do
     printfn "Geomtry type = %A\tID = %i\tTITLE = %s\t" 
         (feat.Geometry.GetGeometryType()) feat.ID feat.TITLE
 (*** include-output:printAttributes ***)
+
+(**
+We can also graphically visualize the features geometries using the `plot` function 
+which is described in the [Plot Geometries](plot-geometries.html) appendix:
+*)
+
+(*** define-output:plotFootPaths ***)
+let footPaths = new OGR.Geometry(OGR.wkbGeometryType.wkbMultiLineString)
+
+for feat in vLayer.Features do
+    let _ = footPaths.AddGeometry(feat.Geometry)
+    ()
+
+footPaths |> plot
+(*** include-it:plotFootPaths ***)
 
 (**
 With the deedle frame and gdal methods at hand we can do some calculations based on geometries.
