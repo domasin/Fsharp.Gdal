@@ -12,7 +12,7 @@ Documentation: http://domasin.github.io/Fsharp.Gdal
 
 Mono | .NET
 ---- | ----
-[![Mono CI Build Status](https://img.shields.io/travis/domasin/Fsharp.Gdal/master.svg)](https://travis-ci.org/domasin/Fsharp.Gdal) | [![.NET Build Status](https://img.shields.io/appveyor/ci/fsgit/Fsharp.Gdal/master.svg)](https://ci.appveyor.com/project/domasin/fsharp-gdal)
+[![Mono CI Build Status](https://img.shields.io/travis/domasin/Fsharp.Gdal/master.svg)](https://travis-ci.org/domasin/Fsharp.Gdal) | [![.NET Build Status](https://img.shields.io/appveyor/ci/domasin/fsharp-gdal/master.svg)](https://ci.appveyor.com/project/domasin/fsharp-gdal)
 
 ## Maintainer(s)
 
