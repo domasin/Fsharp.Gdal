@@ -54,7 +54,7 @@ It can include tutorials automatically generated from `*.fsx` files in [the cont
 and documents generated with FsLab Journal Template in the project named "Journal". 
 The API reference is automatically generated from Markdown comments in the library implementation.
 
- * FSharp Gdal CookBook: an equivalent of Python Gdal / Ogr Cookbook
+ * FSharp Gdal CookBook: an equivalent of [Python Gdal / Ogr Cookbook](http://pcjericks.github.io/py-gdalogr-cookbook/) for FSharp.Gdal
     - [Geometry](geometry.html): working with geometries with `OGR` functions
     - [Appendix A: Plot Geometries](plot-geometries.html): a rudimentary `plot` function for geometries
     - [Appendix B: F# Gdal Type Provider](gdal-type-provider.html): an experimental gdal type provider
