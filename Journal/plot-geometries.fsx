@@ -43,24 +43,6 @@ let coordinates (geom:OGR.Geometry) =
     ]
 
 (**
-To properly draw the shapes in the cartesian space we need to 
-choose a chart type that most fits with the geometry type to plot.
-
-`createChart` creates a `Chart.Point` for points geometries while 
-`Chart.Line` is choosen for every other geometry types: as marked above 
-the main limit of this approach is that ploygons are still rendered as 
-lines but this at least gives an immage of the geometry.
-*)
-
-/// Creates a chart for the geometry
-let createChart (geom:OGR.Geometry) = 
-    let coords = geom |> coordinates
-    match (geom.GetGeometryType()) with
-    | OGR.wkbGeometryType.wkbPoint
-    | OGR.wkbGeometryType.wkbPoint25D -> Chart.Point(coords)
-    | _                               -> Chart.Line(coords)
-
-(**
 We need to set the space of the chart at a size that makes the 
 shape visibile enough.
 
@@ -92,6 +74,24 @@ let resize zoom (en:OGR.Envelope) =
     en.MinY <- en.MinY - yMargin
     en
 
+(**
+To properly draw the shapes in the cartesian space we need to 
+choose a chart type that most fits with the geometry type to plot.
+
+`createChart` creates a `Chart.Point` for points geometries while 
+`Chart.Line` is choosen for every other geometry types: as marked above 
+the main limit of this approach is that ploygons are still rendered as 
+lines but this at least gives an immage of the geometry.
+*)
+
+/// Creates a chart for the geometry
+let createChart (geom:OGR.Geometry) = 
+    let coords = geom |> coordinates
+    match (geom.GetGeometryType()) with
+    | OGR.wkbGeometryType.wkbPoint
+    | OGR.wkbGeometryType.wkbPoint25D   -> Chart.Point(geom |> coordinates)
+    | _                                 -> Chart.Line(geom |> coordinates)
+
 (** 
 Now we can define a `plotAt` function that plots the geometry at a specified
 `zoom`.
@@ -100,28 +100,29 @@ Geomteries can be simple or compund. If `geom`is compound we need to recursively
 traverse its structure till its simple components and populate a `charts` 
 list for each using the `createChart` function defined above.
 
-The recursive part is made by the inner `createCharts` function taking advantage 
+The recursive part is made by the `createCharts` function taking advantage 
 of the functional nature of F#.
 
 At the end we can `Chart.Combine` all the elements of the chart list setting the 
 cartesian plan's space at the proper size.
 *)
 
+let rec createCharts xs (geom:OGR.Geometry) = 
+    let count = geom.GetGeometryCount()
+    match count with
+    | count when count = 0 -> [(geom |> createChart)]@xs
+    | _ -> 
+        [for i in 0..(count-1) -> 
+            (geom.GetGeometryRef(i)) |> createCharts xs
+        ] |> List.concat
+
 /// Plots a geometry at a specified zoom
 let plotAt zoom (geom:OGR.Geometry) = 
-    let rec createCharts xs (geom:OGR.Geometry) = 
-        let count = geom.GetGeometryCount()
-        match count with
-        | count when count = 0 -> [(geom |> createChart)]@xs
-        | _ -> 
-            [for i in 0..(count-1) -> 
-                (geom.GetGeometryRef(i)) |> createCharts xs
-            ] |> List.concat
     let charts = geom |> createCharts []
     let spaceSize = geom |> env |> resize zoom
     Chart.Combine(charts)
-        .WithXAxis(Max=spaceSize.MaxX,Min=spaceSize.MinX)
-        .WithYAxis(Max=spaceSize.MaxY,Min=spaceSize.MinY)
+        .WithXAxis(Max=spaceSize.MaxX,Min=spaceSize.MinX, Enabled = false)
+        .WithYAxis(Max=spaceSize.MaxY,Min=spaceSize.MinY, Enabled = false)
 
 (**
 Since normally a `zoom` at 80% of the shape size is enough to visualize the geometry 
@@ -131,3 +132,26 @@ it each time:
 
 /// Plots a geometry at a zoom of 80%
 let plot = (fun g -> g |> plotAt 0.8)
+
+(** 
+Finally a function to bypass the lack of a shape chart and `fill` polygons' areas with lines
+*)
+
+let fill (geom:OGR.Geometry) = 
+    let geomEnv = geom |> env
+    let xi = (geomEnv.MaxX - geomEnv.MinX) / 10.
+    let lines = 
+        [
+            for i in [1.0..9.] -> 
+                let x =  geomEnv.MinX + xi * i
+                let line = new OGR.Geometry(OGR.wkbGeometryType.wkbLineString)
+                line.AddPoint(x, geomEnv.MinY, 0.)
+                line.AddPoint(x, geomEnv.MaxY, 0.)
+                let intersection = line.Intersection(geom)
+                intersection
+        ]
+    let geomcol = new OGR.Geometry(OGR.wkbGeometryType.wkbGeometryCollection)
+    for l in lines do 
+        geomcol.AddGeometry(l) |> ignore
+    geomcol.AddGeometry(geom) |> ignore
+    geomcol

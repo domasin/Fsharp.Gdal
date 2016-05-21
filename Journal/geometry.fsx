@@ -6,8 +6,8 @@ open FSharp.Charting
 #load "plot-geometries.fsx"
 open ``Plot-geometries``
 
-//#I "../bin/Fsharp.Gdal"
-#I "../src/Fsharp.Gdal/bin/Debug"
+#I "../bin/Fsharp.Gdal"
+//#I "../src/Fsharp.Gdal/bin/Debug"
 
 #r "Fsharp.Gdal.dll"
 #r "gdal_csharp.dll"
@@ -97,6 +97,14 @@ let _,polyStringWkt = poly.ExportToWkt()
 poly |> plot
 (*** include-it:plotPoly ***)
 
+(**
+And just to give a sense of a full shape
+*)
+
+(*** define-output:plotPolyFilled ***)
+poly |> fill|> plot
+(*** include-it:plotPolyFilled ***)
+
 (** 
 Create Polygon with holes
 *)
@@ -119,8 +127,12 @@ innerRing.AddPoint(1149490.1097279799, 691044.6091080031, 0.)
 
 // Create polygon
 let polyWithHoles = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
-polyWithHoles.AddGeometry(outRing)
+
+(** 
+Inner rings must be added before to create a hole
+*)
 polyWithHoles.AddGeometry(innerRing)
+polyWithHoles.AddGeometry(outRing)
 
 let _,polyWithHolesWkt = polyWithHoles.ExportToWkt()
 (*** include-value:polyWithHolesWkt ***)
@@ -128,6 +140,10 @@ let _,polyWithHolesWkt = polyWithHoles.ExportToWkt()
 (*** define-output:plotPolyWithHoles ***)
 polyWithHoles |> plot
 (*** include-it:plotPolyWithHoles ***)
+
+(*** define-output:plotPolyWithHolesFilled ***)
+polyWithHoles |> fill|> plot
+(*** include-it:plotPolyWithHolesFilled ***)
 
 (**
 Create a MultiPoint
@@ -219,6 +235,8 @@ let _,multipolygonWkt = multipolygon.ExportToWkt()
 multipolygon |> plot
 (*** include-it:plotMultiPloygon ***)
 
+multipolygon |> fill |> plot
+
 (**
 Create a GeometryCollection
 ------------------------
@@ -292,14 +310,91 @@ printfn "%f,%f" (point7.GetX(0)) (point7.GetY(0))
 point7 |> plot
 (*** include-it:plotFromGML ***)
 
-////(**
-////Get the bounding box
-////*)
-////
-////let env = 
-////    let res = new OGR.Envelope()
-////    line.GetEnvelope(res)
-////    res
+(**
+Create Geometry from WKB
+------------------------
+*)
 
+// TODO
+
+(**
+Count Points in a Geometry
+------------------------
+*)
+
+(*** define-output:countPoints ***)
+let wkt2 = ref "LINESTRING (1181866.263593049 615654.4222507705, 1205917.1207499576 623979.7189589312, 1227192.8790041457 643405.4112779726, 1224880.2965852122 665143.6860159477)"
+let line4 = OGR.Ogr.CreateGeometryFromWkt(wkt2, null)
+
+printfn "Geometry has %i points" (line4.GetPointCount())
+(*** include-output:countPoints ***)
+
+(**
+Count Geometries in a Geometry
+------------------------
+*)
+
+(*** define-output:countGeometries ***)
+let wkt3 = ref "MULTIPOINT (1181866.263593049 615654.4222507705, 1205917.1207499576 623979.7189589312, 1227192.8790041457 643405.4112779726, 1224880.2965852122 665143.6860159477)"
+let geom = OGR.Ogr.CreateGeometryFromWkt(wkt3, null)
+
+printfn "Geometry has %i geometries" (geom.GetGeometryCount())
+(*** include-output:countGeometries ***)
+
+(**
+Iterate over Geometries in a Geometry
+------------------------
+*)
+
+(*** define-output:iterateGeometries ***)
+for i in 0..(geom.GetGeometryCount() - 1) do
+    let g = geom.GetGeometryRef(i)
+    let _,wkt = g.ExportToWkt()
+    printfn "%i) %s" i wkt
+(*** include-output:iterateGeometries ***)
+
+(**
+Iterate over Points in a Geometry
+------------------------
+*)
+
+(*** define-output:iteratePoints ***)
+for i in 0..(line4.GetPointCount() - 1) do
+    let pt = [|0.; 0.|]
+    line4.GetPoint(i, pt)
+    printfn "%i) POINT (%f %f)" i pt.[0] pt.[1]
+(*** include-output:iteratePoints ***)
+
+(**
+Buffer a Geometry
+------------------------
+
+`Buffer` creates a polygon around a geometry at a speicified distance:
+*)
+
+let bufferDistance = 1000.
+let lineBuffer = line4.Buffer(bufferDistance, 1)
+
+let lineAndBuffer = new OGR.Geometry(OGR.wkbGeometryType.wkbGeometryCollection)
+lineAndBuffer.AddGeometry(line4)
+lineAndBuffer.AddGeometry(lineBuffer)
+
+(*** define-output:lineBuffer ***)
+lineAndBuffer |> plot
+(*** include-it:lineBuffer ***)
+
+(**
+Calculate Envelope of a Geometry
+------------------------
+
+The `Envelope` is the littler rectangular that enclose the geomtry
+*)
+
+(*** define-output:envelope ***)
+let env = new OGR.Envelope()
+line4.GetEnvelope(env)
+
+printfn "MinX: %f, MinY: %f, MaxX: %f, MaxY: %f" env.MinX env.MinY env.MaxX env.MaxY
+(*** include-output:envelope ***)
 
 

@@ -86,7 +86,7 @@ type VectorFile(filename) =
     member __.Values = values
 
 [<TypeProvider>]
-type public OgrTypeProvider(cfg:TypeProviderConfig) as this =
+type public CreateOgrTypeProvider(cfg:TypeProviderConfig) as this =
     inherit TypeProviderForNamespaces()
 
     // Get the assembly and namespace used to house the provided types.
