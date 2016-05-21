@@ -387,7 +387,7 @@ lineAndBuffer |> plot
 Calculate Envelope of a Geometry
 ------------------------
 
-The `Envelope` is the littler rectangular that enclose the geomtry
+The `Envelope` is the minimal rectangular area enclosing the geometry
 *)
 
 (*** define-output:envelope ***)
