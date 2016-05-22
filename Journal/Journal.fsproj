@@ -61,6 +61,7 @@
     <None Include="land-cover.fsx" />
     <None Include="plot-geometries.fsx" />
     <None Include="plot-with-xaml.fsx" />
+    <None Include="svg-plot.fsx" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
