@@ -3,8 +3,10 @@
 // it to define helpers that you do not want to show in the documentation.
 #load "packages/FsLab/FsLab.fsx"
 open FSharp.Charting
-#load "plot-geometries.fsx"
-open ``Plot-geometries``
+//#load "plot-geometries.fsx"
+//open ``Plot-geometries``
+#load "plot-geometry.fsx"
+open ``Plot-geometry``
 
 #I "../bin/Fsharp.Gdal"
 //#I "../src/Fsharp.Gdal/bin/Debug"
@@ -97,14 +99,6 @@ let _,polyStringWkt = poly.ExportToWkt()
 poly |> plot
 (*** include-it:plotPoly ***)
 
-(**
-And just to give a sense of a full shape
-*)
-
-(*** define-output:plotPolyFilled ***)
-poly |> fill|> plot
-(*** include-it:plotPolyFilled ***)
-
 (** 
 Create Polygon with holes
 *)
@@ -140,10 +134,6 @@ let _,polyWithHolesWkt = polyWithHoles.ExportToWkt()
 (*** define-output:plotPolyWithHoles ***)
 polyWithHoles |> plot
 (*** include-it:plotPolyWithHoles ***)
-
-(*** define-output:plotPolyWithHolesFilled ***)
-polyWithHoles |> fill|> plot
-(*** include-it:plotPolyWithHolesFilled ***)
 
 (**
 Create a MultiPoint
@@ -234,8 +224,6 @@ let _,multipolygonWkt = multipolygon.ExportToWkt()
 (*** define-output:plotMultiPloygon ***)
 multipolygon |> plot
 (*** include-it:plotMultiPloygon ***)
-
-multipolygon |> fill |> plot
 
 (**
 Create a GeometryCollection

@@ -62,6 +62,7 @@
     <None Include="plot-geometries.fsx" />
     <None Include="plot-with-xaml.fsx" />
     <None Include="svg-plot.fsx" />
+    <None Include="plot-geometry.fsx" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
