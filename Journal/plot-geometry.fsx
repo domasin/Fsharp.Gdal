@@ -27,7 +27,7 @@ Configuration.Init() |> ignore
 // Define geometries to test the functions
 
 let point = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
-point.AddPoint(200., 200., 0.)
+point.AddPoint(200., 200.,0.)
 
 let line = new OGR.Geometry(OGR.wkbGeometryType.wkbLineString)
 line.AddPoint(50., 50., 0.)
@@ -76,11 +76,11 @@ let coordinates (geom:OGR.Geometry) =
             (p.[0], p.[1])
     ]
 
-let pointPath geom = 
+let pointPath scale geom = 
     let x,y = geom |> coordinates |> List.head 
-    sprintf "M %.2f,%.2f a 4,4 0 1,0 8,0 a 4,4 0 1,0 -8,0" x y
-
-point |> pointPath
+    let x1 = x + (6. / scale)
+    let y1 = y + (6. / scale)
+    sprintf "M %.2f,%.2f %.2f,%.2f %.2f,%.2f %.2f,%.2f %.2f,%.2fz" x y x1 y x1 y1 x y1 x y
 
 let linePath geom = 
     geom
@@ -150,17 +150,12 @@ let geometryShape geom =
     | OGR.wkbGeometryType.wkbGeometryCollection
     | OGR.wkbGeometryType.wkbGeometryCollection25D  -> GeometryCollection
 
-let shapePath geom = 
+let shapePath scale geom = 
     let geomType = geom |> geometryShape
     match geomType with
-    | Point -> geom |> pointPath
+    | Point -> geom |> pointPath scale
     | Line -> geom |> linePath
     | Polygon -> geom |> polygonPath
-
-point |> shapePath
-line |> shapePath
-poly |> shapePath
-polyWithHoles |> shapePath
 
 let getRandomBrush seed  = 
     let brushArray = 
@@ -176,10 +171,11 @@ let geometryToPath scale seed (geom:OGR.Geometry) =
     let geomType = geom |> geometryShape
     let path = new Path()
     
-    
-    let data = geom |> shapePath
+    let data = geom |> shapePath scale
     path.Data <- Media.Geometry.Parse(data)
-    path.StrokeThickness <- 1. / scale
+
+    let thickness = 1. / scale
+    path.StrokeThickness <- thickness
 
     let renderTrasnform = sprintf "%.5f 0 0 %.5f 0 0" scale scale
     path.RenderTransform <- Transform.Parse(renderTrasnform)
@@ -192,7 +188,8 @@ let geometryToPath scale seed (geom:OGR.Geometry) =
 
     printfn "Shape Properties:"
     printfn "Data = %s" data |> ignore
-    printfn "RenderTrasnform = %s" renderTrasnform |> ignore
+    printfn "StrokeThickness = %f" thickness |> ignore
+    printfn "RenderTransform = %s" renderTrasnform |> ignore
     printfn ""
 
     path
@@ -223,8 +220,8 @@ let env (geom:OGR.Geometry) =
 let resize zoom (en:OGR.Envelope) = 
     let dx = en.MaxX - en.MinX
     let dy = en.MaxY - en.MinY
-    let xMargin = if dx = 0. then en.MaxX / zoom / 2. else ((dx / zoom) - dx) / 2.
-    let yMargin = if dy = 0. then en.MaxY / zoom / 2. else ((dy / zoom) - dy) / 2.
+    let xMargin = if dx = 0. then 200. else ((dx / zoom) - dx) / 2.
+    let yMargin = if dy = 0. then 200. else ((dy / zoom) - dy) / 2.
     en.MaxX <- en.MaxX + xMargin
     en.MaxY <- en.MaxY + yMargin
     en.MinX <- en.MinX - xMargin
@@ -287,26 +284,43 @@ let plot (geom:OGR.Geometry) =
     win.Title <- "F# Geometry Plot"
     win.Show()
 
-//point |> plot
-//line |> plot
-//poly |> plot
-//polyWithHoles |> plot
+////point |> plot
+let e = point |> env
+////line |> plot
+////poly |> plot
+////polyWithHoles |> plot
+//
+//let ring2 = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+////ring2.AddPoint(1000., 1000., 0.)
+////ring2.AddPoint(2000., 1000., 0.)
+////ring2.AddPoint(2000., 2000., 0.)
+////ring2.AddPoint(1000., 2000., 0.)
+////ring2.AddPoint(1000., 1000., 0.)
+//
+//ring2.AddPoint(100., 100., 0.)
+//ring2.AddPoint(300., 100., 0.)
+//ring2.AddPoint(200., 200., 0.)
+//ring2.AddPoint(100., 100., 0.)
+//
+//
+//let poly2 = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
+//poly2.AddGeometry(ring2)
+//
+////poly2 |> shapePath
+////poly2 |> plot
 
-let ring2 = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
-//ring2.AddPoint(1000., 1000., 0.)
-//ring2.AddPoint(2000., 1000., 0.)
-//ring2.AddPoint(2000., 2000., 0.)
-//ring2.AddPoint(1000., 2000., 0.)
-//ring2.AddPoint(1000., 1000., 0.)
+let multipoint = new OGR.Geometry(OGR.wkbGeometryType.wkbMultiPoint)
 
-ring2.AddPoint(100., 100., 0.)
-ring2.AddPoint(300., 100., 0.)
-ring2.AddPoint(200., 200., 0.)
-ring2.AddPoint(100., 100., 0.)
+let point1 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+point1.AddPoint(1251243.7361610543, 598078.7958668759, 0.)
+multipoint.AddGeometry(point1)
 
+let point2 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+point2.AddPoint(1240605.8570339603, 601778.9277371694, 0.)
+multipoint.AddGeometry(point2)
 
-let poly2 = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
-poly2.AddGeometry(ring2)
+let point3 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+point3.AddPoint(1250318.7031934808, 606404.0925750365, 0.)
+multipoint.AddGeometry(point3)
 
-//poly2 |> shapePath
-//poly2 |> plot
+multipoint |> plot
