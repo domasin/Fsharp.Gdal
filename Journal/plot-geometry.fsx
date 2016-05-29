@@ -12,9 +12,11 @@
 #r "System.Xaml"
 
 open System
+open System.IO
 open System.Xml
 open System.Windows
 open System.Windows.Media
+open System.Windows.Media.Imaging
 open System.Windows.Markup
 open System.Windows.Shapes
 open System.Windows.Controls
@@ -242,7 +244,18 @@ let scale (canvasSize:float) (envSize:float) =
 
 // RenderTransform = ScaleX 0 0 ScaleY 
 
-let plot (geom:OGR.Geometry) = 
+let save fileName (bmp:RenderTargetBitmap)  = 
+
+    let fileName = __SOURCE_DIRECTORY__ + sprintf "\images\%s.png" fileName
+
+    let enc = new PngBitmapEncoder()
+    let b = BitmapFrame.Create(bmp)
+    enc.Frames.Add(b)
+
+    use stm = File.Create(fileName)
+    enc.Save(stm)
+
+let plot fileName (geom:OGR.Geometry) = 
 
     let env = geom |> env |> resize 1.
     let maxXYSide = env |> maxSize
@@ -282,45 +295,52 @@ let plot (geom:OGR.Geometry) =
     win.Content <- canvas
 
     win.Title <- "F# Geometry Plot"
+
     win.Show()
 
-////point |> plot
-let e = point |> env
-////line |> plot
-////poly |> plot
-////polyWithHoles |> plot
-//
-//let ring2 = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
-////ring2.AddPoint(1000., 1000., 0.)
-////ring2.AddPoint(2000., 1000., 0.)
-////ring2.AddPoint(2000., 2000., 0.)
-////ring2.AddPoint(1000., 2000., 0.)
-////ring2.AddPoint(1000., 1000., 0.)
-//
-//ring2.AddPoint(100., 100., 0.)
-//ring2.AddPoint(300., 100., 0.)
-//ring2.AddPoint(200., 200., 0.)
-//ring2.AddPoint(100., 100., 0.)
-//
-//
-//let poly2 = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
-//poly2.AddGeometry(ring2)
-//
-////poly2 |> shapePath
-////poly2 |> plot
+    let size = new Size(win.Width, win.Height)
+    canvas.Measure(size)
+    let rtb = new RenderTargetBitmap(500, 500, 96., 96., PixelFormats.Default)
+    rtb.Render(canvas)
+    rtb |> save fileName
 
-let multipoint = new OGR.Geometry(OGR.wkbGeometryType.wkbMultiPoint)
-
-let point1 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
-point1.AddPoint(1251243.7361610543, 598078.7958668759, 0.)
-multipoint.AddGeometry(point1)
-
-let point2 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
-point2.AddPoint(1240605.8570339603, 601778.9277371694, 0.)
-multipoint.AddGeometry(point2)
-
-let point3 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
-point3.AddPoint(1250318.7031934808, 606404.0925750365, 0.)
-multipoint.AddGeometry(point3)
-
-multipoint |> plot
+//////point |> plot
+//let e = point |> env
+//////line |> plot
+//////poly |> plot
+//////polyWithHoles |> plot
+////
+////let ring2 = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+//////ring2.AddPoint(1000., 1000., 0.)
+//////ring2.AddPoint(2000., 1000., 0.)
+//////ring2.AddPoint(2000., 2000., 0.)
+//////ring2.AddPoint(1000., 2000., 0.)
+//////ring2.AddPoint(1000., 1000., 0.)
+////
+////ring2.AddPoint(100., 100., 0.)
+////ring2.AddPoint(300., 100., 0.)
+////ring2.AddPoint(200., 200., 0.)
+////ring2.AddPoint(100., 100., 0.)
+////
+////
+////let poly2 = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
+////poly2.AddGeometry(ring2)
+////
+//////poly2 |> shapePath
+//////poly2 |> plot
+//
+//let multipoint = new OGR.Geometry(OGR.wkbGeometryType.wkbMultiPoint)
+//
+//let point1 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+//point1.AddPoint(1251243.7361610543, 598078.7958668759, 0.)
+//multipoint.AddGeometry(point1)
+//
+//let point2 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+//point2.AddPoint(1240605.8570339603, 601778.9277371694, 0.)
+//multipoint.AddGeometry(point2)
+//
+//let point3 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
+//point3.AddPoint(1250318.7031934808, 606404.0925750365, 0.)
+//multipoint.AddGeometry(point3)
+//
+//multipoint |> plot "multipoint"
