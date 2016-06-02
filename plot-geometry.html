@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <!--
+      The Plot Geometry parameters will be replaced with the
+      document title extracted from the <h1> element or
+      file name, if there is no <h1> heading
+    -->
+    <title>Plot Geometry</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="styles/style.css" />
+    <link type="text/css" rel="stylesheet" href="styles/deedle.css" />
+    <script src="styles/tips.js" type="text/javascript"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1.1", { packages: ["corechart", "annotationchart", "calendar", "gauge", "geochart", "map", "sankey", "table", "timeline", "treemap"] })
+    </script>
+    <script language="javascript" type="text/javascript">
+          function init()
+          {
+            try {
+              websocket = new WebSocket("ws://localhost:8088/websocket");
+              websocket.onmessage = function(evt) { location.reload(); };
+            } catch (e) {
+              //silently ignore lack of websockets
+            }
+          }
+          window.addEventListener("load", init, false);
+    </script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="masthead">
+            <ul class="nav nav-pills pull-right">
+                <li><a href="http://fsharp.org/">fsharp.org</a></li>
+                <li><a href="http://fslab.org">fslab.org</a></li>
+                <li><a href="http://github.com/domasin/Fsharp.Gdal">github page</a></li>
+            </ul>
+            <h3 class="muted"><a href="http://domasin.github.io/Fsharp.Gdal/index.html">Fsharp.Gdal</a></h3>
+        </div>
+      <hr />
+	  </div>
+      <div class="row" style="margin-top:30px">
+        <div class="span1"></div>
+		<div class="span1"></div>
+        <div class="span10" id="main">
+          <h1>Plot Geometry</h1>
+<p>This section defines a <code>plot</code> function to give a graphical visualization of GDAL geometries
+in a Xaml Window Page using a Canvas as a Cartesian Plan.</p>
+<p>The <code>coordinates</code> function just extracts a list of tuples
+made of the longitude and latitude of the corrdinates that consistute
+the geometry.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs9', 22)" onmouseover="showTip(event, 'fs9', 22)" class="i">OSGeo</span>
+
+<span class="c">/// Extracts the geometry&#39;s coordinates as a list of tuples made of </span>
+<span class="c">/// longitude and latitude.</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs10', 23)" onmouseover="showTip(event, 'fs10', 23)" class="f">coordinates</span> (<span onmouseout="hideTip(event, 'fs11', 24)" onmouseover="showTip(event, 'fs11', 24)" class="i">geom</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="t">Geometry</span>) <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 27)" onmouseover="showTip(event, 'fs14', 27)" class="i">last</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 28)" onmouseover="showTip(event, 'fs11', 28)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs15', 29)" onmouseover="showTip(event, 'fs15', 29)" class="f">GetPointCount</span>() <span class="o">-</span> <span class="n">1</span>
+    [
+        <span class="k">for</span> <span onmouseout="hideTip(event, 'fs16', 30)" onmouseover="showTip(event, 'fs16', 30)" class="i">i</span> <span class="k">in</span> <span class="n">0..</span><span onmouseout="hideTip(event, 'fs14', 31)" onmouseover="showTip(event, 'fs14', 31)" class="i">last</span> <span class="k">-&gt;</span>
+            <span class="k">let</span> <span onmouseout="hideTip(event, 'fs17', 32)" onmouseover="showTip(event, 'fs17', 32)" class="i">p</span> <span class="o">=</span> [|<span class="n">0.</span>;<span class="n">0.</span>|]
+            <span onmouseout="hideTip(event, 'fs11', 33)" onmouseover="showTip(event, 'fs11', 33)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 34)" onmouseover="showTip(event, 'fs18', 34)" class="f">GetPoint</span>(<span onmouseout="hideTip(event, 'fs16', 35)" onmouseover="showTip(event, 'fs16', 35)" class="i">i</span>,<span onmouseout="hideTip(event, 'fs17', 36)" onmouseover="showTip(event, 'fs17', 36)" class="i">p</span>)
+            (<span onmouseout="hideTip(event, 'fs17', 37)" onmouseover="showTip(event, 'fs17', 37)" class="i">p</span><span class="o">.</span>[<span class="n">0</span>], <span onmouseout="hideTip(event, 'fs17', 38)" onmouseover="showTip(event, 'fs17', 38)" class="i">p</span><span class="o">.</span>[<span class="n">1</span>])
+    ]
+</code></pre></td>
+</tr>
+</table>
+<p>Geometries in the Canvas are rendered as <code>Paths</code> whose <code>Data</code> property follows
+the Standard Vector Graphics pattern.</p>
+<p>We define functions specific for each shapes type (points, line,
+polygons) to return their path data as svg strings.</p>
+<p>Points will be rendered graphically as little squares whose dimension must be choosen
+in a way appropriate to give a sense of a puntual shape.</p>
+<p>Fo this reason the <code>pointPath</code> function takes an <code>OGR.Geometry</code> argument together with
+a <code>scale</code> argument.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">/// Takes a `scale` argument and an OGR.Geometry of point type and returns the svg </span>
+<span class="c">/// reppresentation of a little square sized at the given scale as to give a sense </span>
+<span class="c">/// of a punctual shape.</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs19', 39)" onmouseover="showTip(event, 'fs19', 39)" class="f">pointPath</span> <span onmouseout="hideTip(event, 'fs20', 40)" onmouseover="showTip(event, 'fs20', 40)" class="i">scale</span> <span onmouseout="hideTip(event, 'fs11', 41)" onmouseover="showTip(event, 'fs11', 41)" class="i">geom</span> <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 42)" onmouseover="showTip(event, 'fs21', 42)" class="i">x</span>,<span onmouseout="hideTip(event, 'fs22', 43)" onmouseover="showTip(event, 'fs22', 43)" class="i">y</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 44)" onmouseover="showTip(event, 'fs11', 44)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs10', 45)" onmouseover="showTip(event, 'fs10', 45)" class="f">coordinates</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 46)" onmouseover="showTip(event, 'fs23', 46)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs24', 47)" onmouseover="showTip(event, 'fs24', 47)" class="f">head</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs25', 48)" onmouseover="showTip(event, 'fs25', 48)" class="i">x1</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs21', 49)" onmouseover="showTip(event, 'fs21', 49)" class="i">x</span> <span class="o">-</span> (<span class="n">3.</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 50)" onmouseover="showTip(event, 'fs20', 50)" class="i">scale</span>)
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs26', 51)" onmouseover="showTip(event, 'fs26', 51)" class="i">y1</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 52)" onmouseover="showTip(event, 'fs22', 52)" class="i">y</span> <span class="o">-</span> (<span class="n">3.</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 53)" onmouseover="showTip(event, 'fs20', 53)" class="i">scale</span>)
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs27', 54)" onmouseover="showTip(event, 'fs27', 54)" class="i">x2</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs21', 55)" onmouseover="showTip(event, 'fs21', 55)" class="i">x</span> <span class="o">+</span> (<span class="n">3.</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 56)" onmouseover="showTip(event, 'fs20', 56)" class="i">scale</span>)
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs28', 57)" onmouseover="showTip(event, 'fs28', 57)" class="i">y2</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 58)" onmouseover="showTip(event, 'fs22', 58)" class="i">y</span> <span class="o">+</span> (<span class="n">3.</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 59)" onmouseover="showTip(event, 'fs20', 59)" class="i">scale</span>)
+    <span onmouseout="hideTip(event, 'fs29', 60)" onmouseover="showTip(event, 'fs29', 60)" class="f">sprintf</span> <span class="s">&quot;M </span><span class="pf">%f</span><span class="s">,</span><span class="pf">%f</span><span class="s"> </span><span class="pf">%f</span><span class="s">,</span><span class="pf">%f</span><span class="s"> </span><span class="pf">%f</span><span class="s">,</span><span class="pf">%f</span><span class="s"> </span><span class="pf">%f</span><span class="s">,</span><span class="pf">%f</span><span class="s"> </span><span class="pf">%f</span><span class="s">,</span><span class="pf">%f</span><span class="s">z&quot;</span> <span onmouseout="hideTip(event, 'fs25', 61)" onmouseover="showTip(event, 'fs25', 61)" class="i">x1</span> <span onmouseout="hideTip(event, 'fs26', 62)" onmouseover="showTip(event, 'fs26', 62)" class="i">y1</span> <span onmouseout="hideTip(event, 'fs27', 63)" onmouseover="showTip(event, 'fs27', 63)" class="i">x2</span> <span onmouseout="hideTip(event, 'fs26', 64)" onmouseover="showTip(event, 'fs26', 64)" class="i">y1</span> <span onmouseout="hideTip(event, 'fs27', 65)" onmouseover="showTip(event, 'fs27', 65)" class="i">x2</span> <span onmouseout="hideTip(event, 'fs28', 66)" onmouseover="showTip(event, 'fs28', 66)" class="i">y2</span> <span onmouseout="hideTip(event, 'fs25', 67)" onmouseover="showTip(event, 'fs25', 67)" class="i">x1</span> <span onmouseout="hideTip(event, 'fs28', 68)" onmouseover="showTip(event, 'fs28', 68)" class="i">y2</span> <span onmouseout="hideTip(event, 'fs25', 69)" onmouseover="showTip(event, 'fs25', 69)" class="i">x1</span> <span onmouseout="hideTip(event, 'fs26', 70)" onmouseover="showTip(event, 'fs26', 70)" class="i">y1</span>
+</code></pre></td>
+</tr>
+</table>
+<p>The <code>linePath</code> function takes an <code>OGR.Geometry</code> which should be of linear type for the function
+to work appropriately and returns its svg reppresentation.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">/// Takes an OGR.Geometry of linear type and returns its svg reppresentation as a string.</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs30', 71)" onmouseover="showTip(event, 'fs30', 71)" class="f">linePath</span> <span onmouseout="hideTip(event, 'fs11', 72)" onmouseover="showTip(event, 'fs11', 72)" class="i">geom</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs11', 73)" onmouseover="showTip(event, 'fs11', 73)" class="i">geom</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs10', 74)" onmouseover="showTip(event, 'fs10', 74)" class="f">coordinates</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 75)" onmouseover="showTip(event, 'fs23', 75)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 76)" onmouseover="showTip(event, 'fs31', 76)" class="f">fold</span> 
+        (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs32', 77)" onmouseover="showTip(event, 'fs32', 77)" class="i">acc</span> (<span onmouseout="hideTip(event, 'fs21', 78)" onmouseover="showTip(event, 'fs21', 78)" class="i">x</span>,<span onmouseout="hideTip(event, 'fs22', 79)" onmouseover="showTip(event, 'fs22', 79)" class="i">y</span>) <span class="k">-&gt;</span> 
+            <span class="k">if</span> <span onmouseout="hideTip(event, 'fs32', 80)" onmouseover="showTip(event, 'fs32', 80)" class="i">acc</span> <span class="o">=</span> <span class="s">&quot;&quot;</span> <span class="k">then</span>
+                <span onmouseout="hideTip(event, 'fs32', 81)" onmouseover="showTip(event, 'fs32', 81)" class="i">acc</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs29', 82)" onmouseover="showTip(event, 'fs29', 82)" class="f">sprintf</span> <span class="s">&quot;M </span><span class="pf">%f</span><span class="s">,</span><span class="pf">%f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs21', 83)" onmouseover="showTip(event, 'fs21', 83)" class="i">x</span> <span onmouseout="hideTip(event, 'fs22', 84)" onmouseover="showTip(event, 'fs22', 84)" class="i">y</span>)
+            <span class="k">else</span>
+                <span onmouseout="hideTip(event, 'fs32', 85)" onmouseover="showTip(event, 'fs32', 85)" class="i">acc</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs29', 86)" onmouseover="showTip(event, 'fs29', 86)" class="f">sprintf</span> <span class="s">&quot; L </span><span class="pf">%f</span><span class="s">,</span><span class="pf">%f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs21', 87)" onmouseover="showTip(event, 'fs21', 87)" class="i">x</span> <span onmouseout="hideTip(event, 'fs22', 88)" onmouseover="showTip(event, 'fs22', 88)" class="i">y</span>)
+        ) <span class="s">&quot;&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+<p>The <code>ringPath</code> function takes an <code>OGR.Geometry</code> of ring type and returns its
+svg reppresentation.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">/// Takes an OGR.Geometry of ring type and returns its svg reppresentation as a string.</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs33', 89)" onmouseover="showTip(event, 'fs33', 89)" class="f">ringPath</span> <span onmouseout="hideTip(event, 'fs11', 90)" onmouseover="showTip(event, 'fs11', 90)" class="i">geom</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs11', 91)" onmouseover="showTip(event, 'fs11', 91)" class="i">geom</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs10', 92)" onmouseover="showTip(event, 'fs10', 92)" class="f">coordinates</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 93)" onmouseover="showTip(event, 'fs23', 93)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 94)" onmouseover="showTip(event, 'fs31', 94)" class="f">fold</span> 
+        (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs32', 95)" onmouseover="showTip(event, 'fs32', 95)" class="i">acc</span> (<span onmouseout="hideTip(event, 'fs21', 96)" onmouseover="showTip(event, 'fs21', 96)" class="i">x</span>,<span onmouseout="hideTip(event, 'fs22', 97)" onmouseover="showTip(event, 'fs22', 97)" class="i">y</span>) <span class="k">-&gt;</span> 
+            <span class="k">if</span> <span onmouseout="hideTip(event, 'fs32', 98)" onmouseover="showTip(event, 'fs32', 98)" class="i">acc</span> <span class="o">=</span> <span class="s">&quot;&quot;</span> <span class="k">then</span>
+                <span onmouseout="hideTip(event, 'fs32', 99)" onmouseover="showTip(event, 'fs32', 99)" class="i">acc</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs29', 100)" onmouseover="showTip(event, 'fs29', 100)" class="f">sprintf</span> <span class="s">&quot;M </span><span class="pf">%f</span><span class="s">,</span><span class="pf">%f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs21', 101)" onmouseover="showTip(event, 'fs21', 101)" class="i">x</span> <span onmouseout="hideTip(event, 'fs22', 102)" onmouseover="showTip(event, 'fs22', 102)" class="i">y</span>)
+            <span class="k">else</span>
+                <span onmouseout="hideTip(event, 'fs32', 103)" onmouseover="showTip(event, 'fs32', 103)" class="i">acc</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs29', 104)" onmouseover="showTip(event, 'fs29', 104)" class="f">sprintf</span> <span class="s">&quot; </span><span class="pf">%f</span><span class="s">,</span><span class="pf">%f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs21', 105)" onmouseover="showTip(event, 'fs21', 105)" class="i">x</span> <span onmouseout="hideTip(event, 'fs22', 106)" onmouseover="showTip(event, 'fs22', 106)" class="i">y</span>)
+        ) <span class="s">&quot;&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+<p>An OGR Polygon is a complex structure made of one or more rings. The <code>polygonPath</code>
+traverses the polygon structure to find all its rings and then concatenate their
+svg reppresentation in a single string.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">/// Takes an OGR.Geometry of polygon type and returns its svg reppresentation.</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs34', 107)" onmouseover="showTip(event, 'fs34', 107)" class="f">polygonPath</span> (<span onmouseout="hideTip(event, 'fs11', 108)" onmouseover="showTip(event, 'fs11', 108)" class="i">geom</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 109)" onmouseover="showTip(event, 'fs12', 109)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 110)" onmouseover="showTip(event, 'fs13', 110)" class="t">Geometry</span>) <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 111)" onmouseover="showTip(event, 'fs35', 111)" class="i">count</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 112)" onmouseover="showTip(event, 'fs11', 112)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 113)" onmouseover="showTip(event, 'fs36', 113)" class="f">GetGeometryCount</span>()
+    [<span class="k">for</span> <span onmouseout="hideTip(event, 'fs16', 114)" onmouseover="showTip(event, 'fs16', 114)" class="i">i</span> <span class="k">in</span> [<span class="n">0..</span>(<span onmouseout="hideTip(event, 'fs35', 115)" onmouseover="showTip(event, 'fs35', 115)" class="i">count</span><span class="o">-</span><span class="n">1</span>)] <span class="k">-&gt;</span> 
+        (<span onmouseout="hideTip(event, 'fs11', 116)" onmouseover="showTip(event, 'fs11', 116)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs37', 117)" onmouseover="showTip(event, 'fs37', 117)" class="f">GetGeometryRef</span>(<span onmouseout="hideTip(event, 'fs16', 118)" onmouseover="showTip(event, 'fs16', 118)" class="i">i</span>)) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs33', 119)" onmouseover="showTip(event, 'fs33', 119)" class="f">ringPath</span>
+    ]
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 120)" onmouseover="showTip(event, 'fs23', 120)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 121)" onmouseover="showTip(event, 'fs31', 121)" class="f">fold</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs32', 122)" onmouseover="showTip(event, 'fs32', 122)" class="i">acc</span> <span onmouseout="hideTip(event, 'fs38', 123)" onmouseover="showTip(event, 'fs38', 123)" class="i">ringPath</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs38', 124)" onmouseover="showTip(event, 'fs38', 124)" class="i">ringPath</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs32', 125)" onmouseover="showTip(event, 'fs32', 125)" class="i">acc</span>) <span class="s">&quot;&quot;</span>
+</code></pre></td>
+</tr>
+</table>
+<p>OGR includes different geometry types that for our purpose can be rendered
+as the same shape type.</p>
+<p>Below we define 5 classes of shapes and then a function that maps an OGR.Geometry
+to the appropiate shape.</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">  1: </span>
+<span class="l">  2: </span>
+<span class="l">  3: </span>
+<span class="l">  4: </span>
+<span class="l">  5: </span>
+<span class="l">  6: </span>
+<span class="l">  7: </span>
+<span class="l">  8: </span>
+<span class="l">  9: </span>
+<span class="l"> 10: </span>
+<span class="l"> 11: </span>
+<span class="l"> 12: </span>
+<span class="l"> 13: </span>
+<span class="l"> 14: </span>
+<span class="l"> 15: </span>
+<span class="l"> 16: </span>
+<span class="l"> 17: </span>
+<span class="l"> 18: </span>
+<span class="l"> 19: </span>
+<span class="l"> 20: </span>
+<span class="l"> 21: </span>
+<span class="l"> 22: </span>
+<span class="l"> 23: </span>
+<span class="l"> 24: </span>
+<span class="l"> 25: </span>
+<span class="l"> 26: </span>
+<span class="l"> 27: </span>
+<span class="l"> 28: </span>
+<span class="l"> 29: </span>
+<span class="l"> 30: </span>
+<span class="l"> 31: </span>
+<span class="l"> 32: </span>
+<span class="l"> 33: </span>
+<span class="l"> 34: </span>
+<span class="l"> 35: </span>
+<span class="l"> 36: </span>
+<span class="l"> 37: </span>
+<span class="l"> 38: </span>
+<span class="l"> 39: </span>
+<span class="l"> 40: </span>
+<span class="l"> 41: </span>
+<span class="l"> 42: </span>
+<span class="l"> 43: </span>
+<span class="l"> 44: </span>
+<span class="l"> 45: </span>
+<span class="l"> 46: </span>
+<span class="l"> 47: </span>
+<span class="l"> 48: </span>
+<span class="l"> 49: </span>
+<span class="l"> 50: </span>
+<span class="l"> 51: </span>
+<span class="l"> 52: </span>
+<span class="l"> 53: </span>
+<span class="l"> 54: </span>
+<span class="l"> 55: </span>
+<span class="l"> 56: </span>
+<span class="l"> 57: </span>
+<span class="l"> 58: </span>
+<span class="l"> 59: </span>
+<span class="l"> 60: </span>
+<span class="l"> 61: </span>
+<span class="l"> 62: </span>
+<span class="l"> 63: </span>
+<span class="l"> 64: </span>
+<span class="l"> 65: </span>
+<span class="l"> 66: </span>
+<span class="l"> 67: </span>
+<span class="l"> 68: </span>
+<span class="l"> 69: </span>
+<span class="l"> 70: </span>
+<span class="l"> 71: </span>
+<span class="l"> 72: </span>
+<span class="l"> 73: </span>
+<span class="l"> 74: </span>
+<span class="l"> 75: </span>
+<span class="l"> 76: </span>
+<span class="l"> 77: </span>
+<span class="l"> 78: </span>
+<span class="l"> 79: </span>
+<span class="l"> 80: </span>
+<span class="l"> 81: </span>
+<span class="l"> 82: </span>
+<span class="l"> 83: </span>
+<span class="l"> 84: </span>
+<span class="l"> 85: </span>
+<span class="l"> 86: </span>
+<span class="l"> 87: </span>
+<span class="l"> 88: </span>
+<span class="l"> 89: </span>
+<span class="l"> 90: </span>
+<span class="l"> 91: </span>
+<span class="l"> 92: </span>
+<span class="l"> 93: </span>
+<span class="l"> 94: </span>
+<span class="l"> 95: </span>
+<span class="l"> 96: </span>
+<span class="l"> 97: </span>
+<span class="l"> 98: </span>
+<span class="l"> 99: </span>
+<span class="l">100: </span>
+<span class="l">101: </span>
+<span class="l">102: </span>
+<span class="l">103: </span>
+<span class="l">104: </span>
+<span class="l">105: </span>
+<span class="l">106: </span>
+<span class="l">107: </span>
+<span class="l">108: </span>
+<span class="l">109: </span>
+<span class="l">110: </span>
+<span class="l">111: </span>
+<span class="l">112: </span>
+<span class="l">113: </span>
+<span class="l">114: </span>
+<span class="l">115: </span>
+<span class="l">116: </span>
+<span class="l">117: </span>
+<span class="l">118: </span>
+<span class="l">119: </span>
+<span class="l">120: </span>
+<span class="l">121: </span>
+<span class="l">122: </span>
+<span class="l">123: </span>
+<span class="l">124: </span>
+<span class="l">125: </span>
+<span class="l">126: </span>
+<span class="l">127: </span>
+<span class="l">128: </span>
+<span class="l">129: </span>
+<span class="l">130: </span>
+<span class="l">131: </span>
+<span class="l">132: </span>
+<span class="l">133: </span>
+<span class="l">134: </span>
+<span class="l">135: </span>
+<span class="l">136: </span>
+<span class="l">137: </span>
+<span class="l">138: </span>
+<span class="l">139: </span>
+<span class="l">140: </span>
+<span class="l">141: </span>
+<span class="l">142: </span>
+<span class="l">143: </span>
+<span class="l">144: </span>
+<span class="l">145: </span>
+<span class="l">146: </span>
+<span class="l">147: </span>
+<span class="l">148: </span>
+<span class="l">149: </span>
+<span class="l">150: </span>
+<span class="l">151: </span>
+<span class="l">152: </span>
+<span class="l">153: </span>
+<span class="l">154: </span>
+<span class="l">155: </span>
+<span class="l">156: </span>
+<span class="l">157: </span>
+<span class="l">158: </span>
+<span class="l">159: </span>
+<span class="l">160: </span>
+<span class="l">161: </span>
+<span class="l">162: </span>
+<span class="l">163: </span>
+<span class="l">164: </span>
+<span class="l">165: </span>
+<span class="l">166: </span>
+<span class="l">167: </span>
+<span class="l">168: </span>
+<span class="l">169: </span>
+<span class="l">170: </span>
+<span class="l">171: </span>
+<span class="l">172: </span>
+<span class="l">173: </span>
+<span class="l">174: </span>
+<span class="l">175: </span>
+<span class="l">176: </span>
+<span class="l">177: </span>
+<span class="l">178: </span>
+<span class="l">179: </span>
+<span class="l">180: </span>
+<span class="l">181: </span>
+<span class="l">182: </span>
+<span class="l">183: </span>
+<span class="l">184: </span>
+<span class="l">185: </span>
+<span class="l">186: </span>
+<span class="l">187: </span>
+<span class="l">188: </span>
+<span class="l">189: </span>
+<span class="l">190: </span>
+<span class="l">191: </span>
+<span class="l">192: </span>
+<span class="l">193: </span>
+<span class="l">194: </span>
+<span class="l">195: </span>
+<span class="l">196: </span>
+<span class="l">197: </span>
+<span class="l">198: </span>
+<span class="l">199: </span>
+<span class="l">200: </span>
+<span class="l">201: </span>
+<span class="l">202: </span>
+<span class="l">203: </span>
+<span class="l">204: </span>
+<span class="l">205: </span>
+<span class="l">206: </span>
+<span class="l">207: </span>
+<span class="l">208: </span>
+<span class="l">209: </span>
+<span class="l">210: </span>
+<span class="l">211: </span>
+<span class="l">212: </span>
+<span class="l">213: </span>
+<span class="l">214: </span>
+<span class="l">215: </span>
+<span class="l">216: </span>
+<span class="l">217: </span>
+<span class="l">218: </span>
+<span class="l">219: </span>
+<span class="l">220: </span>
+<span class="l">221: </span>
+<span class="l">222: </span>
+<span class="l">223: </span>
+<span class="l">224: </span>
+<span class="l">225: </span>
+<span class="l">226: </span>
+<span class="l">227: </span>
+<span class="l">228: </span>
+<span class="l">229: </span>
+<span class="l">230: </span>
+<span class="l">231: </span>
+<span class="l">232: </span>
+<span class="l">233: </span>
+<span class="l">234: </span>
+<span class="l">235: </span>
+<span class="l">236: </span>
+<span class="l">237: </span>
+<span class="l">238: </span>
+<span class="l">239: </span>
+<span class="l">240: </span>
+<span class="l">241: </span>
+<span class="l">242: </span>
+<span class="l">243: </span>
+<span class="l">244: </span>
+<span class="l">245: </span>
+<span class="l">246: </span>
+<span class="l">247: </span>
+<span class="l">248: </span>
+<span class="l">249: </span>
+<span class="l">250: </span>
+<span class="l">251: </span>
+<span class="l">252: </span>
+<span class="l">253: </span>
+<span class="l">254: </span>
+<span class="l">255: </span>
+<span class="l">256: </span>
+<span class="l">257: </span>
+<span class="l">258: </span>
+<span class="l">259: </span>
+<span class="l">260: </span>
+<span class="l">261: </span>
+<span class="l">262: </span>
+<span class="l">263: </span>
+<span class="l">264: </span>
+<span class="l">265: </span>
+<span class="l">266: </span>
+<span class="l">267: </span>
+<span class="l">268: </span>
+<span class="l">269: </span>
+<span class="l">270: </span>
+<span class="l">271: </span>
+<span class="l">272: </span>
+<span class="l">273: </span>
+<span class="l">274: </span>
+<span class="l">275: </span>
+<span class="l">276: </span>
+<span class="l">277: </span>
+<span class="l">278: </span>
+<span class="l">279: </span>
+<span class="l">280: </span>
+<span class="l">281: </span>
+<span class="l">282: </span>
+<span class="l">283: </span>
+<span class="l">284: </span>
+<span class="l">285: </span>
+<span class="l">286: </span>
+<span class="l">287: </span>
+<span class="l">288: </span>
+<span class="l">289: </span>
+<span class="l">290: </span>
+<span class="l">291: </span>
+<span class="l">292: </span>
+<span class="l">293: </span>
+<span class="l">294: </span>
+<span class="l">295: </span>
+<span class="l">296: </span>
+<span class="l">297: </span>
+<span class="l">298: </span>
+<span class="l">299: </span>
+<span class="l">300: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">/// Classes of shapes reppresenting OGR.Geometries</span>
+<span class="k">type</span> <span onmouseout="hideTip(event, 'fs39', 126)" onmouseover="showTip(event, 'fs39', 126)" class="t">Shape</span> <span class="o">=</span> 
+    | <span onmouseout="hideTip(event, 'fs40', 127)" onmouseover="showTip(event, 'fs40', 127)" class="p">Point</span>
+    | <span onmouseout="hideTip(event, 'fs41', 128)" onmouseover="showTip(event, 'fs41', 128)" class="p">Line</span>
+    | <span onmouseout="hideTip(event, 'fs42', 129)" onmouseover="showTip(event, 'fs42', 129)" class="p">Ring</span>
+    | <span onmouseout="hideTip(event, 'fs43', 130)" onmouseover="showTip(event, 'fs43', 130)" class="p">Polygon</span>
+    | <span onmouseout="hideTip(event, 'fs44', 131)" onmouseover="showTip(event, 'fs44', 131)" class="p">GeometryCollection</span>
+
+<span class="c">/// Just an utility function to more easily get the OGR.Geometry type</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs45', 132)" onmouseover="showTip(event, 'fs45', 132)" class="f">geomType</span> (<span onmouseout="hideTip(event, 'fs11', 133)" onmouseover="showTip(event, 'fs11', 133)" class="i">geom</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 134)" onmouseover="showTip(event, 'fs12', 134)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 135)" onmouseover="showTip(event, 'fs13', 135)" class="t">Geometry</span>) <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs11', 136)" onmouseover="showTip(event, 'fs11', 136)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs46', 137)" onmouseover="showTip(event, 'fs46', 137)" class="f">GetGeometryType</span>()
+    
+<span class="c">/// Maps an OGR.Geometry to the appropriate shape</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs47', 138)" onmouseover="showTip(event, 'fs47', 138)" class="f">geometryShape</span> <span onmouseout="hideTip(event, 'fs11', 139)" onmouseover="showTip(event, 'fs11', 139)" class="i">geom</span> <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs48', 140)" onmouseover="showTip(event, 'fs48', 140)" class="i">geomType</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 141)" onmouseover="showTip(event, 'fs11', 141)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs48', 142)" onmouseover="showTip(event, 'fs48', 142)" class="f">geomType</span>
+    <span class="k">match</span> <span onmouseout="hideTip(event, 'fs48', 143)" onmouseover="showTip(event, 'fs48', 143)" class="i">geomType</span> <span class="k">with</span>
+    | <span onmouseout="hideTip(event, 'fs12', 144)" onmouseover="showTip(event, 'fs12', 144)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 145)" onmouseover="showTip(event, 'fs49', 145)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs50', 146)" onmouseover="showTip(event, 'fs50', 146)" class="i">wkbPoint</span>
+    | <span onmouseout="hideTip(event, 'fs12', 147)" onmouseover="showTip(event, 'fs12', 147)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 148)" onmouseover="showTip(event, 'fs49', 148)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs51', 149)" onmouseover="showTip(event, 'fs51', 149)" class="i">wkbPoint25D</span>               <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs40', 150)" onmouseover="showTip(event, 'fs40', 150)" class="p">Point</span>
+
+    | <span onmouseout="hideTip(event, 'fs12', 151)" onmouseover="showTip(event, 'fs12', 151)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 152)" onmouseover="showTip(event, 'fs49', 152)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs52', 153)" onmouseover="showTip(event, 'fs52', 153)" class="i">wkbLineString</span>
+    | <span onmouseout="hideTip(event, 'fs12', 154)" onmouseover="showTip(event, 'fs12', 154)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 155)" onmouseover="showTip(event, 'fs49', 155)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs53', 156)" onmouseover="showTip(event, 'fs53', 156)" class="i">wkbLineString25D</span>          <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs41', 157)" onmouseover="showTip(event, 'fs41', 157)" class="p">Line</span>
+
+    | <span onmouseout="hideTip(event, 'fs12', 158)" onmouseover="showTip(event, 'fs12', 158)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 159)" onmouseover="showTip(event, 'fs49', 159)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs54', 160)" onmouseover="showTip(event, 'fs54', 160)" class="i">wkbLinearRing</span>             <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs42', 161)" onmouseover="showTip(event, 'fs42', 161)" class="p">Ring</span>
+
+    | <span onmouseout="hideTip(event, 'fs12', 162)" onmouseover="showTip(event, 'fs12', 162)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 163)" onmouseover="showTip(event, 'fs49', 163)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs55', 164)" onmouseover="showTip(event, 'fs55', 164)" class="i">wkbPolygon</span>
+    | <span onmouseout="hideTip(event, 'fs12', 165)" onmouseover="showTip(event, 'fs12', 165)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 166)" onmouseover="showTip(event, 'fs49', 166)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs56', 167)" onmouseover="showTip(event, 'fs56', 167)" class="i">wkbPolygon25D</span>             <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs43', 168)" onmouseover="showTip(event, 'fs43', 168)" class="p">Polygon</span>
+
+    | <span onmouseout="hideTip(event, 'fs12', 169)" onmouseover="showTip(event, 'fs12', 169)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 170)" onmouseover="showTip(event, 'fs49', 170)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs57', 171)" onmouseover="showTip(event, 'fs57', 171)" class="i">wkbMultiPoint</span> 
+    | <span onmouseout="hideTip(event, 'fs12', 172)" onmouseover="showTip(event, 'fs12', 172)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 173)" onmouseover="showTip(event, 'fs49', 173)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs58', 174)" onmouseover="showTip(event, 'fs58', 174)" class="i">wkbMultiPoint25D</span> 
+    | <span onmouseout="hideTip(event, 'fs12', 175)" onmouseover="showTip(event, 'fs12', 175)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 176)" onmouseover="showTip(event, 'fs49', 176)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs59', 177)" onmouseover="showTip(event, 'fs59', 177)" class="i">wkbMultiLineString</span>
+    | <span onmouseout="hideTip(event, 'fs12', 178)" onmouseover="showTip(event, 'fs12', 178)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 179)" onmouseover="showTip(event, 'fs49', 179)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs60', 180)" onmouseover="showTip(event, 'fs60', 180)" class="i">wkbMultiLineString25D</span>
+    | <span onmouseout="hideTip(event, 'fs12', 181)" onmouseover="showTip(event, 'fs12', 181)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 182)" onmouseover="showTip(event, 'fs49', 182)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs61', 183)" onmouseover="showTip(event, 'fs61', 183)" class="i">wkbMultiPolygon</span>
+    | <span onmouseout="hideTip(event, 'fs12', 184)" onmouseover="showTip(event, 'fs12', 184)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 185)" onmouseover="showTip(event, 'fs49', 185)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs62', 186)" onmouseover="showTip(event, 'fs62', 186)" class="i">wkbMultiPolygon25D</span>    
+    | <span onmouseout="hideTip(event, 'fs12', 187)" onmouseover="showTip(event, 'fs12', 187)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 188)" onmouseover="showTip(event, 'fs49', 188)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs63', 189)" onmouseover="showTip(event, 'fs63', 189)" class="i">wkbGeometryCollection</span>
+    | <span onmouseout="hideTip(event, 'fs12', 190)" onmouseover="showTip(event, 'fs12', 190)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 191)" onmouseover="showTip(event, 'fs49', 191)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs64', 192)" onmouseover="showTip(event, 'fs64', 192)" class="i">wkbGeometryCollection25D</span>  <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs44', 193)" onmouseover="showTip(event, 'fs44', 193)" class="p">GeometryCollection</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs65', 194)" onmouseover="showTip(event, 'fs65', 194)" class="f">shapePath</span> <span onmouseout="hideTip(event, 'fs20', 195)" onmouseover="showTip(event, 'fs20', 195)" class="i">scale</span> <span onmouseout="hideTip(event, 'fs11', 196)" onmouseover="showTip(event, 'fs11', 196)" class="i">geom</span> <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs66', 197)" onmouseover="showTip(event, 'fs66', 197)" class="i">geomType</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 198)" onmouseover="showTip(event, 'fs11', 198)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs47', 199)" onmouseover="showTip(event, 'fs47', 199)" class="f">geometryShape</span>
+    <span class="k">match</span> <span onmouseout="hideTip(event, 'fs66', 200)" onmouseover="showTip(event, 'fs66', 200)" class="i">geomType</span> <span class="k">with</span>
+    | <span onmouseout="hideTip(event, 'fs40', 201)" onmouseover="showTip(event, 'fs40', 201)" class="p">Point</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 202)" onmouseover="showTip(event, 'fs11', 202)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs19', 203)" onmouseover="showTip(event, 'fs19', 203)" class="f">pointPath</span> <span onmouseout="hideTip(event, 'fs20', 204)" onmouseover="showTip(event, 'fs20', 204)" class="i">scale</span>
+    | <span onmouseout="hideTip(event, 'fs41', 205)" onmouseover="showTip(event, 'fs41', 205)" class="p">Line</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 206)" onmouseover="showTip(event, 'fs11', 206)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs30', 207)" onmouseover="showTip(event, 'fs30', 207)" class="f">linePath</span>
+    | <span onmouseout="hideTip(event, 'fs43', 208)" onmouseover="showTip(event, 'fs43', 208)" class="p">Polygon</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs11', 209)" onmouseover="showTip(event, 'fs11', 209)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs34', 210)" onmouseover="showTip(event, 'fs34', 210)" class="f">polygonPath</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs67', 211)" onmouseover="showTip(event, 'fs67', 211)" class="f">getRandomBrush</span> <span onmouseout="hideTip(event, 'fs68', 212)" onmouseover="showTip(event, 'fs68', 212)" class="i">seed</span>  <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs69', 213)" onmouseover="showTip(event, 'fs69', 213)" class="i">brushArray</span> <span class="o">=</span> 
+        <span onmouseout="hideTip(event, 'fs70', 214)" onmouseover="showTip(event, 'fs70', 214)" class="i">typeof</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs71', 215)" onmouseover="showTip(event, 'fs71', 215)" class="t">Brushes</span><span class="o">&gt;</span><span class="o">.</span><span class="f">GetProperties</span>() 
+        <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs72', 216)" onmouseover="showTip(event, 'fs72', 216)" class="t">Array</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs73', 217)" onmouseover="showTip(event, 'fs73', 217)" class="f">map</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs74', 218)" onmouseover="showTip(event, 'fs74', 218)" class="i">c</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs74', 219)" onmouseover="showTip(event, 'fs74', 219)" class="i">c</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs75', 220)" onmouseover="showTip(event, 'fs75', 220)" class="i">Name</span>)
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs76', 221)" onmouseover="showTip(event, 'fs76', 221)" class="i">randomGen</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs77', 222)" onmouseover="showTip(event, 'fs77', 222)" class="t">Random</span>(<span onmouseout="hideTip(event, 'fs68', 223)" onmouseover="showTip(event, 'fs68', 223)" class="i">seed</span>)
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs78', 224)" onmouseover="showTip(event, 'fs78', 224)" class="i">randomColorName</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs69', 225)" onmouseover="showTip(event, 'fs69', 225)" class="i">brushArray</span><span class="o">.</span>[<span onmouseout="hideTip(event, 'fs76', 226)" onmouseover="showTip(event, 'fs76', 226)" class="i">randomGen</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs79', 227)" onmouseover="showTip(event, 'fs79', 227)" class="f">Next</span>(<span onmouseout="hideTip(event, 'fs69', 228)" onmouseover="showTip(event, 'fs69', 228)" class="i">brushArray</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs80', 229)" onmouseover="showTip(event, 'fs80', 229)" class="i">Length</span>)]
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs81', 230)" onmouseover="showTip(event, 'fs81', 230)" class="i">color</span> <span class="o">=</span> (<span class="k">new</span> <span onmouseout="hideTip(event, 'fs82', 231)" onmouseover="showTip(event, 'fs82', 231)" class="t">BrushConverter</span>())<span class="o">.</span><span class="f">ConvertFromString</span>(<span onmouseout="hideTip(event, 'fs78', 232)" onmouseover="showTip(event, 'fs78', 232)" class="i">randomColorName</span>) <span class="o">:?&gt;</span> <span onmouseout="hideTip(event, 'fs83', 233)" onmouseover="showTip(event, 'fs83', 233)" class="t">SolidColorBrush</span>
+    <span onmouseout="hideTip(event, 'fs81', 234)" onmouseover="showTip(event, 'fs81', 234)" class="i">color</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs84', 235)" onmouseover="showTip(event, 'fs84', 235)" class="f">geometryToPath</span> <span onmouseout="hideTip(event, 'fs20', 236)" onmouseover="showTip(event, 'fs20', 236)" class="i">scale</span> <span onmouseout="hideTip(event, 'fs68', 237)" onmouseover="showTip(event, 'fs68', 237)" class="i">seed</span> (<span onmouseout="hideTip(event, 'fs11', 238)" onmouseover="showTip(event, 'fs11', 238)" class="i">geom</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 239)" onmouseover="showTip(event, 'fs12', 239)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 240)" onmouseover="showTip(event, 'fs13', 240)" class="t">Geometry</span>) <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs66', 241)" onmouseover="showTip(event, 'fs66', 241)" class="i">geomType</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 242)" onmouseover="showTip(event, 'fs11', 242)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs47', 243)" onmouseover="showTip(event, 'fs47', 243)" class="f">geometryShape</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs85', 244)" onmouseover="showTip(event, 'fs85', 244)" class="i">path</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs86', 245)" onmouseover="showTip(event, 'fs86', 245)" class="t">Path</span>()
+    
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs87', 246)" onmouseover="showTip(event, 'fs87', 246)" class="i">data</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 247)" onmouseover="showTip(event, 'fs11', 247)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs65', 248)" onmouseover="showTip(event, 'fs65', 248)" class="f">shapePath</span> <span onmouseout="hideTip(event, 'fs20', 249)" onmouseover="showTip(event, 'fs20', 249)" class="i">scale</span>
+    <span onmouseout="hideTip(event, 'fs85', 250)" onmouseover="showTip(event, 'fs85', 250)" class="i">path</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs88', 251)" onmouseover="showTip(event, 'fs88', 251)" class="i">Data</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs89', 252)" onmouseover="showTip(event, 'fs89', 252)" class="i">Media</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs90', 253)" onmouseover="showTip(event, 'fs90', 253)" class="t">Geometry</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs91', 254)" onmouseover="showTip(event, 'fs91', 254)" class="f">Parse</span>(<span onmouseout="hideTip(event, 'fs87', 255)" onmouseover="showTip(event, 'fs87', 255)" class="i">data</span>)
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs92', 256)" onmouseover="showTip(event, 'fs92', 256)" class="i">thickness</span> <span class="o">=</span> <span class="n">1.</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 257)" onmouseover="showTip(event, 'fs20', 257)" class="i">scale</span>
+    <span onmouseout="hideTip(event, 'fs85', 258)" onmouseover="showTip(event, 'fs85', 258)" class="i">path</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs93', 259)" onmouseover="showTip(event, 'fs93', 259)" class="i">StrokeThickness</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs92', 260)" onmouseover="showTip(event, 'fs92', 260)" class="i">thickness</span>
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs94', 261)" onmouseover="showTip(event, 'fs94', 261)" class="i">renderTrasnform</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs29', 262)" onmouseover="showTip(event, 'fs29', 262)" class="f">sprintf</span> <span class="s">&quot;</span><span class="pf">%.5f</span><span class="s"> 0 0 </span><span class="pf">%.5f</span><span class="s"> 0 0&quot;</span> <span onmouseout="hideTip(event, 'fs20', 263)" onmouseover="showTip(event, 'fs20', 263)" class="i">scale</span> <span onmouseout="hideTip(event, 'fs20', 264)" onmouseover="showTip(event, 'fs20', 264)" class="i">scale</span>
+    <span onmouseout="hideTip(event, 'fs85', 265)" onmouseover="showTip(event, 'fs85', 265)" class="i">path</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs95', 266)" onmouseover="showTip(event, 'fs95', 266)" class="i">RenderTransform</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs96', 267)" onmouseover="showTip(event, 'fs96', 267)" class="t">Transform</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs97', 268)" onmouseover="showTip(event, 'fs97', 268)" class="f">Parse</span>(<span onmouseout="hideTip(event, 'fs94', 269)" onmouseover="showTip(event, 'fs94', 269)" class="i">renderTrasnform</span>)
+
+    <span class="k">match</span> <span onmouseout="hideTip(event, 'fs66', 270)" onmouseover="showTip(event, 'fs66', 270)" class="i">geomType</span> <span class="k">with</span>
+    | <span onmouseout="hideTip(event, 'fs40', 271)" onmouseover="showTip(event, 'fs40', 271)" class="p">Point</span>     <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs85', 272)" onmouseover="showTip(event, 'fs85', 272)" class="i">path</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs98', 273)" onmouseover="showTip(event, 'fs98', 273)" class="i">Fill</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs71', 274)" onmouseover="showTip(event, 'fs71', 274)" class="t">Brushes</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs99', 275)" onmouseover="showTip(event, 'fs99', 275)" class="i">Black</span>
+    | <span onmouseout="hideTip(event, 'fs43', 276)" onmouseover="showTip(event, 'fs43', 276)" class="p">Polygon</span>   <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs85', 277)" onmouseover="showTip(event, 'fs85', 277)" class="i">path</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs98', 278)" onmouseover="showTip(event, 'fs98', 278)" class="i">Fill</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs68', 279)" onmouseover="showTip(event, 'fs68', 279)" class="i">seed</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs67', 280)" onmouseover="showTip(event, 'fs67', 280)" class="f">getRandomBrush</span>
+    | <span onmouseout="hideTip(event, 'fs41', 281)" onmouseover="showTip(event, 'fs41', 281)" class="p">Line</span>      <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs85', 282)" onmouseover="showTip(event, 'fs85', 282)" class="i">path</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs100', 283)" onmouseover="showTip(event, 'fs100', 283)" class="i">Stroke</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs71', 284)" onmouseover="showTip(event, 'fs71', 284)" class="t">Brushes</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs99', 285)" onmouseover="showTip(event, 'fs99', 285)" class="i">Black</span>
+    | _         <span class="k">-&gt;</span> ()
+
+    <span onmouseout="hideTip(event, 'fs101', 286)" onmouseover="showTip(event, 'fs101', 286)" class="f">printfn</span> <span class="s">&quot;Shape Properties:&quot;</span>
+    <span onmouseout="hideTip(event, 'fs101', 287)" onmouseover="showTip(event, 'fs101', 287)" class="f">printfn</span> <span class="s">&quot;Data = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs87', 288)" onmouseover="showTip(event, 'fs87', 288)" class="i">data</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 289)" onmouseover="showTip(event, 'fs102', 289)" class="f">ignore</span>
+    <span onmouseout="hideTip(event, 'fs101', 290)" onmouseover="showTip(event, 'fs101', 290)" class="f">printfn</span> <span class="s">&quot;StrokeThickness = </span><span class="pf">%f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs92', 291)" onmouseover="showTip(event, 'fs92', 291)" class="i">thickness</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 292)" onmouseover="showTip(event, 'fs102', 292)" class="f">ignore</span>
+    <span onmouseout="hideTip(event, 'fs101', 293)" onmouseover="showTip(event, 'fs101', 293)" class="f">printfn</span> <span class="s">&quot;RenderTransform = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs94', 294)" onmouseover="showTip(event, 'fs94', 294)" class="i">renderTrasnform</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 295)" onmouseover="showTip(event, 'fs102', 295)" class="f">ignore</span>
+    <span onmouseout="hideTip(event, 'fs101', 296)" onmouseover="showTip(event, 'fs101', 296)" class="f">printfn</span> <span class="s">&quot;&quot;</span>
+
+    <span onmouseout="hideTip(event, 'fs85', 297)" onmouseover="showTip(event, 'fs85', 297)" class="i">path</span>
+
+<span class="k">let</span> <span class="k">rec</span> <span onmouseout="hideTip(event, 'fs103', 298)" onmouseover="showTip(event, 'fs103', 298)" class="f">geometryPaths</span> <span onmouseout="hideTip(event, 'fs20', 299)" onmouseover="showTip(event, 'fs20', 299)" class="i">scale</span> <span onmouseout="hideTip(event, 'fs68', 300)" onmouseover="showTip(event, 'fs68', 300)" class="i">seed</span> <span onmouseout="hideTip(event, 'fs104', 301)" onmouseover="showTip(event, 'fs104', 301)" class="i">xs</span> (<span onmouseout="hideTip(event, 'fs11', 302)" onmouseover="showTip(event, 'fs11', 302)" class="i">geom</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 303)" onmouseover="showTip(event, 'fs12', 303)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 304)" onmouseover="showTip(event, 'fs13', 304)" class="t">Geometry</span>) <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs66', 305)" onmouseover="showTip(event, 'fs66', 305)" class="i">geomType</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 306)" onmouseover="showTip(event, 'fs11', 306)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs47', 307)" onmouseover="showTip(event, 'fs47', 307)" class="f">geometryShape</span>
+
+    <span class="k">match</span> <span onmouseout="hideTip(event, 'fs66', 308)" onmouseover="showTip(event, 'fs66', 308)" class="i">geomType</span> <span class="k">with</span>
+    | <span onmouseout="hideTip(event, 'fs44', 309)" onmouseover="showTip(event, 'fs44', 309)" class="p">GeometryCollection</span> <span class="k">-&gt;</span> 
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 310)" onmouseover="showTip(event, 'fs35', 310)" class="i">count</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 311)" onmouseover="showTip(event, 'fs11', 311)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 312)" onmouseover="showTip(event, 'fs36', 312)" class="f">GetGeometryCount</span>()
+        <span class="k">match</span> <span onmouseout="hideTip(event, 'fs35', 313)" onmouseover="showTip(event, 'fs35', 313)" class="i">count</span> <span class="k">with</span>
+        | <span onmouseout="hideTip(event, 'fs35', 314)" onmouseover="showTip(event, 'fs35', 314)" class="i">count</span> <span class="k">when</span> <span onmouseout="hideTip(event, 'fs35', 315)" onmouseover="showTip(event, 'fs35', 315)" class="i">count</span> <span class="o">=</span> <span class="n">0</span> <span class="k">-&gt;</span> 
+            <span class="k">let</span> <span onmouseout="hideTip(event, 'fs85', 316)" onmouseover="showTip(event, 'fs85', 316)" class="i">path</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 317)" onmouseover="showTip(event, 'fs11', 317)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs84', 318)" onmouseover="showTip(event, 'fs84', 318)" class="f">geometryToPath</span> <span onmouseout="hideTip(event, 'fs20', 319)" onmouseover="showTip(event, 'fs20', 319)" class="i">scale</span> <span onmouseout="hideTip(event, 'fs68', 320)" onmouseover="showTip(event, 'fs68', 320)" class="i">seed</span>
+            [<span onmouseout="hideTip(event, 'fs85', 321)" onmouseover="showTip(event, 'fs85', 321)" class="i">path</span>]<span class="o">@</span><span onmouseout="hideTip(event, 'fs104', 322)" onmouseover="showTip(event, 'fs104', 322)" class="i">xs</span>
+        | _ <span class="k">-&gt;</span> 
+            [<span class="k">for</span> <span onmouseout="hideTip(event, 'fs16', 323)" onmouseover="showTip(event, 'fs16', 323)" class="i">i</span> <span class="k">in</span> [<span class="n">0..</span>(<span onmouseout="hideTip(event, 'fs35', 324)" onmouseover="showTip(event, 'fs35', 324)" class="i">count</span><span class="o">-</span><span class="n">1</span>)] <span class="k">-&gt;</span> 
+                (<span onmouseout="hideTip(event, 'fs11', 325)" onmouseover="showTip(event, 'fs11', 325)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs37', 326)" onmouseover="showTip(event, 'fs37', 326)" class="f">GetGeometryRef</span>(<span onmouseout="hideTip(event, 'fs16', 327)" onmouseover="showTip(event, 'fs16', 327)" class="i">i</span>)) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs103', 328)" onmouseover="showTip(event, 'fs103', 328)" class="f">geometryPaths</span> <span onmouseout="hideTip(event, 'fs20', 329)" onmouseover="showTip(event, 'fs20', 329)" class="i">scale</span> <span onmouseout="hideTip(event, 'fs16', 330)" onmouseover="showTip(event, 'fs16', 330)" class="i">i</span> <span onmouseout="hideTip(event, 'fs104', 331)" onmouseover="showTip(event, 'fs104', 331)" class="i">xs</span>
+            ] <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 332)" onmouseover="showTip(event, 'fs23', 332)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs105', 333)" onmouseover="showTip(event, 'fs105', 333)" class="f">concat</span>
+    | _ <span class="k">-&gt;</span> <span class="k">let</span> <span onmouseout="hideTip(event, 'fs85', 334)" onmouseover="showTip(event, 'fs85', 334)" class="i">path</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 335)" onmouseover="showTip(event, 'fs11', 335)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs84', 336)" onmouseover="showTip(event, 'fs84', 336)" class="f">geometryToPath</span> <span onmouseout="hideTip(event, 'fs20', 337)" onmouseover="showTip(event, 'fs20', 337)" class="i">scale</span> <span onmouseout="hideTip(event, 'fs68', 338)" onmouseover="showTip(event, 'fs68', 338)" class="i">seed</span>
+           [<span onmouseout="hideTip(event, 'fs85', 339)" onmouseover="showTip(event, 'fs85', 339)" class="i">path</span>]<span class="o">@</span><span onmouseout="hideTip(event, 'fs104', 340)" onmouseover="showTip(event, 'fs104', 340)" class="i">xs</span>
+
+<span class="c">/// Extracs the bounding box of the geometry</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs106', 341)" onmouseover="showTip(event, 'fs106', 341)" class="f">env</span> (<span onmouseout="hideTip(event, 'fs11', 342)" onmouseover="showTip(event, 'fs11', 342)" class="i">geom</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 343)" onmouseover="showTip(event, 'fs12', 343)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 344)" onmouseover="showTip(event, 'fs13', 344)" class="t">Geometry</span>) <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs107', 345)" onmouseover="showTip(event, 'fs107', 345)" class="i">res</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs12', 346)" onmouseover="showTip(event, 'fs12', 346)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs108', 347)" onmouseover="showTip(event, 'fs108', 347)" class="t">Envelope</span>()
+    <span onmouseout="hideTip(event, 'fs11', 348)" onmouseover="showTip(event, 'fs11', 348)" class="i">geom</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs109', 349)" onmouseover="showTip(event, 'fs109', 349)" class="f">GetEnvelope</span>(<span onmouseout="hideTip(event, 'fs107', 350)" onmouseover="showTip(event, 'fs107', 350)" class="i">res</span>)
+    <span onmouseout="hideTip(event, 'fs107', 351)" onmouseover="showTip(event, 'fs107', 351)" class="i">res</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs110', 352)" onmouseover="showTip(event, 'fs110', 352)" class="f">resize</span> <span onmouseout="hideTip(event, 'fs111', 353)" onmouseover="showTip(event, 'fs111', 353)" class="i">zoom</span> (<span onmouseout="hideTip(event, 'fs112', 354)" onmouseover="showTip(event, 'fs112', 354)" class="i">en</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 355)" onmouseover="showTip(event, 'fs12', 355)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs108', 356)" onmouseover="showTip(event, 'fs108', 356)" class="t">Envelope</span>) <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs113', 357)" onmouseover="showTip(event, 'fs113', 357)" class="i">dx</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs112', 358)" onmouseover="showTip(event, 'fs112', 358)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs114', 359)" onmouseover="showTip(event, 'fs114', 359)" class="i">MaxX</span> <span class="o">-</span> <span onmouseout="hideTip(event, 'fs112', 360)" onmouseover="showTip(event, 'fs112', 360)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs115', 361)" onmouseover="showTip(event, 'fs115', 361)" class="i">MinX</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs116', 362)" onmouseover="showTip(event, 'fs116', 362)" class="i">dy</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs112', 363)" onmouseover="showTip(event, 'fs112', 363)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs117', 364)" onmouseover="showTip(event, 'fs117', 364)" class="i">MaxY</span> <span class="o">-</span> <span onmouseout="hideTip(event, 'fs112', 365)" onmouseover="showTip(event, 'fs112', 365)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs118', 366)" onmouseover="showTip(event, 'fs118', 366)" class="i">MinY</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs119', 367)" onmouseover="showTip(event, 'fs119', 367)" class="i">xMargin</span> <span class="o">=</span> <span class="k">if</span> <span onmouseout="hideTip(event, 'fs113', 368)" onmouseover="showTip(event, 'fs113', 368)" class="i">dx</span> <span class="o">=</span> <span class="n">0.</span> <span class="k">then</span> <span class="n">200.</span> <span class="k">else</span> ((<span onmouseout="hideTip(event, 'fs113', 369)" onmouseover="showTip(event, 'fs113', 369)" class="i">dx</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs111', 370)" onmouseover="showTip(event, 'fs111', 370)" class="i">zoom</span>) <span class="o">-</span> <span onmouseout="hideTip(event, 'fs113', 371)" onmouseover="showTip(event, 'fs113', 371)" class="i">dx</span>) <span class="o">/</span> <span class="n">2.</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs120', 372)" onmouseover="showTip(event, 'fs120', 372)" class="i">yMargin</span> <span class="o">=</span> <span class="k">if</span> <span onmouseout="hideTip(event, 'fs116', 373)" onmouseover="showTip(event, 'fs116', 373)" class="i">dy</span> <span class="o">=</span> <span class="n">0.</span> <span class="k">then</span> <span class="n">200.</span> <span class="k">else</span> ((<span onmouseout="hideTip(event, 'fs116', 374)" onmouseover="showTip(event, 'fs116', 374)" class="i">dy</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs111', 375)" onmouseover="showTip(event, 'fs111', 375)" class="i">zoom</span>) <span class="o">-</span> <span onmouseout="hideTip(event, 'fs116', 376)" onmouseover="showTip(event, 'fs116', 376)" class="i">dy</span>) <span class="o">/</span> <span class="n">2.</span>
+    <span onmouseout="hideTip(event, 'fs112', 377)" onmouseover="showTip(event, 'fs112', 377)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs114', 378)" onmouseover="showTip(event, 'fs114', 378)" class="i">MaxX</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs112', 379)" onmouseover="showTip(event, 'fs112', 379)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs114', 380)" onmouseover="showTip(event, 'fs114', 380)" class="i">MaxX</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs119', 381)" onmouseover="showTip(event, 'fs119', 381)" class="i">xMargin</span>
+    <span onmouseout="hideTip(event, 'fs112', 382)" onmouseover="showTip(event, 'fs112', 382)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs117', 383)" onmouseover="showTip(event, 'fs117', 383)" class="i">MaxY</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs112', 384)" onmouseover="showTip(event, 'fs112', 384)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs117', 385)" onmouseover="showTip(event, 'fs117', 385)" class="i">MaxY</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs120', 386)" onmouseover="showTip(event, 'fs120', 386)" class="i">yMargin</span>
+    <span onmouseout="hideTip(event, 'fs112', 387)" onmouseover="showTip(event, 'fs112', 387)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs115', 388)" onmouseover="showTip(event, 'fs115', 388)" class="i">MinX</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs112', 389)" onmouseover="showTip(event, 'fs112', 389)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs115', 390)" onmouseover="showTip(event, 'fs115', 390)" class="i">MinX</span> <span class="o">-</span> <span onmouseout="hideTip(event, 'fs119', 391)" onmouseover="showTip(event, 'fs119', 391)" class="i">xMargin</span>
+    <span onmouseout="hideTip(event, 'fs112', 392)" onmouseover="showTip(event, 'fs112', 392)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs118', 393)" onmouseover="showTip(event, 'fs118', 393)" class="i">MinY</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs112', 394)" onmouseover="showTip(event, 'fs112', 394)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs118', 395)" onmouseover="showTip(event, 'fs118', 395)" class="i">MinY</span> <span class="o">-</span> <span onmouseout="hideTip(event, 'fs120', 396)" onmouseover="showTip(event, 'fs120', 396)" class="i">yMargin</span>
+    <span onmouseout="hideTip(event, 'fs112', 397)" onmouseover="showTip(event, 'fs112', 397)" class="i">en</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs121', 398)" onmouseover="showTip(event, 'fs121', 398)" class="f">sizeX</span> (<span onmouseout="hideTip(event, 'fs112', 399)" onmouseover="showTip(event, 'fs112', 399)" class="i">en</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 400)" onmouseover="showTip(event, 'fs12', 400)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs108', 401)" onmouseover="showTip(event, 'fs108', 401)" class="t">Envelope</span>) <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs112', 402)" onmouseover="showTip(event, 'fs112', 402)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs114', 403)" onmouseover="showTip(event, 'fs114', 403)" class="i">MaxX</span> <span class="o">-</span> <span onmouseout="hideTip(event, 'fs112', 404)" onmouseover="showTip(event, 'fs112', 404)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs115', 405)" onmouseover="showTip(event, 'fs115', 405)" class="i">MinX</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs122', 406)" onmouseover="showTip(event, 'fs122', 406)" class="f">sizeY</span> (<span onmouseout="hideTip(event, 'fs112', 407)" onmouseover="showTip(event, 'fs112', 407)" class="i">en</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 408)" onmouseover="showTip(event, 'fs12', 408)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs108', 409)" onmouseover="showTip(event, 'fs108', 409)" class="t">Envelope</span>) <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs112', 410)" onmouseover="showTip(event, 'fs112', 410)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs117', 411)" onmouseover="showTip(event, 'fs117', 411)" class="i">MaxY</span> <span class="o">-</span> <span onmouseout="hideTip(event, 'fs112', 412)" onmouseover="showTip(event, 'fs112', 412)" class="i">en</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs118', 413)" onmouseover="showTip(event, 'fs118', 413)" class="i">MinY</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs123', 414)" onmouseover="showTip(event, 'fs123', 414)" class="f">maxSize</span> <span onmouseout="hideTip(event, 'fs124', 415)" onmouseover="showTip(event, 'fs124', 415)" class="i">env</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs125', 416)" onmouseover="showTip(event, 'fs125', 416)" class="f">max</span> (<span onmouseout="hideTip(event, 'fs124', 417)" onmouseover="showTip(event, 'fs124', 417)" class="i">env</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs121', 418)" onmouseover="showTip(event, 'fs121', 418)" class="f">sizeX</span>) (<span onmouseout="hideTip(event, 'fs124', 419)" onmouseover="showTip(event, 'fs124', 419)" class="i">env</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs122', 420)" onmouseover="showTip(event, 'fs122', 420)" class="f">sizeY</span>)
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs126', 421)" onmouseover="showTip(event, 'fs126', 421)" class="f">scale</span> (<span onmouseout="hideTip(event, 'fs127', 422)" onmouseover="showTip(event, 'fs127', 422)" class="i">canvasSize</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs128', 423)" onmouseover="showTip(event, 'fs128', 423)" class="t">float</span>) (<span onmouseout="hideTip(event, 'fs129', 424)" onmouseover="showTip(event, 'fs129', 424)" class="i">envSize</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs128', 425)" onmouseover="showTip(event, 'fs128', 425)" class="t">float</span>) <span class="o">=</span> 
+     <span onmouseout="hideTip(event, 'fs127', 426)" onmouseover="showTip(event, 'fs127', 426)" class="i">canvasSize</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs129', 427)" onmouseover="showTip(event, 'fs129', 427)" class="i">envSize</span>
+
+<span class="c">// RenderTransform = ScaleX 0 0 ScaleY </span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs130', 428)" onmouseover="showTip(event, 'fs130', 428)" class="f">save</span> <span onmouseout="hideTip(event, 'fs131', 429)" onmouseover="showTip(event, 'fs131', 429)" class="i">fileName</span> (<span onmouseout="hideTip(event, 'fs132', 430)" onmouseover="showTip(event, 'fs132', 430)" class="i">bmp</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs133', 431)" onmouseover="showTip(event, 'fs133', 431)" class="t">RenderTargetBitmap</span>)  <span class="o">=</span> 
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs131', 432)" onmouseover="showTip(event, 'fs131', 432)" class="i">fileName</span> <span class="o">=</span> <span class="k">__SOURCE_DIRECTORY__</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs29', 433)" onmouseover="showTip(event, 'fs29', 433)" class="f">sprintf</span> <span class="s">&quot;\output\img\</span><span class="pf">%s</span><span class="s">.png&quot;</span> <span onmouseout="hideTip(event, 'fs131', 434)" onmouseover="showTip(event, 'fs131', 434)" class="i">fileName</span>
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs134', 435)" onmouseover="showTip(event, 'fs134', 435)" class="i">enc</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs135', 436)" onmouseover="showTip(event, 'fs135', 436)" class="t">PngBitmapEncoder</span>()
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs136', 437)" onmouseover="showTip(event, 'fs136', 437)" class="i">b</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs137', 438)" onmouseover="showTip(event, 'fs137', 438)" class="t">BitmapFrame</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs138', 439)" onmouseover="showTip(event, 'fs138', 439)" class="f">Create</span>(<span onmouseout="hideTip(event, 'fs132', 440)" onmouseover="showTip(event, 'fs132', 440)" class="i">bmp</span>)
+    <span onmouseout="hideTip(event, 'fs134', 441)" onmouseover="showTip(event, 'fs134', 441)" class="i">enc</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs139', 442)" onmouseover="showTip(event, 'fs139', 442)" class="i">Frames</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs140', 443)" onmouseover="showTip(event, 'fs140', 443)" class="f">Add</span>(<span onmouseout="hideTip(event, 'fs136', 444)" onmouseover="showTip(event, 'fs136', 444)" class="i">b</span>)
+
+    <span class="k">use</span> <span onmouseout="hideTip(event, 'fs141', 445)" onmouseover="showTip(event, 'fs141', 445)" class="i">stm</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs142', 446)" onmouseover="showTip(event, 'fs142', 446)" class="t">File</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs143', 447)" onmouseover="showTip(event, 'fs143', 447)" class="f">Create</span>(<span onmouseout="hideTip(event, 'fs131', 448)" onmouseover="showTip(event, 'fs131', 448)" class="i">fileName</span>)
+    <span onmouseout="hideTip(event, 'fs134', 449)" onmouseover="showTip(event, 'fs134', 449)" class="i">enc</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs144', 450)" onmouseover="showTip(event, 'fs144', 450)" class="f">Save</span>(<span onmouseout="hideTip(event, 'fs141', 451)" onmouseover="showTip(event, 'fs141', 451)" class="i">stm</span>)
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs145', 452)" onmouseover="showTip(event, 'fs145', 452)" class="f">steps</span> <span onmouseout="hideTip(event, 'fs21', 453)" onmouseover="showTip(event, 'fs21', 453)" class="i">x</span> <span onmouseout="hideTip(event, 'fs22', 454)" onmouseover="showTip(event, 'fs22', 454)" class="i">y</span> <span onmouseout="hideTip(event, 'fs146', 455)" onmouseover="showTip(event, 'fs146', 455)" class="i">text</span> <span onmouseout="hideTip(event, 'fs147', 456)" onmouseover="showTip(event, 'fs147', 456)" class="i">color</span> <span onmouseout="hideTip(event, 'fs148', 457)" onmouseover="showTip(event, 'fs148', 457)" class="i">renderTransform</span> (<span onmouseout="hideTip(event, 'fs149', 458)" onmouseover="showTip(event, 'fs149', 458)" class="i">canvas</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs150', 459)" onmouseover="showTip(event, 'fs150', 459)" class="t">Canvas</span>) <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs101', 460)" onmouseover="showTip(event, 'fs101', 460)" class="f">printfn</span> <span class="s">&quot;x = </span><span class="pf">%f</span><span class="s"> y = </span><span class="pf">%f</span><span class="s"> renderTransform = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs21', 461)" onmouseover="showTip(event, 'fs21', 461)" class="i">x</span> <span onmouseout="hideTip(event, 'fs22', 462)" onmouseover="showTip(event, 'fs22', 462)" class="i">y</span> <span onmouseout="hideTip(event, 'fs148', 463)" onmouseover="showTip(event, 'fs148', 463)" class="i">renderTransform</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs151', 464)" onmouseover="showTip(event, 'fs151', 464)" class="i">textBlock</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs152', 465)" onmouseover="showTip(event, 'fs152', 465)" class="t">TextBlock</span>()
+    <span onmouseout="hideTip(event, 'fs151', 466)" onmouseover="showTip(event, 'fs151', 466)" class="i">textBlock</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs153', 467)" onmouseover="showTip(event, 'fs153', 467)" class="i">Text</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs146', 468)" onmouseover="showTip(event, 'fs146', 468)" class="i">text</span>
+    <span onmouseout="hideTip(event, 'fs151', 469)" onmouseover="showTip(event, 'fs151', 469)" class="i">textBlock</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs154', 470)" onmouseover="showTip(event, 'fs154', 470)" class="i">Foreground</span> <span class="o">&lt;-</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs83', 471)" onmouseover="showTip(event, 'fs83', 471)" class="t">SolidColorBrush</span>(<span onmouseout="hideTip(event, 'fs147', 472)" onmouseover="showTip(event, 'fs147', 472)" class="i">color</span>)
+    <span onmouseout="hideTip(event, 'fs150', 473)" onmouseover="showTip(event, 'fs150', 473)" class="t">Canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs155', 474)" onmouseover="showTip(event, 'fs155', 474)" class="f">SetLeft</span>(<span onmouseout="hideTip(event, 'fs151', 475)" onmouseover="showTip(event, 'fs151', 475)" class="i">textBlock</span>, <span onmouseout="hideTip(event, 'fs21', 476)" onmouseover="showTip(event, 'fs21', 476)" class="i">x</span>)
+    <span onmouseout="hideTip(event, 'fs150', 477)" onmouseover="showTip(event, 'fs150', 477)" class="t">Canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs156', 478)" onmouseover="showTip(event, 'fs156', 478)" class="f">SetTop</span>(<span onmouseout="hideTip(event, 'fs151', 479)" onmouseover="showTip(event, 'fs151', 479)" class="i">textBlock</span>, <span onmouseout="hideTip(event, 'fs22', 480)" onmouseover="showTip(event, 'fs22', 480)" class="i">y</span>)
+    <span onmouseout="hideTip(event, 'fs151', 481)" onmouseover="showTip(event, 'fs151', 481)" class="i">textBlock</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs95', 482)" onmouseover="showTip(event, 'fs95', 482)" class="i">RenderTransform</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs96', 483)" onmouseover="showTip(event, 'fs96', 483)" class="t">Transform</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs97', 484)" onmouseover="showTip(event, 'fs97', 484)" class="f">Parse</span>(<span onmouseout="hideTip(event, 'fs148', 485)" onmouseover="showTip(event, 'fs148', 485)" class="i">renderTransform</span>)
+    <span onmouseout="hideTip(event, 'fs149', 486)" onmouseover="showTip(event, 'fs149', 486)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs157', 487)" onmouseover="showTip(event, 'fs157', 487)" class="i">Children</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs158', 488)" onmouseover="showTip(event, 'fs158', 488)" class="f">Add</span>(<span onmouseout="hideTip(event, 'fs151', 489)" onmouseover="showTip(event, 'fs151', 489)" class="i">textBlock</span>)
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs159', 490)" onmouseover="showTip(event, 'fs159', 490)" class="f">axisXY</span> <span onmouseout="hideTip(event, 'fs20', 491)" onmouseover="showTip(event, 'fs20', 491)" class="i">scale</span> (<span onmouseout="hideTip(event, 'fs124', 492)" onmouseover="showTip(event, 'fs124', 492)" class="i">env</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 493)" onmouseover="showTip(event, 'fs12', 493)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs108', 494)" onmouseover="showTip(event, 'fs108', 494)" class="t">Envelope</span>) <span onmouseout="hideTip(event, 'fs148', 495)" onmouseover="showTip(event, 'fs148', 495)" class="i">renderTransform</span> (<span onmouseout="hideTip(event, 'fs149', 496)" onmouseover="showTip(event, 'fs149', 496)" class="i">canvas</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs150', 497)" onmouseover="showTip(event, 'fs150', 497)" class="t">Canvas</span>) <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs21', 498)" onmouseover="showTip(event, 'fs21', 498)" class="i">x</span>,<span onmouseout="hideTip(event, 'fs22', 499)" onmouseover="showTip(event, 'fs22', 499)" class="i">y</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs124', 500)" onmouseover="showTip(event, 'fs124', 500)" class="i">env</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs115', 501)" onmouseover="showTip(event, 'fs115', 501)" class="i">MinX</span>, <span onmouseout="hideTip(event, 'fs124', 502)" onmouseover="showTip(event, 'fs124', 502)" class="i">env</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs118', 503)" onmouseover="showTip(event, 'fs118', 503)" class="i">MinY</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs25', 504)" onmouseover="showTip(event, 'fs25', 504)" class="i">x1</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs21', 505)" onmouseover="showTip(event, 'fs21', 505)" class="i">x</span> <span class="o">+</span> (<span class="n">400.</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 506)" onmouseover="showTip(event, 'fs20', 506)" class="i">scale</span>)
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs26', 507)" onmouseover="showTip(event, 'fs26', 507)" class="i">y1</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 508)" onmouseover="showTip(event, 'fs22', 508)" class="i">y</span> <span class="o">+</span> (<span class="n">400.</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 509)" onmouseover="showTip(event, 'fs20', 509)" class="i">scale</span>)
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs160', 510)" onmouseover="showTip(event, 'fs160', 510)" class="i">axisX</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs12', 511)" onmouseover="showTip(event, 'fs12', 511)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 512)" onmouseover="showTip(event, 'fs13', 512)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs12', 513)" onmouseover="showTip(event, 'fs12', 513)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 514)" onmouseover="showTip(event, 'fs49', 514)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs52', 515)" onmouseover="showTip(event, 'fs52', 515)" class="i">wkbLineString</span>)
+    <span onmouseout="hideTip(event, 'fs160', 516)" onmouseover="showTip(event, 'fs160', 516)" class="i">axisX</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs161', 517)" onmouseover="showTip(event, 'fs161', 517)" class="f">AddPoint</span>(<span onmouseout="hideTip(event, 'fs21', 518)" onmouseover="showTip(event, 'fs21', 518)" class="i">x</span>,  <span onmouseout="hideTip(event, 'fs22', 519)" onmouseover="showTip(event, 'fs22', 519)" class="i">y</span>,  <span class="n">0.</span>)
+    <span onmouseout="hideTip(event, 'fs160', 520)" onmouseover="showTip(event, 'fs160', 520)" class="i">axisX</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs161', 521)" onmouseover="showTip(event, 'fs161', 521)" class="f">AddPoint</span>(<span onmouseout="hideTip(event, 'fs25', 522)" onmouseover="showTip(event, 'fs25', 522)" class="i">x1</span>, <span onmouseout="hideTip(event, 'fs22', 523)" onmouseover="showTip(event, 'fs22', 523)" class="i">y</span>,  <span class="n">0.</span>)
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs162', 524)" onmouseover="showTip(event, 'fs162', 524)" class="i">axisY</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs12', 525)" onmouseover="showTip(event, 'fs12', 525)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 526)" onmouseover="showTip(event, 'fs13', 526)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs12', 527)" onmouseover="showTip(event, 'fs12', 527)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 528)" onmouseover="showTip(event, 'fs49', 528)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs52', 529)" onmouseover="showTip(event, 'fs52', 529)" class="i">wkbLineString</span>)
+    <span onmouseout="hideTip(event, 'fs162', 530)" onmouseover="showTip(event, 'fs162', 530)" class="i">axisY</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs161', 531)" onmouseover="showTip(event, 'fs161', 531)" class="f">AddPoint</span>(<span onmouseout="hideTip(event, 'fs21', 532)" onmouseover="showTip(event, 'fs21', 532)" class="i">x</span>, <span onmouseout="hideTip(event, 'fs22', 533)" onmouseover="showTip(event, 'fs22', 533)" class="i">y</span>, <span class="n">0.</span>)
+    <span onmouseout="hideTip(event, 'fs162', 534)" onmouseover="showTip(event, 'fs162', 534)" class="i">axisY</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs161', 535)" onmouseover="showTip(event, 'fs161', 535)" class="f">AddPoint</span>(<span onmouseout="hideTip(event, 'fs21', 536)" onmouseover="showTip(event, 'fs21', 536)" class="i">x</span>,  <span onmouseout="hideTip(event, 'fs26', 537)" onmouseover="showTip(event, 'fs26', 537)" class="i">y1</span>, <span class="n">0.</span>)
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs163', 538)" onmouseover="showTip(event, 'fs163', 538)" class="i">geomcol</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs12', 539)" onmouseover="showTip(event, 'fs12', 539)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 540)" onmouseover="showTip(event, 'fs13', 540)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs12', 541)" onmouseover="showTip(event, 'fs12', 541)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 542)" onmouseover="showTip(event, 'fs49', 542)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs63', 543)" onmouseover="showTip(event, 'fs63', 543)" class="i">wkbGeometryCollection</span>)
+    <span onmouseout="hideTip(event, 'fs163', 544)" onmouseover="showTip(event, 'fs163', 544)" class="i">geomcol</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs164', 545)" onmouseover="showTip(event, 'fs164', 545)" class="f">AddGeometry</span>(<span onmouseout="hideTip(event, 'fs160', 546)" onmouseover="showTip(event, 'fs160', 546)" class="i">axisX</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 547)" onmouseover="showTip(event, 'fs102', 547)" class="f">ignore</span>
+    <span onmouseout="hideTip(event, 'fs163', 548)" onmouseover="showTip(event, 'fs163', 548)" class="i">geomcol</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs164', 549)" onmouseover="showTip(event, 'fs164', 549)" class="f">AddGeometry</span>(<span onmouseout="hideTip(event, 'fs162', 550)" onmouseover="showTip(event, 'fs162', 550)" class="i">axisY</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 551)" onmouseover="showTip(event, 'fs102', 551)" class="f">ignore</span>
+
+    <span class="k">for</span> <span onmouseout="hideTip(event, 'fs165', 552)" onmouseover="showTip(event, 'fs165', 552)" class="i">i</span> <span class="k">in</span> [<span class="n">0.0</span><span class="o">..</span><span class="n">50.0</span><span class="o">..</span><span class="n">400.0</span>] <span class="k">do</span>
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs166', 553)" onmouseover="showTip(event, 'fs166', 553)" class="i">step</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs12', 554)" onmouseover="showTip(event, 'fs12', 554)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 555)" onmouseover="showTip(event, 'fs13', 555)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs12', 556)" onmouseover="showTip(event, 'fs12', 556)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 557)" onmouseover="showTip(event, 'fs49', 557)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs52', 558)" onmouseover="showTip(event, 'fs52', 558)" class="i">wkbLineString</span>)
+        <span onmouseout="hideTip(event, 'fs166', 559)" onmouseover="showTip(event, 'fs166', 559)" class="i">step</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs161', 560)" onmouseover="showTip(event, 'fs161', 560)" class="f">AddPoint</span>(<span onmouseout="hideTip(event, 'fs21', 561)" onmouseover="showTip(event, 'fs21', 561)" class="i">x</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs165', 562)" onmouseover="showTip(event, 'fs165', 562)" class="i">i</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 563)" onmouseover="showTip(event, 'fs20', 563)" class="i">scale</span>),  <span onmouseout="hideTip(event, 'fs22', 564)" onmouseover="showTip(event, 'fs22', 564)" class="i">y</span>,                  <span class="n">0.</span>)
+        <span onmouseout="hideTip(event, 'fs166', 565)" onmouseover="showTip(event, 'fs166', 565)" class="i">step</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs161', 566)" onmouseover="showTip(event, 'fs161', 566)" class="f">AddPoint</span>(<span onmouseout="hideTip(event, 'fs21', 567)" onmouseover="showTip(event, 'fs21', 567)" class="i">x</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs165', 568)" onmouseover="showTip(event, 'fs165', 568)" class="i">i</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 569)" onmouseover="showTip(event, 'fs20', 569)" class="i">scale</span>),  <span onmouseout="hideTip(event, 'fs22', 570)" onmouseover="showTip(event, 'fs22', 570)" class="i">y</span> <span class="o">+</span> (<span class="n">10.</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 571)" onmouseover="showTip(event, 'fs20', 571)" class="i">scale</span>),  <span class="n">0.</span>)
+        <span onmouseout="hideTip(event, 'fs163', 572)" onmouseover="showTip(event, 'fs163', 572)" class="i">geomcol</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs164', 573)" onmouseover="showTip(event, 'fs164', 573)" class="f">AddGeometry</span>(<span onmouseout="hideTip(event, 'fs166', 574)" onmouseover="showTip(event, 'fs166', 574)" class="i">step</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 575)" onmouseover="showTip(event, 'fs102', 575)" class="f">ignore</span>
+
+    <span class="k">for</span> <span onmouseout="hideTip(event, 'fs165', 576)" onmouseover="showTip(event, 'fs165', 576)" class="i">i</span> <span class="k">in</span> [<span class="n">0.0</span><span class="o">..</span><span class="n">50.0</span><span class="o">..</span><span class="n">400.0</span>] <span class="k">do</span>
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs166', 577)" onmouseover="showTip(event, 'fs166', 577)" class="i">step</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs12', 578)" onmouseover="showTip(event, 'fs12', 578)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 579)" onmouseover="showTip(event, 'fs13', 579)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs12', 580)" onmouseover="showTip(event, 'fs12', 580)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 581)" onmouseover="showTip(event, 'fs49', 581)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs52', 582)" onmouseover="showTip(event, 'fs52', 582)" class="i">wkbLineString</span>)
+        <span onmouseout="hideTip(event, 'fs166', 583)" onmouseover="showTip(event, 'fs166', 583)" class="i">step</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs161', 584)" onmouseover="showTip(event, 'fs161', 584)" class="f">AddPoint</span>(<span onmouseout="hideTip(event, 'fs21', 585)" onmouseover="showTip(event, 'fs21', 585)" class="i">x</span>,                    <span onmouseout="hideTip(event, 'fs22', 586)" onmouseover="showTip(event, 'fs22', 586)" class="i">y</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs165', 587)" onmouseover="showTip(event, 'fs165', 587)" class="i">i</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 588)" onmouseover="showTip(event, 'fs20', 588)" class="i">scale</span>),  <span class="n">0.</span>)
+        <span onmouseout="hideTip(event, 'fs166', 589)" onmouseover="showTip(event, 'fs166', 589)" class="i">step</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs161', 590)" onmouseover="showTip(event, 'fs161', 590)" class="f">AddPoint</span>(<span onmouseout="hideTip(event, 'fs21', 591)" onmouseover="showTip(event, 'fs21', 591)" class="i">x</span> <span class="o">+</span> (<span class="n">10.</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 592)" onmouseover="showTip(event, 'fs20', 592)" class="i">scale</span>),    <span onmouseout="hideTip(event, 'fs22', 593)" onmouseover="showTip(event, 'fs22', 593)" class="i">y</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs165', 594)" onmouseover="showTip(event, 'fs165', 594)" class="i">i</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 595)" onmouseover="showTip(event, 'fs20', 595)" class="i">scale</span>),  <span class="n">0.</span>)
+        <span onmouseout="hideTip(event, 'fs163', 596)" onmouseover="showTip(event, 'fs163', 596)" class="i">geomcol</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs164', 597)" onmouseover="showTip(event, 'fs164', 597)" class="f">AddGeometry</span>(<span onmouseout="hideTip(event, 'fs166', 598)" onmouseover="showTip(event, 'fs166', 598)" class="i">step</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 599)" onmouseover="showTip(event, 'fs102', 599)" class="f">ignore</span>
+
+    <span onmouseout="hideTip(event, 'fs101', 600)" onmouseover="showTip(event, 'fs101', 600)" class="f">printfn</span> <span class="s">&quot;scael = </span><span class="pf">%f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs20', 601)" onmouseover="showTip(event, 'fs20', 601)" class="i">scale</span>
+
+    <span class="c">// draw x steps</span>
+    <span class="k">for</span> <span onmouseout="hideTip(event, 'fs165', 602)" onmouseover="showTip(event, 'fs165', 602)" class="i">i</span> <span class="k">in</span> [<span class="n">0.0</span><span class="o">..</span><span class="n">50.0</span><span class="o">..</span><span class="n">400.0</span>] <span class="k">do</span>
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs167', 603)" onmouseover="showTip(event, 'fs167', 603)" class="i">xi</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs165', 604)" onmouseover="showTip(event, 'fs165', 604)" class="i">i</span>
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs168', 605)" onmouseover="showTip(event, 'fs168', 605)" class="i">yi</span> <span class="o">=</span> <span class="k">if</span> <span onmouseout="hideTip(event, 'fs165', 606)" onmouseover="showTip(event, 'fs165', 606)" class="i">i</span> <span class="o">%</span> <span class="n">100.</span> <span class="o">=</span> <span class="n">0.</span> <span class="k">then</span> <span class="n">0.</span> <span class="k">else</span> <span class="o">-</span><span class="n">15.</span>
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs169', 607)" onmouseover="showTip(event, 'fs169', 607)" class="i">xCoord</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs21', 608)" onmouseover="showTip(event, 'fs21', 608)" class="i">x</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs165', 609)" onmouseover="showTip(event, 'fs165', 609)" class="i">i</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 610)" onmouseover="showTip(event, 'fs20', 610)" class="i">scale</span>)
+        <span onmouseout="hideTip(event, 'fs149', 611)" onmouseover="showTip(event, 'fs149', 611)" class="i">canvas</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs145', 612)" onmouseover="showTip(event, 'fs145', 612)" class="f">steps</span> <span onmouseout="hideTip(event, 'fs167', 613)" onmouseover="showTip(event, 'fs167', 613)" class="i">xi</span> <span onmouseout="hideTip(event, 'fs168', 614)" onmouseover="showTip(event, 'fs168', 614)" class="i">yi</span> (<span onmouseout="hideTip(event, 'fs29', 615)" onmouseover="showTip(event, 'fs29', 615)" class="f">sprintf</span> <span class="s">&quot;</span><span class="pf">%.2f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs169', 616)" onmouseover="showTip(event, 'fs169', 616)" class="i">xCoord</span>) <span onmouseout="hideTip(event, 'fs170', 617)" onmouseover="showTip(event, 'fs170', 617)" class="t">Colors</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs171', 618)" onmouseover="showTip(event, 'fs171', 618)" class="i">Black</span> <span onmouseout="hideTip(event, 'fs148', 619)" onmouseover="showTip(event, 'fs148', 619)" class="i">renderTransform</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 620)" onmouseover="showTip(event, 'fs102', 620)" class="f">ignore</span>
+
+    <span class="c">// draw y steps</span>
+    <span class="k">for</span> <span onmouseout="hideTip(event, 'fs165', 621)" onmouseover="showTip(event, 'fs165', 621)" class="i">i</span> <span class="k">in</span> [<span class="n">0.0</span><span class="o">..</span><span class="n">50.0</span><span class="o">..</span><span class="n">400.0</span>] <span class="k">do</span>
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs168', 622)" onmouseover="showTip(event, 'fs168', 622)" class="i">yi</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs165', 623)" onmouseover="showTip(event, 'fs165', 623)" class="i">i</span>
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs167', 624)" onmouseover="showTip(event, 'fs167', 624)" class="i">xi</span> <span class="o">=</span> <span class="o">-</span><span class="n">70.</span>
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs172', 625)" onmouseover="showTip(event, 'fs172', 625)" class="i">yCoord</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 626)" onmouseover="showTip(event, 'fs22', 626)" class="i">y</span> <span class="o">+</span> (<span onmouseout="hideTip(event, 'fs165', 627)" onmouseover="showTip(event, 'fs165', 627)" class="i">i</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs20', 628)" onmouseover="showTip(event, 'fs20', 628)" class="i">scale</span>)
+        <span class="k">if</span> <span onmouseout="hideTip(event, 'fs165', 629)" onmouseover="showTip(event, 'fs165', 629)" class="i">i</span> <span class="o">&gt;</span> <span class="n">0.0</span> <span class="k">then</span>
+            <span onmouseout="hideTip(event, 'fs149', 630)" onmouseover="showTip(event, 'fs149', 630)" class="i">canvas</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs145', 631)" onmouseover="showTip(event, 'fs145', 631)" class="f">steps</span> <span onmouseout="hideTip(event, 'fs167', 632)" onmouseover="showTip(event, 'fs167', 632)" class="i">xi</span> <span onmouseout="hideTip(event, 'fs168', 633)" onmouseover="showTip(event, 'fs168', 633)" class="i">yi</span> (<span onmouseout="hideTip(event, 'fs29', 634)" onmouseover="showTip(event, 'fs29', 634)" class="f">sprintf</span> <span class="s">&quot;</span><span class="pf">%.2f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs172', 635)" onmouseover="showTip(event, 'fs172', 635)" class="i">yCoord</span>) <span onmouseout="hideTip(event, 'fs170', 636)" onmouseover="showTip(event, 'fs170', 636)" class="t">Colors</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs171', 637)" onmouseover="showTip(event, 'fs171', 637)" class="i">Black</span> <span onmouseout="hideTip(event, 'fs148', 638)" onmouseover="showTip(event, 'fs148', 638)" class="i">renderTransform</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 639)" onmouseover="showTip(event, 'fs102', 639)" class="f">ignore</span>
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs173', 640)" onmouseover="showTip(event, 'fs173', 640)" class="i">paths</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs163', 641)" onmouseover="showTip(event, 'fs163', 641)" class="i">geomcol</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs103', 642)" onmouseover="showTip(event, 'fs103', 642)" class="f">geometryPaths</span> <span onmouseout="hideTip(event, 'fs20', 643)" onmouseover="showTip(event, 'fs20', 643)" class="i">scale</span> <span class="n">0</span> []
+    <span class="k">for</span> <span onmouseout="hideTip(event, 'fs85', 644)" onmouseover="showTip(event, 'fs85', 644)" class="i">path</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs173', 645)" onmouseover="showTip(event, 'fs173', 645)" class="i">paths</span> <span class="k">do</span> 
+        <span onmouseout="hideTip(event, 'fs149', 646)" onmouseover="showTip(event, 'fs149', 646)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs157', 647)" onmouseover="showTip(event, 'fs157', 647)" class="i">Children</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs158', 648)" onmouseover="showTip(event, 'fs158', 648)" class="f">Add</span>(<span onmouseout="hideTip(event, 'fs85', 649)" onmouseover="showTip(event, 'fs85', 649)" class="i">path</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 650)" onmouseover="showTip(event, 'fs102', 650)" class="f">ignore</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs174', 651)" onmouseover="showTip(event, 'fs174', 651)" class="f">plot</span> <span onmouseout="hideTip(event, 'fs131', 652)" onmouseover="showTip(event, 'fs131', 652)" class="i">fileName</span> (<span onmouseout="hideTip(event, 'fs11', 653)" onmouseover="showTip(event, 'fs11', 653)" class="i">geom</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 654)" onmouseover="showTip(event, 'fs12', 654)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 655)" onmouseover="showTip(event, 'fs13', 655)" class="t">Geometry</span>) <span class="o">=</span> 
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs124', 656)" onmouseover="showTip(event, 'fs124', 656)" class="i">env</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 657)" onmouseover="showTip(event, 'fs11', 657)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs124', 658)" onmouseover="showTip(event, 'fs124', 658)" class="f">env</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs110', 659)" onmouseover="showTip(event, 'fs110', 659)" class="f">resize</span> <span class="n">0.8</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs175', 660)" onmouseover="showTip(event, 'fs175', 660)" class="i">maxXYSide</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs124', 661)" onmouseover="showTip(event, 'fs124', 661)" class="i">env</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs123', 662)" onmouseover="showTip(event, 'fs123', 662)" class="f">maxSize</span>
+
+    <span onmouseout="hideTip(event, 'fs101', 663)" onmouseover="showTip(event, 'fs101', 663)" class="f">printfn</span> <span class="s">&quot;Geometry Properties:&quot;</span>
+    <span onmouseout="hideTip(event, 'fs101', 664)" onmouseover="showTip(event, 'fs101', 664)" class="f">printfn</span> <span class="s">&quot;Geometry Type: </span><span class="pf">%A</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs11', 665)" onmouseover="showTip(event, 'fs11', 665)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs45', 666)" onmouseover="showTip(event, 'fs45', 666)" class="f">geomType</span>)
+    <span onmouseout="hideTip(event, 'fs101', 667)" onmouseover="showTip(event, 'fs101', 667)" class="f">printfn</span> <span class="s">&quot;Envelope: MinX = </span><span class="pf">%.2f</span><span class="s">, MaxX = </span><span class="pf">%.2f</span><span class="s">, MinY = </span><span class="pf">%.2f</span><span class="s">, MaxY = </span><span class="pf">%.2f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs124', 668)" onmouseover="showTip(event, 'fs124', 668)" class="i">env</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs115', 669)" onmouseover="showTip(event, 'fs115', 669)" class="i">MinX</span> <span onmouseout="hideTip(event, 'fs124', 670)" onmouseover="showTip(event, 'fs124', 670)" class="i">env</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs118', 671)" onmouseover="showTip(event, 'fs118', 671)" class="i">MinY</span> <span onmouseout="hideTip(event, 'fs124', 672)" onmouseover="showTip(event, 'fs124', 672)" class="i">env</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs114', 673)" onmouseover="showTip(event, 'fs114', 673)" class="i">MaxX</span> <span onmouseout="hideTip(event, 'fs124', 674)" onmouseover="showTip(event, 'fs124', 674)" class="i">env</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs117', 675)" onmouseover="showTip(event, 'fs117', 675)" class="i">MaxY</span>
+    <span onmouseout="hideTip(event, 'fs101', 676)" onmouseover="showTip(event, 'fs101', 676)" class="f">printfn</span> <span class="s">&quot;Max Envelope XY size: </span><span class="pf">%.2f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs175', 677)" onmouseover="showTip(event, 'fs175', 677)" class="i">maxXYSide</span>
+    <span onmouseout="hideTip(event, 'fs101', 678)" onmouseover="showTip(event, 'fs101', 678)" class="f">printfn</span> <span class="s">&quot;&quot;</span>
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs149', 679)" onmouseover="showTip(event, 'fs149', 679)" class="i">canvas</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs150', 680)" onmouseover="showTip(event, 'fs150', 680)" class="t">Canvas</span>()
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs127', 681)" onmouseover="showTip(event, 'fs127', 681)" class="i">canvasSize</span> <span class="o">=</span> <span class="n">400.</span>
+    <span onmouseout="hideTip(event, 'fs149', 682)" onmouseover="showTip(event, 'fs149', 682)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs176', 683)" onmouseover="showTip(event, 'fs176', 683)" class="i">Width</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs127', 684)" onmouseover="showTip(event, 'fs127', 684)" class="i">canvasSize</span>
+    <span onmouseout="hideTip(event, 'fs149', 685)" onmouseover="showTip(event, 'fs149', 685)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs177', 686)" onmouseover="showTip(event, 'fs177', 686)" class="i">Height</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs127', 687)" onmouseover="showTip(event, 'fs127', 687)" class="i">canvasSize</span>
+    <span onmouseout="hideTip(event, 'fs149', 688)" onmouseover="showTip(event, 'fs149', 688)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs178', 689)" onmouseover="showTip(event, 'fs178', 689)" class="i">RenderTransformOrigin</span> <span class="o">&lt;-</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs40', 690)" onmouseover="showTip(event, 'fs40', 690)" class="t">Point</span>(<span class="n">0.5</span>,<span class="n">0.5</span>)
+
+    <span onmouseout="hideTip(event, 'fs101', 691)" onmouseover="showTip(event, 'fs101', 691)" class="f">printfn</span> <span class="s">&quot;Canvas Properties:&quot;</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs20', 692)" onmouseover="showTip(event, 'fs20', 692)" class="i">scale</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs127', 693)" onmouseover="showTip(event, 'fs127', 693)" class="i">canvasSize</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs175', 694)" onmouseover="showTip(event, 'fs175', 694)" class="i">maxXYSide</span>
+    <span onmouseout="hideTip(event, 'fs101', 695)" onmouseover="showTip(event, 'fs101', 695)" class="f">printfn</span> <span class="s">&quot;Scale shapes: (canvas size = </span><span class="pf">%.2f</span><span class="s"> / envelope size = </span><span class="pf">%.2f</span><span class="s">) = </span><span class="pf">%.5f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs127', 696)" onmouseover="showTip(event, 'fs127', 696)" class="i">canvasSize</span> <span onmouseout="hideTip(event, 'fs175', 697)" onmouseover="showTip(event, 'fs175', 697)" class="i">maxXYSide</span> <span onmouseout="hideTip(event, 'fs20', 698)" onmouseover="showTip(event, 'fs20', 698)" class="i">scale</span>
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs179', 699)" onmouseover="showTip(event, 'fs179', 699)" class="i">originX</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs124', 700)" onmouseover="showTip(event, 'fs124', 700)" class="i">env</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs115', 701)" onmouseover="showTip(event, 'fs115', 701)" class="i">MinX</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs20', 702)" onmouseover="showTip(event, 'fs20', 702)" class="i">scale</span> <span class="o">*</span> <span class="o">-</span><span class="n">1.</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs180', 703)" onmouseover="showTip(event, 'fs180', 703)" class="i">originY</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs124', 704)" onmouseover="showTip(event, 'fs124', 704)" class="i">env</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs118', 705)" onmouseover="showTip(event, 'fs118', 705)" class="i">MinY</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs20', 706)" onmouseover="showTip(event, 'fs20', 706)" class="i">scale</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs148', 707)" onmouseover="showTip(event, 'fs148', 707)" class="i">renderTransform</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs29', 708)" onmouseover="showTip(event, 'fs29', 708)" class="f">sprintf</span> <span class="s">&quot;1 0 0 -1 </span><span class="pf">%.2f</span><span class="s"> </span><span class="pf">%.2f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs179', 709)" onmouseover="showTip(event, 'fs179', 709)" class="i">originX</span> <span onmouseout="hideTip(event, 'fs180', 710)" onmouseover="showTip(event, 'fs180', 710)" class="i">originY</span>
+    
+    <span onmouseout="hideTip(event, 'fs149', 711)" onmouseover="showTip(event, 'fs149', 711)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs95', 712)" onmouseover="showTip(event, 'fs95', 712)" class="i">RenderTransform</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs96', 713)" onmouseover="showTip(event, 'fs96', 713)" class="t">Transform</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs97', 714)" onmouseover="showTip(event, 'fs97', 714)" class="f">Parse</span>(<span onmouseout="hideTip(event, 'fs148', 715)" onmouseover="showTip(event, 'fs148', 715)" class="i">renderTransform</span>)
+    
+    <span onmouseout="hideTip(event, 'fs101', 716)" onmouseover="showTip(event, 'fs101', 716)" class="f">printfn</span> <span class="s">&quot;RenderTrasnform = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs148', 717)" onmouseover="showTip(event, 'fs148', 717)" class="i">renderTransform</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 718)" onmouseover="showTip(event, 'fs102', 718)" class="f">ignore</span>
+    <span onmouseout="hideTip(event, 'fs101', 719)" onmouseover="showTip(event, 'fs101', 719)" class="f">printfn</span> <span class="s">&quot;&quot;</span>
+    
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs173', 720)" onmouseover="showTip(event, 'fs173', 720)" class="i">paths</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 721)" onmouseover="showTip(event, 'fs11', 721)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs103', 722)" onmouseover="showTip(event, 'fs103', 722)" class="f">geometryPaths</span> <span onmouseout="hideTip(event, 'fs20', 723)" onmouseover="showTip(event, 'fs20', 723)" class="i">scale</span> <span class="n">0</span> []
+    <span class="k">for</span> <span onmouseout="hideTip(event, 'fs85', 724)" onmouseover="showTip(event, 'fs85', 724)" class="i">path</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs173', 725)" onmouseover="showTip(event, 'fs173', 725)" class="i">paths</span> <span class="k">do</span> 
+        <span onmouseout="hideTip(event, 'fs149', 726)" onmouseover="showTip(event, 'fs149', 726)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs157', 727)" onmouseover="showTip(event, 'fs157', 727)" class="i">Children</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs158', 728)" onmouseover="showTip(event, 'fs158', 728)" class="f">Add</span>(<span onmouseout="hideTip(event, 'fs85', 729)" onmouseover="showTip(event, 'fs85', 729)" class="i">path</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 730)" onmouseover="showTip(event, 'fs102', 730)" class="f">ignore</span>
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs181', 731)" onmouseover="showTip(event, 'fs181', 731)" class="i">renderTransformAxisXY</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs29', 732)" onmouseover="showTip(event, 'fs29', 732)" class="f">sprintf</span> <span class="s">&quot;1 0 0 -1 </span><span class="pf">%.2f</span><span class="s"> </span><span class="pf">%.2f</span><span class="s">&quot;</span> <span class="o">-</span><span onmouseout="hideTip(event, 'fs179', 733)" onmouseover="showTip(event, 'fs179', 733)" class="i">originX</span> <span onmouseout="hideTip(event, 'fs180', 734)" onmouseover="showTip(event, 'fs180', 734)" class="i">originY</span>
+    <span onmouseout="hideTip(event, 'fs149', 735)" onmouseover="showTip(event, 'fs149', 735)" class="i">canvas</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs159', 736)" onmouseover="showTip(event, 'fs159', 736)" class="f">axisXY</span> <span onmouseout="hideTip(event, 'fs20', 737)" onmouseover="showTip(event, 'fs20', 737)" class="i">scale</span> <span onmouseout="hideTip(event, 'fs124', 738)" onmouseover="showTip(event, 'fs124', 738)" class="i">env</span> <span onmouseout="hideTip(event, 'fs181', 739)" onmouseover="showTip(event, 'fs181', 739)" class="i">renderTransformAxisXY</span>
+
+<span class="c">//    let winSize = 900.</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs182', 740)" onmouseover="showTip(event, 'fs182', 740)" class="i">win</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs183', 741)" onmouseover="showTip(event, 'fs183', 741)" class="t">Window</span>()
+    <span onmouseout="hideTip(event, 'fs182', 742)" onmouseover="showTip(event, 'fs182', 742)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs176', 743)" onmouseover="showTip(event, 'fs176', 743)" class="i">Width</span> <span class="o">&lt;-</span> <span class="n">600.</span>
+    <span onmouseout="hideTip(event, 'fs182', 744)" onmouseover="showTip(event, 'fs182', 744)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs177', 745)" onmouseover="showTip(event, 'fs177', 745)" class="i">Height</span> <span class="o">&lt;-</span> <span class="n">550.</span>
+    <span onmouseout="hideTip(event, 'fs182', 746)" onmouseover="showTip(event, 'fs182', 746)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs184', 747)" onmouseover="showTip(event, 'fs184', 747)" class="i">Content</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs149', 748)" onmouseover="showTip(event, 'fs149', 748)" class="i">canvas</span>
+    <span onmouseout="hideTip(event, 'fs182', 749)" onmouseover="showTip(event, 'fs182', 749)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs185', 750)" onmouseover="showTip(event, 'fs185', 750)" class="i">Topmost</span> <span class="o">&lt;-</span> <span class="k">true</span>
+
+    <span onmouseout="hideTip(event, 'fs182', 751)" onmouseover="showTip(event, 'fs182', 751)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs186', 752)" onmouseover="showTip(event, 'fs186', 752)" class="i">Title</span> <span class="o">&lt;-</span> <span class="s">&quot;F# Geometry Plot: &quot;</span> <span class="o">+</span> <span onmouseout="hideTip(event, 'fs131', 753)" onmouseover="showTip(event, 'fs131', 753)" class="i">fileName</span>
+
+    <span onmouseout="hideTip(event, 'fs182', 754)" onmouseover="showTip(event, 'fs182', 754)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs187', 755)" onmouseover="showTip(event, 'fs187', 755)" class="f">Show</span>()
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs188', 756)" onmouseover="showTip(event, 'fs188', 756)" class="i">size</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs189', 757)" onmouseover="showTip(event, 'fs189', 757)" class="t">Size</span>(<span onmouseout="hideTip(event, 'fs182', 758)" onmouseover="showTip(event, 'fs182', 758)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs176', 759)" onmouseover="showTip(event, 'fs176', 759)" class="i">Width</span>, <span onmouseout="hideTip(event, 'fs182', 760)" onmouseover="showTip(event, 'fs182', 760)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs177', 761)" onmouseover="showTip(event, 'fs177', 761)" class="i">Height</span>)
+    <span onmouseout="hideTip(event, 'fs149', 762)" onmouseover="showTip(event, 'fs149', 762)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs190', 763)" onmouseover="showTip(event, 'fs190', 763)" class="f">Measure</span>(<span onmouseout="hideTip(event, 'fs188', 764)" onmouseover="showTip(event, 'fs188', 764)" class="i">size</span>)
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs191', 765)" onmouseover="showTip(event, 'fs191', 765)" class="i">rtb</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs133', 766)" onmouseover="showTip(event, 'fs133', 766)" class="t">RenderTargetBitmap</span>(<span class="n">600</span>, <span class="n">550</span>, <span class="n">96.</span>, <span class="n">96.</span>, <span onmouseout="hideTip(event, 'fs192', 767)" onmouseover="showTip(event, 'fs192', 767)" class="t">PixelFormats</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs193', 768)" onmouseover="showTip(event, 'fs193', 768)" class="i">Default</span>)
+    <span onmouseout="hideTip(event, 'fs191', 769)" onmouseover="showTip(event, 'fs191', 769)" class="i">rtb</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs194', 770)" onmouseover="showTip(event, 'fs194', 770)" class="f">Render</span>(<span onmouseout="hideTip(event, 'fs149', 771)" onmouseover="showTip(event, 'fs149', 771)" class="i">canvas</span>)
+    <span onmouseout="hideTip(event, 'fs191', 772)" onmouseover="showTip(event, 'fs191', 772)" class="i">rtb</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs130', 773)" onmouseover="showTip(event, 'fs130', 773)" class="f">save</span> <span onmouseout="hideTip(event, 'fs131', 774)" onmouseover="showTip(event, 'fs131', 774)" class="i">fileName</span>
+
+<span class="k">type</span> <span onmouseout="hideTip(event, 'fs195', 775)" onmouseover="showTip(event, 'fs195', 775)" class="t">Plot</span>(<span onmouseout="hideTip(event, 'fs11', 776)" onmouseover="showTip(event, 'fs11', 776)" class="i">geom</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs12', 777)" onmouseover="showTip(event, 'fs12', 777)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 778)" onmouseover="showTip(event, 'fs13', 778)" class="t">Geometry</span>) <span class="o">=</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs124', 779)" onmouseover="showTip(event, 'fs124', 779)" class="i">env</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 780)" onmouseover="showTip(event, 'fs11', 780)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs124', 781)" onmouseover="showTip(event, 'fs124', 781)" class="f">env</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs110', 782)" onmouseover="showTip(event, 'fs110', 782)" class="f">resize</span> <span class="n">1.</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs175', 783)" onmouseover="showTip(event, 'fs175', 783)" class="i">maxXYSide</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs124', 784)" onmouseover="showTip(event, 'fs124', 784)" class="i">env</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs123', 785)" onmouseover="showTip(event, 'fs123', 785)" class="f">maxSize</span>
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs149', 786)" onmouseover="showTip(event, 'fs149', 786)" class="i">canvas</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs150', 787)" onmouseover="showTip(event, 'fs150', 787)" class="t">Canvas</span>()
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs127', 788)" onmouseover="showTip(event, 'fs127', 788)" class="i">canvasSize</span> <span class="o">=</span> <span class="n">400.</span>
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs149', 789)" onmouseover="showTip(event, 'fs149', 789)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs176', 790)" onmouseover="showTip(event, 'fs176', 790)" class="i">Width</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs127', 791)" onmouseover="showTip(event, 'fs127', 791)" class="i">canvasSize</span>
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs149', 792)" onmouseover="showTip(event, 'fs149', 792)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs177', 793)" onmouseover="showTip(event, 'fs177', 793)" class="i">Height</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs127', 794)" onmouseover="showTip(event, 'fs127', 794)" class="i">canvasSize</span>
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs149', 795)" onmouseover="showTip(event, 'fs149', 795)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs178', 796)" onmouseover="showTip(event, 'fs178', 796)" class="i">RenderTransformOrigin</span> <span class="o">&lt;-</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs40', 797)" onmouseover="showTip(event, 'fs40', 797)" class="t">Point</span>(<span class="n">0.5</span>,<span class="n">0.5</span>)
+
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs101', 798)" onmouseover="showTip(event, 'fs101', 798)" class="f">printfn</span> <span class="s">&quot;Canvas Properties:&quot;</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs20', 799)" onmouseover="showTip(event, 'fs20', 799)" class="i">scale</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs127', 800)" onmouseover="showTip(event, 'fs127', 800)" class="i">canvasSize</span> <span class="o">/</span> <span onmouseout="hideTip(event, 'fs175', 801)" onmouseover="showTip(event, 'fs175', 801)" class="i">maxXYSide</span>
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs101', 802)" onmouseover="showTip(event, 'fs101', 802)" class="f">printfn</span> <span class="s">&quot;Scale shapes: (canvas size = </span><span class="pf">%.2f</span><span class="s"> / envelope size = </span><span class="pf">%.2f</span><span class="s">) = </span><span class="pf">%.5f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs127', 803)" onmouseover="showTip(event, 'fs127', 803)" class="i">canvasSize</span> <span onmouseout="hideTip(event, 'fs175', 804)" onmouseover="showTip(event, 'fs175', 804)" class="i">maxXYSide</span> <span onmouseout="hideTip(event, 'fs20', 805)" onmouseover="showTip(event, 'fs20', 805)" class="i">scale</span>
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs179', 806)" onmouseover="showTip(event, 'fs179', 806)" class="i">originX</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs124', 807)" onmouseover="showTip(event, 'fs124', 807)" class="i">env</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs115', 808)" onmouseover="showTip(event, 'fs115', 808)" class="i">MinX</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs20', 809)" onmouseover="showTip(event, 'fs20', 809)" class="i">scale</span> <span class="o">*</span> <span class="o">-</span><span class="n">1.</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs180', 810)" onmouseover="showTip(event, 'fs180', 810)" class="i">originY</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs124', 811)" onmouseover="showTip(event, 'fs124', 811)" class="i">env</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs118', 812)" onmouseover="showTip(event, 'fs118', 812)" class="i">MinY</span> <span class="o">*</span> <span onmouseout="hideTip(event, 'fs20', 813)" onmouseover="showTip(event, 'fs20', 813)" class="i">scale</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs94', 814)" onmouseover="showTip(event, 'fs94', 814)" class="i">renderTrasnform</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs29', 815)" onmouseover="showTip(event, 'fs29', 815)" class="f">sprintf</span> <span class="s">&quot;1 0 0 -1 </span><span class="pf">%.2f</span><span class="s"> </span><span class="pf">%.2f</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs179', 816)" onmouseover="showTip(event, 'fs179', 816)" class="i">originX</span> <span onmouseout="hideTip(event, 'fs180', 817)" onmouseover="showTip(event, 'fs180', 817)" class="i">originY</span>
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs149', 818)" onmouseover="showTip(event, 'fs149', 818)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs95', 819)" onmouseover="showTip(event, 'fs95', 819)" class="i">RenderTransform</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs96', 820)" onmouseover="showTip(event, 'fs96', 820)" class="t">Transform</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs97', 821)" onmouseover="showTip(event, 'fs97', 821)" class="f">Parse</span>(<span onmouseout="hideTip(event, 'fs94', 822)" onmouseover="showTip(event, 'fs94', 822)" class="i">renderTrasnform</span>)
+    
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs101', 823)" onmouseover="showTip(event, 'fs101', 823)" class="f">printfn</span> <span class="s">&quot;RenderTrasnform = </span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs94', 824)" onmouseover="showTip(event, 'fs94', 824)" class="i">renderTrasnform</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 825)" onmouseover="showTip(event, 'fs102', 825)" class="f">ignore</span>
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs101', 826)" onmouseover="showTip(event, 'fs101', 826)" class="f">printfn</span> <span class="s">&quot;&quot;</span>
+    
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs173', 827)" onmouseover="showTip(event, 'fs173', 827)" class="i">paths</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs11', 828)" onmouseover="showTip(event, 'fs11', 828)" class="i">geom</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs103', 829)" onmouseover="showTip(event, 'fs103', 829)" class="f">geometryPaths</span> <span onmouseout="hideTip(event, 'fs20', 830)" onmouseover="showTip(event, 'fs20', 830)" class="i">scale</span> <span class="n">0</span> []
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs196', 831)" onmouseover="showTip(event, 'fs196', 831)" class="i">addPaths</span> <span class="o">=</span> 
+        <span class="k">for</span> <span onmouseout="hideTip(event, 'fs85', 832)" onmouseover="showTip(event, 'fs85', 832)" class="i">path</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs173', 833)" onmouseover="showTip(event, 'fs173', 833)" class="i">paths</span> <span class="k">do</span> 
+            <span onmouseout="hideTip(event, 'fs149', 834)" onmouseover="showTip(event, 'fs149', 834)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs157', 835)" onmouseover="showTip(event, 'fs157', 835)" class="i">Children</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs158', 836)" onmouseover="showTip(event, 'fs158', 836)" class="f">Add</span>(<span onmouseout="hideTip(event, 'fs85', 837)" onmouseover="showTip(event, 'fs85', 837)" class="i">path</span>) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs102', 838)" onmouseover="showTip(event, 'fs102', 838)" class="f">ignore</span>
+    <span class="k">do</span> <span class="i">addPaths</span>
+
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs197', 839)" onmouseover="showTip(event, 'fs197', 839)" class="i">winSize</span> <span class="o">=</span> <span class="n">500.</span>
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs182', 840)" onmouseover="showTip(event, 'fs182', 840)" class="i">win</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs183', 841)" onmouseover="showTip(event, 'fs183', 841)" class="t">Window</span>()
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs182', 842)" onmouseover="showTip(event, 'fs182', 842)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs176', 843)" onmouseover="showTip(event, 'fs176', 843)" class="i">Width</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs197', 844)" onmouseover="showTip(event, 'fs197', 844)" class="i">winSize</span>
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs182', 845)" onmouseover="showTip(event, 'fs182', 845)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs177', 846)" onmouseover="showTip(event, 'fs177', 846)" class="i">Height</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs197', 847)" onmouseover="showTip(event, 'fs197', 847)" class="i">winSize</span>
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs182', 848)" onmouseover="showTip(event, 'fs182', 848)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs184', 849)" onmouseover="showTip(event, 'fs184', 849)" class="i">Content</span> <span class="o">&lt;-</span> <span onmouseout="hideTip(event, 'fs149', 850)" onmouseover="showTip(event, 'fs149', 850)" class="i">canvas</span>
+
+    <span class="k">do</span> <span onmouseout="hideTip(event, 'fs182', 851)" onmouseover="showTip(event, 'fs182', 851)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs186', 852)" onmouseover="showTip(event, 'fs186', 852)" class="i">Title</span> <span class="o">&lt;-</span> <span class="s">&quot;F# Geometry Plot&quot;</span>
+
+<span class="c">//    do win.Show()</span>
+
+    <span class="k">member</span> <span onmouseout="hideTip(event, 'fs198', 853)" onmouseover="showTip(event, 'fs198', 853)" class="i">this</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs199', 854)" onmouseover="showTip(event, 'fs199', 854)" class="f">Show</span>() <span class="o">=</span> 
+        <span onmouseout="hideTip(event, 'fs182', 855)" onmouseover="showTip(event, 'fs182', 855)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs187', 856)" onmouseover="showTip(event, 'fs187', 856)" class="f">Show</span>()
+
+    <span class="k">member</span> <span onmouseout="hideTip(event, 'fs198', 857)" onmouseover="showTip(event, 'fs198', 857)" class="i">this</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs200', 858)" onmouseover="showTip(event, 'fs200', 858)" class="f">SaveAsBitmap</span>(<span onmouseout="hideTip(event, 'fs131', 859)" onmouseover="showTip(event, 'fs131', 859)" class="i">fileName</span>) <span class="o">=</span> 
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs188', 860)" onmouseover="showTip(event, 'fs188', 860)" class="i">size</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs189', 861)" onmouseover="showTip(event, 'fs189', 861)" class="t">Size</span>(<span onmouseout="hideTip(event, 'fs182', 862)" onmouseover="showTip(event, 'fs182', 862)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs176', 863)" onmouseover="showTip(event, 'fs176', 863)" class="i">Width</span>, <span onmouseout="hideTip(event, 'fs182', 864)" onmouseover="showTip(event, 'fs182', 864)" class="i">win</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs177', 865)" onmouseover="showTip(event, 'fs177', 865)" class="i">Height</span>)
+        <span onmouseout="hideTip(event, 'fs149', 866)" onmouseover="showTip(event, 'fs149', 866)" class="i">canvas</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs190', 867)" onmouseover="showTip(event, 'fs190', 867)" class="f">Measure</span>(<span onmouseout="hideTip(event, 'fs188', 868)" onmouseover="showTip(event, 'fs188', 868)" class="i">size</span>)
+        <span class="k">let</span> <span onmouseout="hideTip(event, 'fs191', 869)" onmouseover="showTip(event, 'fs191', 869)" class="i">rtb</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs133', 870)" onmouseover="showTip(event, 'fs133', 870)" class="t">RenderTargetBitmap</span>(<span class="n">500</span>, <span class="n">500</span>, <span class="n">96.</span>, <span class="n">96.</span>, <span onmouseout="hideTip(event, 'fs192', 871)" onmouseover="showTip(event, 'fs192', 871)" class="t">PixelFormats</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs193', 872)" onmouseover="showTip(event, 'fs193', 872)" class="i">Default</span>)
+        <span onmouseout="hideTip(event, 'fs191', 873)" onmouseover="showTip(event, 'fs191', 873)" class="i">rtb</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs194', 874)" onmouseover="showTip(event, 'fs194', 874)" class="f">Render</span>(<span onmouseout="hideTip(event, 'fs149', 875)" onmouseover="showTip(event, 'fs149', 875)" class="i">canvas</span>)
+        <span onmouseout="hideTip(event, 'fs191', 876)" onmouseover="showTip(event, 'fs191', 876)" class="i">rtb</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs130', 877)" onmouseover="showTip(event, 'fs130', 877)" class="f">save</span> <span onmouseout="hideTip(event, 'fs131', 878)" onmouseover="showTip(event, 'fs131', 878)" class="i">fileName</span>
+</code></pre></td>
+</tr>
+</table>
+<div class="tip" id="fs1">namespace System</div>
+<div class="tip" id="fs2">namespace System.IO</div>
+<div class="tip" id="fs3">namespace System.Windows</div>
+<div class="tip" id="fs4">namespace System.Windows.Media</div>
+<div class="tip" id="fs5">namespace System.Windows.Media.Imaging</div>
+<div class="tip" id="fs6">namespace System.Windows.Markup</div>
+<div class="tip" id="fs7">namespace System.Windows.Shapes</div>
+<div class="tip" id="fs8">namespace System.Windows.Controls</div>
+<div class="tip" id="fs9">namespace OSGeo</div>
+<div class="tip" id="fs10">val coordinates : geom:OGR.Geometry -&gt; (float * float) list<br /><br />Full name: Plot-geometry.coordinates<br /><em><br /><br />&#160;Extracts the geometry&#39;s coordinates as a list of tuples made of <br />&#160;longitude and latitude.</em></div>
+<div class="tip" id="fs11">val geom : OGR.Geometry</div>
+<div class="tip" id="fs12">namespace OSGeo.OGR</div>
+<div class="tip" id="fs13">Multiple items<br />type Geometry =<br />&#160;&#160;new : type:wkbGeometryType -&gt; Geometry + 2 overloads<br />&#160;&#160;member AddGeometry : other:Geometry -&gt; int<br />&#160;&#160;member AddGeometryDirectly : other_disown:Geometry -&gt; int<br />&#160;&#160;member AddPoint : x:float * y:float * z:float -&gt; unit<br />&#160;&#160;member AddPoint_2D : x:float * y:float -&gt; unit<br />&#160;&#160;member Area : unit -&gt; float<br />&#160;&#160;member AssignSpatialReference : reference:SpatialReference -&gt; unit<br />&#160;&#160;member Boundary : unit -&gt; Geometry<br />&#160;&#160;member Buffer : distance:float * quadsecs:int -&gt; Geometry<br />&#160;&#160;member Centroid : unit -&gt; Geometry<br />&#160;&#160;...<br /><br />Full name: OSGeo.OGR.Geometry<br /><br />--------------------<br />OGR.Geometry(type: OGR.wkbGeometryType) : unit<br />OGR.Geometry(cPtr: nativeint, cMemoryOwn: bool, parent: obj) : unit<br />OGR.Geometry(type: OGR.wkbGeometryType, wkt: string, wkb: int, wkb_buf: nativeint, gml: string) : unit</div>
+<div class="tip" id="fs14">val last : int</div>
+<div class="tip" id="fs15">OGR.Geometry.GetPointCount() : int</div>
+<div class="tip" id="fs16">val i : int</div>
+<div class="tip" id="fs17">val p : float []</div>
+<div class="tip" id="fs18">OGR.Geometry.GetPoint(iPoint: int, argout: float []) : unit</div>
+<div class="tip" id="fs19">val pointPath : scale:float -&gt; geom:OGR.Geometry -&gt; string<br /><br />Full name: Plot-geometry.pointPath<br /><em><br /><br />&#160;Takes a `scale` argument and an OGR.Geometry of point type and returns the svg <br />&#160;reppresentation of a little square sized at the given scale as to give a sense <br />&#160;of a punctual shape.</em></div>
+<div class="tip" id="fs20">val scale : float</div>
+<div class="tip" id="fs21">val x : float</div>
+<div class="tip" id="fs22">val y : float</div>
+<div class="tip" id="fs23">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
+<div class="tip" id="fs24">val head : list:&#39;T list -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Collections.List.head</div>
+<div class="tip" id="fs25">val x1 : float</div>
+<div class="tip" id="fs26">val y1 : float</div>
+<div class="tip" id="fs27">val x2 : float</div>
+<div class="tip" id="fs28">val y2 : float</div>
+<div class="tip" id="fs29">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</div>
+<div class="tip" id="fs30">val linePath : geom:OGR.Geometry -&gt; string<br /><br />Full name: Plot-geometry.linePath<br /><em><br /><br />&#160;Takes an OGR.Geometry of linear type and returns its svg reppresentation as a string.</em></div>
+<div class="tip" id="fs31">val fold : folder:(&#39;State -&gt; &#39;T -&gt; &#39;State) -&gt; state:&#39;State -&gt; list:&#39;T list -&gt; &#39;State<br /><br />Full name: Microsoft.FSharp.Collections.List.fold</div>
+<div class="tip" id="fs32">val acc : string</div>
+<div class="tip" id="fs33">val ringPath : geom:OGR.Geometry -&gt; string<br /><br />Full name: Plot-geometry.ringPath<br /><em><br /><br />&#160;Takes an OGR.Geometry of ring type and returns its svg reppresentation as a string.</em></div>
+<div class="tip" id="fs34">val polygonPath : geom:OGR.Geometry -&gt; string<br /><br />Full name: Plot-geometry.polygonPath<br /><em><br /><br />&#160;Takes an OGR.Geometry of polygon type and returns its svg reppresentation.</em></div>
+<div class="tip" id="fs35">val count : int</div>
+<div class="tip" id="fs36">OGR.Geometry.GetGeometryCount() : int</div>
+<div class="tip" id="fs37">OGR.Geometry.GetGeometryRef(geom: int) : OGR.Geometry</div>
+<div class="tip" id="fs38">val ringPath : string</div>
+<div class="tip" id="fs39">type Shape =<br />&#160;&#160;| Point<br />&#160;&#160;| Line<br />&#160;&#160;| Ring<br />&#160;&#160;| Polygon<br />&#160;&#160;| GeometryCollection<br /><br />Full name: Plot-geometry.Shape<br /><em><br /><br />&#160;Classes of shapes reppresenting OGR.Geometries</em></div>
+<div class="tip" id="fs40">Multiple items<br />union case Shape.Point: Shape<br /><br />--------------------<br />type Point =<br />&#160;&#160;struct<br />&#160;&#160;&#160;&#160;new : x:float * y:float -&gt; Point<br />&#160;&#160;&#160;&#160;member Equals : o:obj -&gt; bool + 1 overload<br />&#160;&#160;&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;&#160;&#160;member Offset : offsetX:float * offsetY:float -&gt; unit<br />&#160;&#160;&#160;&#160;member ToString : unit -&gt; string + 1 overload<br />&#160;&#160;&#160;&#160;member X : float with get, set<br />&#160;&#160;&#160;&#160;member Y : float with get, set<br />&#160;&#160;&#160;&#160;static member Add : point:Point * vector:Vector -&gt; Point<br />&#160;&#160;&#160;&#160;static member Equals : point1:Point * point2:Point -&gt; bool<br />&#160;&#160;&#160;&#160;static member Multiply : point:Point * matrix:Matrix -&gt; Point<br />&#160;&#160;&#160;&#160;...<br />&#160;&#160;end<br /><br />Full name: System.Windows.Point<br /><br />--------------------<br />Point()<br />Point(x: float, y: float) : unit</div>
+<div class="tip" id="fs41">Multiple items<br />union case Shape.Line: Shape<br /><br />--------------------<br />type Line =<br />&#160;&#160;inherit Shape<br />&#160;&#160;new : unit -&gt; Line<br />&#160;&#160;member X1 : float with get, set<br />&#160;&#160;member X2 : float with get, set<br />&#160;&#160;member Y1 : float with get, set<br />&#160;&#160;member Y2 : float with get, set<br />&#160;&#160;static val X1Property : DependencyProperty<br />&#160;&#160;static val Y1Property : DependencyProperty<br />&#160;&#160;static val X2Property : DependencyProperty<br />&#160;&#160;static val Y2Property : DependencyProperty<br /><br />Full name: System.Windows.Shapes.Line<br /><br />--------------------<br />Line() : unit</div>
+<div class="tip" id="fs42">union case Shape.Ring: Shape</div>
+<div class="tip" id="fs43">Multiple items<br />union case Shape.Polygon: Shape<br /><br />--------------------<br />type Polygon =<br />&#160;&#160;inherit Shape<br />&#160;&#160;new : unit -&gt; Polygon<br />&#160;&#160;member FillRule : FillRule with get, set<br />&#160;&#160;member Points : PointCollection with get, set<br />&#160;&#160;static val PointsProperty : DependencyProperty<br />&#160;&#160;static val FillRuleProperty : DependencyProperty<br /><br />Full name: System.Windows.Shapes.Polygon<br /><br />--------------------<br />Polygon() : unit</div>
+<div class="tip" id="fs44">Multiple items<br />union case Shape.GeometryCollection: Shape<br /><br />--------------------<br />type GeometryCollection =<br />&#160;&#160;inherit Animatable<br />&#160;&#160;new : unit -&gt; GeometryCollection + 2 overloads<br />&#160;&#160;member Add : value:Geometry -&gt; unit<br />&#160;&#160;member Clear : unit -&gt; unit<br />&#160;&#160;member Clone : unit -&gt; GeometryCollection<br />&#160;&#160;member CloneCurrentValue : unit -&gt; GeometryCollection<br />&#160;&#160;member Contains : value:Geometry -&gt; bool<br />&#160;&#160;member CopyTo : array:Geometry[] * index:int -&gt; unit<br />&#160;&#160;member Count : int<br />&#160;&#160;member GetEnumerator : unit -&gt; Enumerator<br />&#160;&#160;member IndexOf : value:Geometry -&gt; int<br />&#160;&#160;...<br />&#160;&#160;nested type Enumerator<br /><br />Full name: System.Windows.Media.GeometryCollection<br /><br />--------------------<br />GeometryCollection() : unit<br />GeometryCollection(capacity: int) : unit<br />GeometryCollection(collection: Collections.Generic.IEnumerable&lt;Geometry&gt;) : unit</div>
+<div class="tip" id="fs45">val geomType : geom:OGR.Geometry -&gt; OGR.wkbGeometryType<br /><br />Full name: Plot-geometry.geomType<br /><em><br /><br />&#160;Just an utility function to more easily get the OGR.Geometry type</em></div>
+<div class="tip" id="fs46">OGR.Geometry.GetGeometryType() : OGR.wkbGeometryType</div>
+<div class="tip" id="fs47">val geometryShape : geom:OGR.Geometry -&gt; Shape<br /><br />Full name: Plot-geometry.geometryShape<br /><em><br /><br />&#160;Maps an OGR.Geometry to the appropriate shape</em></div>
+<div class="tip" id="fs48">val geomType : OGR.wkbGeometryType</div>
+<div class="tip" id="fs49">type wkbGeometryType =<br />&#160;&#160;| wkbUnknown = 0<br />&#160;&#160;| wkbPoint = 1<br />&#160;&#160;| wkbLineString = 2<br />&#160;&#160;| wkbPolygon = 3<br />&#160;&#160;| wkbMultiPoint = 4<br />&#160;&#160;| wkbMultiLineString = 5<br />&#160;&#160;| wkbMultiPolygon = 6<br />&#160;&#160;| wkbGeometryCollection = 7<br />&#160;&#160;| wkbNone = 100<br />&#160;&#160;| wkbLinearRing = 101<br />&#160;&#160;...<br /><br />Full name: OSGeo.OGR.wkbGeometryType</div>
+<div class="tip" id="fs50">field OGR.wkbGeometryType.wkbPoint = 1</div>
+<div class="tip" id="fs51">field OGR.wkbGeometryType.wkbPoint25D = -2147483647</div>
+<div class="tip" id="fs52">field OGR.wkbGeometryType.wkbLineString = 2</div>
+<div class="tip" id="fs53">field OGR.wkbGeometryType.wkbLineString25D = -2147483646</div>
+<div class="tip" id="fs54">field OGR.wkbGeometryType.wkbLinearRing = 101</div>
+<div class="tip" id="fs55">field OGR.wkbGeometryType.wkbPolygon = 3</div>
+<div class="tip" id="fs56">field OGR.wkbGeometryType.wkbPolygon25D = -2147483645</div>
+<div class="tip" id="fs57">field OGR.wkbGeometryType.wkbMultiPoint = 4</div>
+<div class="tip" id="fs58">field OGR.wkbGeometryType.wkbMultiPoint25D = -2147483644</div>
+<div class="tip" id="fs59">field OGR.wkbGeometryType.wkbMultiLineString = 5</div>
+<div class="tip" id="fs60">field OGR.wkbGeometryType.wkbMultiLineString25D = -2147483643</div>
+<div class="tip" id="fs61">field OGR.wkbGeometryType.wkbMultiPolygon = 6</div>
+<div class="tip" id="fs62">field OGR.wkbGeometryType.wkbMultiPolygon25D = -2147483642</div>
+<div class="tip" id="fs63">field OGR.wkbGeometryType.wkbGeometryCollection = 7</div>
+<div class="tip" id="fs64">field OGR.wkbGeometryType.wkbGeometryCollection25D = -2147483641</div>
+<div class="tip" id="fs65">val shapePath : scale:float -&gt; geom:OGR.Geometry -&gt; string<br /><br />Full name: Plot-geometry.shapePath</div>
+<div class="tip" id="fs66">val geomType : Shape</div>
+<div class="tip" id="fs67">val getRandomBrush : seed:int -&gt; SolidColorBrush<br /><br />Full name: Plot-geometry.getRandomBrush</div>
+<div class="tip" id="fs68">val seed : int</div>
+<div class="tip" id="fs69">val brushArray : string []</div>
+<div class="tip" id="fs70">val typeof&lt;&#39;T&gt; : Type<br /><br />Full name: Microsoft.FSharp.Core.Operators.typeof</div>
+<div class="tip" id="fs71">type Brushes =<br />&#160;&#160;static member AliceBlue : SolidColorBrush<br />&#160;&#160;static member AntiqueWhite : SolidColorBrush<br />&#160;&#160;static member Aqua : SolidColorBrush<br />&#160;&#160;static member Aquamarine : SolidColorBrush<br />&#160;&#160;static member Azure : SolidColorBrush<br />&#160;&#160;static member Beige : SolidColorBrush<br />&#160;&#160;static member Bisque : SolidColorBrush<br />&#160;&#160;static member Black : SolidColorBrush<br />&#160;&#160;static member BlanchedAlmond : SolidColorBrush<br />&#160;&#160;static member Blue : SolidColorBrush<br />&#160;&#160;...<br /><br />Full name: System.Windows.Media.Brushes</div>
+<div class="tip" id="fs72">type Array =<br />&#160;&#160;member Clone : unit -&gt; obj<br />&#160;&#160;member CopyTo : array:Array * index:int -&gt; unit + 1 overload<br />&#160;&#160;member GetEnumerator : unit -&gt; IEnumerator<br />&#160;&#160;member GetLength : dimension:int -&gt; int<br />&#160;&#160;member GetLongLength : dimension:int -&gt; int64<br />&#160;&#160;member GetLowerBound : dimension:int -&gt; int<br />&#160;&#160;member GetUpperBound : dimension:int -&gt; int<br />&#160;&#160;member GetValue : [&lt;ParamArray&gt;] indices:int[] -&gt; obj + 7 overloads<br />&#160;&#160;member Initialize : unit -&gt; unit<br />&#160;&#160;member IsFixedSize : bool<br />&#160;&#160;...<br /><br />Full name: System.Array</div>
+<div class="tip" id="fs73">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; array:&#39;T [] -&gt; &#39;U []<br /><br />Full name: Microsoft.FSharp.Collections.Array.map</div>
+<div class="tip" id="fs74">val c : Reflection.PropertyInfo</div>
+<div class="tip" id="fs75">property Reflection.MemberInfo.Name: string</div>
+<div class="tip" id="fs76">val randomGen : Random</div>
+<div class="tip" id="fs77">Multiple items<br />type Random =<br />&#160;&#160;new : unit -&gt; Random + 1 overload<br />&#160;&#160;member Next : unit -&gt; int + 2 overloads<br />&#160;&#160;member NextBytes : buffer:byte[] -&gt; unit<br />&#160;&#160;member NextDouble : unit -&gt; float<br /><br />Full name: System.Random<br /><br />--------------------<br />Random() : unit<br />Random(Seed: int) : unit</div>
+<div class="tip" id="fs78">val randomColorName : string</div>
+<div class="tip" id="fs79">Random.Next() : int<br />Random.Next(maxValue: int) : int<br />Random.Next(minValue: int, maxValue: int) : int</div>
+<div class="tip" id="fs80">property Array.Length: int</div>
+<div class="tip" id="fs81">val color : SolidColorBrush</div>
+<div class="tip" id="fs82">Multiple items<br />type BrushConverter =<br />&#160;&#160;inherit TypeConverter<br />&#160;&#160;new : unit -&gt; BrushConverter<br />&#160;&#160;member CanConvertFrom : context:ITypeDescriptorContext * sourceType:Type -&gt; bool<br />&#160;&#160;member CanConvertTo : context:ITypeDescriptorContext * destinationType:Type -&gt; bool<br />&#160;&#160;member ConvertFrom : context:ITypeDescriptorContext * culture:CultureInfo * value:obj -&gt; obj<br />&#160;&#160;member ConvertTo : context:ITypeDescriptorContext * culture:CultureInfo * value:obj * destinationType:Type -&gt; obj<br /><br />Full name: System.Windows.Media.BrushConverter<br /><br />--------------------<br />BrushConverter() : unit</div>
+<div class="tip" id="fs83">Multiple items<br />type SolidColorBrush =<br />&#160;&#160;inherit Brush<br />&#160;&#160;new : unit -&gt; SolidColorBrush + 1 overload<br />&#160;&#160;member Clone : unit -&gt; SolidColorBrush<br />&#160;&#160;member CloneCurrentValue : unit -&gt; SolidColorBrush<br />&#160;&#160;member Color : Color with get, set<br />&#160;&#160;static val ColorProperty : DependencyProperty<br />&#160;&#160;static member DeserializeFrom : reader:BinaryReader -&gt; obj<br /><br />Full name: System.Windows.Media.SolidColorBrush<br /><br />--------------------<br />SolidColorBrush() : unit<br />SolidColorBrush(color: Color) : unit</div>
+<div class="tip" id="fs84">val geometryToPath : scale:float -&gt; seed:int -&gt; geom:OGR.Geometry -&gt; Path<br /><br />Full name: Plot-geometry.geometryToPath</div>
+<div class="tip" id="fs85">val path : Path</div>
+<div class="tip" id="fs86">Multiple items<br />type Path =<br />&#160;&#160;inherit Shape<br />&#160;&#160;new : unit -&gt; Path<br />&#160;&#160;member Data : Geometry with get, set<br />&#160;&#160;static val DataProperty : DependencyProperty<br /><br />Full name: System.Windows.Shapes.Path<br /><br />--------------------<br />Path() : unit</div>
+<div class="tip" id="fs87">val data : string</div>
+<div class="tip" id="fs88">property Path.Data: Geometry</div>
+<div class="tip" id="fs89">Multiple items<br />namespace System.Windows.Media<br /><br />--------------------<br />namespace System.Media</div>
+<div class="tip" id="fs90">type Geometry =<br />&#160;&#160;inherit Animatable<br />&#160;&#160;member Bounds : Rect<br />&#160;&#160;member Clone : unit -&gt; Geometry<br />&#160;&#160;member CloneCurrentValue : unit -&gt; Geometry<br />&#160;&#160;member FillContains : hitPoint:Point -&gt; bool + 3 overloads<br />&#160;&#160;member FillContainsWithDetail : geometry:Geometry -&gt; IntersectionDetail + 1 overload<br />&#160;&#160;member GetArea : unit -&gt; float + 1 overload<br />&#160;&#160;member GetFlattenedPathGeometry : unit -&gt; PathGeometry + 1 overload<br />&#160;&#160;member GetOutlinedPathGeometry : unit -&gt; PathGeometry + 1 overload<br />&#160;&#160;member GetRenderBounds : pen:Pen -&gt; Rect + 1 overload<br />&#160;&#160;member GetWidenedPathGeometry : pen:Pen -&gt; PathGeometry + 1 overload<br />&#160;&#160;...<br /><br />Full name: System.Windows.Media.Geometry</div>
+<div class="tip" id="fs91">Geometry.Parse(source: string) : Geometry</div>
+<div class="tip" id="fs92">val thickness : float</div>
+<div class="tip" id="fs93">property Shape.StrokeThickness: float</div>
+<div class="tip" id="fs94">val renderTrasnform : string</div>
+<div class="tip" id="fs95">property UIElement.RenderTransform: Transform</div>
+<div class="tip" id="fs96">type Transform =<br />&#160;&#160;inherit GeneralTransform<br />&#160;&#160;member Clone : unit -&gt; Transform<br />&#160;&#160;member CloneCurrentValue : unit -&gt; Transform<br />&#160;&#160;member Inverse : GeneralTransform<br />&#160;&#160;member TransformBounds : rect:Rect -&gt; Rect<br />&#160;&#160;member TryTransform : inPoint:Point * result:Point -&gt; bool<br />&#160;&#160;member Value : Matrix<br />&#160;&#160;static member Identity : Transform<br />&#160;&#160;static member Parse : source:string -&gt; Transform<br /><br />Full name: System.Windows.Media.Transform</div>
+<div class="tip" id="fs97">Transform.Parse(source: string) : Transform</div>
+<div class="tip" id="fs98">property Shape.Fill: Brush</div>
+<div class="tip" id="fs99">property Brushes.Black: SolidColorBrush</div>
+<div class="tip" id="fs100">property Shape.Stroke: Brush</div>
+<div class="tip" id="fs101">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
+<div class="tip" id="fs102">val ignore : value:&#39;T -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Operators.ignore</div>
+<div class="tip" id="fs103">val geometryPaths : scale:float -&gt; seed:int -&gt; xs:Path list -&gt; geom:OGR.Geometry -&gt; Path list<br /><br />Full name: Plot-geometry.geometryPaths</div>
+<div class="tip" id="fs104">val xs : Path list</div>
+<div class="tip" id="fs105">val concat : lists:seq&lt;&#39;T list&gt; -&gt; &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List.concat</div>
+<div class="tip" id="fs106">val env : geom:OGR.Geometry -&gt; OGR.Envelope<br /><br />Full name: Plot-geometry.env<br /><em><br /><br />&#160;Extracs the bounding box of the geometry</em></div>
+<div class="tip" id="fs107">val res : OGR.Envelope</div>
+<div class="tip" id="fs108">Multiple items<br />type Envelope =<br />&#160;&#160;new : unit -&gt; Envelope + 1 overload<br />&#160;&#160;member Dispose : unit -&gt; unit<br />&#160;&#160;member MaxX : float with get, set<br />&#160;&#160;member MaxY : float with get, set<br />&#160;&#160;member MinX : float with get, set<br />&#160;&#160;member MinY : float with get, set<br />&#160;&#160;static member getCPtr : obj:Envelope -&gt; HandleRef<br />&#160;&#160;static member getCPtrAndDisown : obj:Envelope * parent:obj -&gt; HandleRef<br />&#160;&#160;static member getCPtrAndSetReference : obj:Envelope * parent:obj -&gt; HandleRef<br /><br />Full name: OSGeo.OGR.Envelope<br /><br />--------------------<br />OGR.Envelope() : unit<br />OGR.Envelope(cPtr: nativeint, cMemoryOwn: bool, parent: obj) : unit</div>
+<div class="tip" id="fs109">OGR.Geometry.GetEnvelope(env: OGR.Envelope) : unit</div>
+<div class="tip" id="fs110">val resize : zoom:float -&gt; en:OGR.Envelope -&gt; OGR.Envelope<br /><br />Full name: Plot-geometry.resize</div>
+<div class="tip" id="fs111">val zoom : float</div>
+<div class="tip" id="fs112">val en : OGR.Envelope</div>
+<div class="tip" id="fs113">val dx : float</div>
+<div class="tip" id="fs114">property OGR.Envelope.MaxX: float</div>
+<div class="tip" id="fs115">property OGR.Envelope.MinX: float</div>
+<div class="tip" id="fs116">val dy : float</div>
+<div class="tip" id="fs117">property OGR.Envelope.MaxY: float</div>
+<div class="tip" id="fs118">property OGR.Envelope.MinY: float</div>
+<div class="tip" id="fs119">val xMargin : float</div>
+<div class="tip" id="fs120">val yMargin : float</div>
+<div class="tip" id="fs121">val sizeX : en:OGR.Envelope -&gt; float<br /><br />Full name: Plot-geometry.sizeX</div>
+<div class="tip" id="fs122">val sizeY : en:OGR.Envelope -&gt; float<br /><br />Full name: Plot-geometry.sizeY</div>
+<div class="tip" id="fs123">val maxSize : env:OGR.Envelope -&gt; float<br /><br />Full name: Plot-geometry.maxSize</div>
+<div class="tip" id="fs124">val env : OGR.Envelope</div>
+<div class="tip" id="fs125">val max : e1:&#39;T -&gt; e2:&#39;T -&gt; &#39;T (requires comparison)<br /><br />Full name: Microsoft.FSharp.Core.Operators.max</div>
+<div class="tip" id="fs126">val scale : canvasSize:float -&gt; envSize:float -&gt; float<br /><br />Full name: Plot-geometry.scale</div>
+<div class="tip" id="fs127">val canvasSize : float</div>
+<div class="tip" id="fs128">Multiple items<br />val float : value:&#39;T -&gt; float (requires member op_Explicit)<br /><br />Full name: Microsoft.FSharp.Core.Operators.float<br /><br />--------------------<br />type float = Double<br /><br />Full name: Microsoft.FSharp.Core.float<br /><br />--------------------<br />type float&lt;&#39;Measure&gt; = float<br /><br />Full name: Microsoft.FSharp.Core.float&lt;_&gt;</div>
+<div class="tip" id="fs129">val envSize : float</div>
+<div class="tip" id="fs130">val save : fileName:string -&gt; bmp:RenderTargetBitmap -&gt; unit<br /><br />Full name: Plot-geometry.save</div>
+<div class="tip" id="fs131">val fileName : string</div>
+<div class="tip" id="fs132">val bmp : RenderTargetBitmap</div>
+<div class="tip" id="fs133">Multiple items<br />type RenderTargetBitmap =<br />&#160;&#160;inherit BitmapSource<br />&#160;&#160;new : pixelWidth:int * pixelHeight:int * dpiX:float * dpiY:float * pixelFormat:PixelFormat -&gt; RenderTargetBitmap<br />&#160;&#160;member Clear : unit -&gt; unit<br />&#160;&#160;member Render : visual:Visual -&gt; unit<br /><br />Full name: System.Windows.Media.Imaging.RenderTargetBitmap<br /><br />--------------------<br />RenderTargetBitmap(pixelWidth: int, pixelHeight: int, dpiX: float, dpiY: float, pixelFormat: PixelFormat) : unit</div>
+<div class="tip" id="fs134">val enc : PngBitmapEncoder</div>
+<div class="tip" id="fs135">Multiple items<br />type PngBitmapEncoder =<br />&#160;&#160;inherit BitmapEncoder<br />&#160;&#160;new : unit -&gt; PngBitmapEncoder<br />&#160;&#160;member Interlace : PngInterlaceOption with get, set<br /><br />Full name: System.Windows.Media.Imaging.PngBitmapEncoder<br /><br />--------------------<br />PngBitmapEncoder() : unit</div>
+<div class="tip" id="fs136">val b : BitmapFrame</div>
+<div class="tip" id="fs137">type BitmapFrame =<br />&#160;&#160;inherit BitmapSource<br />&#160;&#160;member BaseUri : Uri with get, set<br />&#160;&#160;member ColorContexts : ReadOnlyCollection&lt;ColorContext&gt;<br />&#160;&#160;member CreateInPlaceBitmapMetadataWriter : unit -&gt; InPlaceBitmapMetadataWriter<br />&#160;&#160;member Decoder : BitmapDecoder<br />&#160;&#160;member Thumbnail : BitmapSource<br />&#160;&#160;static member Create : bitmapUri:Uri -&gt; BitmapFrame + 8 overloads<br /><br />Full name: System.Windows.Media.Imaging.BitmapFrame</div>
+<div class="tip" id="fs138">BitmapFrame.Create(source: BitmapSource) : BitmapFrame<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />BitmapFrame.Create(bitmapStream: Stream) : BitmapFrame<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />BitmapFrame.Create(bitmapUri: Uri) : BitmapFrame<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />BitmapFrame.Create(source: BitmapSource, thumbnail: BitmapSource) : BitmapFrame<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />BitmapFrame.Create(bitmapUri: Uri, uriCachePolicy: Net.Cache.RequestCachePolicy) : BitmapFrame<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />BitmapFrame.Create(bitmapStream: Stream, createOptions: BitmapCreateOptions, cacheOption: BitmapCacheOption) : BitmapFrame<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />BitmapFrame.Create(bitmapUri: Uri, createOptions: BitmapCreateOptions, cacheOption: BitmapCacheOption) : BitmapFrame<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />BitmapFrame.Create(source: BitmapSource, thumbnail: BitmapSource, metadata: BitmapMetadata, colorContexts: Collections.ObjectModel.ReadOnlyCollection&lt;ColorContext&gt;) : BitmapFrame<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />BitmapFrame.Create(bitmapUri: Uri, createOptions: BitmapCreateOptions, cacheOption: BitmapCacheOption, uriCachePolicy: Net.Cache.RequestCachePolicy) : BitmapFrame<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />BitmapSource.Create(pixelWidth: int, pixelHeight: int, dpiX: float, dpiY: float, pixelFormat: PixelFormat, palette: BitmapPalette, pixels: Array, stride: int) : BitmapSource<br />&#160;&#160;&#160;<em>(+0 other overloads)</em></div>
+<div class="tip" id="fs139">property BitmapEncoder.Frames: Collections.Generic.IList&lt;BitmapFrame&gt;</div>
+<div class="tip" id="fs140">Collections.Generic.ICollection.Add(item: BitmapFrame) : unit</div>
+<div class="tip" id="fs141">val stm : FileStream</div>
+<div class="tip" id="fs142">type File =<br />&#160;&#160;static member AppendAllLines : path:string * contents:IEnumerable&lt;string&gt; -&gt; unit + 1 overload<br />&#160;&#160;static member AppendAllText : path:string * contents:string -&gt; unit + 1 overload<br />&#160;&#160;static member AppendText : path:string -&gt; StreamWriter<br />&#160;&#160;static member Copy : sourceFileName:string * destFileName:string -&gt; unit + 1 overload<br />&#160;&#160;static member Create : path:string -&gt; FileStream + 3 overloads<br />&#160;&#160;static member CreateText : path:string -&gt; StreamWriter<br />&#160;&#160;static member Decrypt : path:string -&gt; unit<br />&#160;&#160;static member Delete : path:string -&gt; unit<br />&#160;&#160;static member Encrypt : path:string -&gt; unit<br />&#160;&#160;static member Exists : path:string -&gt; bool<br />&#160;&#160;...<br /><br />Full name: System.IO.File</div>
+<div class="tip" id="fs143">File.Create(path: string) : FileStream<br />File.Create(path: string, bufferSize: int) : FileStream<br />File.Create(path: string, bufferSize: int, options: FileOptions) : FileStream<br />File.Create(path: string, bufferSize: int, options: FileOptions, fileSecurity: Security.AccessControl.FileSecurity) : FileStream</div>
+<div class="tip" id="fs144">BitmapEncoder.Save(stream: Stream) : unit</div>
+<div class="tip" id="fs145">val steps : x:float -&gt; y:float -&gt; text:string -&gt; color:Color -&gt; renderTransform:string -&gt; canvas:Canvas -&gt; int<br /><br />Full name: Plot-geometry.steps</div>
+<div class="tip" id="fs146">val text : string</div>
+<div class="tip" id="fs147">val color : Color</div>
+<div class="tip" id="fs148">val renderTransform : string</div>
+<div class="tip" id="fs149">val canvas : Canvas</div>
+<div class="tip" id="fs150">Multiple items<br />type Canvas =<br />&#160;&#160;inherit Panel<br />&#160;&#160;new : unit -&gt; Canvas<br />&#160;&#160;static val LeftProperty : DependencyProperty<br />&#160;&#160;static val TopProperty : DependencyProperty<br />&#160;&#160;static val RightProperty : DependencyProperty<br />&#160;&#160;static val BottomProperty : DependencyProperty<br />&#160;&#160;static member GetBottom : element:UIElement -&gt; float<br />&#160;&#160;static member GetLeft : element:UIElement -&gt; float<br />&#160;&#160;static member GetRight : element:UIElement -&gt; float<br />&#160;&#160;static member GetTop : element:UIElement -&gt; float<br />&#160;&#160;static member SetBottom : element:UIElement * length:float -&gt; unit<br />&#160;&#160;...<br /><br />Full name: System.Windows.Controls.Canvas<br /><br />--------------------<br />Canvas() : unit</div>
+<div class="tip" id="fs151">val textBlock : TextBlock</div>
+<div class="tip" id="fs152">Multiple items<br />type TextBlock =<br />&#160;&#160;inherit FrameworkElement<br />&#160;&#160;new : unit -&gt; TextBlock + 1 overload<br />&#160;&#160;member Background : Brush with get, set<br />&#160;&#160;member BaselineOffset : float with get, set<br />&#160;&#160;member BreakAfter : LineBreakCondition<br />&#160;&#160;member BreakBefore : LineBreakCondition<br />&#160;&#160;member ContentEnd : TextPointer<br />&#160;&#160;member ContentStart : TextPointer<br />&#160;&#160;member FontFamily : FontFamily with get, set<br />&#160;&#160;member FontSize : float with get, set<br />&#160;&#160;member FontStretch : FontStretch with get, set<br />&#160;&#160;...<br /><br />Full name: System.Windows.Controls.TextBlock<br /><br />--------------------<br />TextBlock() : unit<br />TextBlock(inline: Documents.Inline) : unit</div>
+<div class="tip" id="fs153">property TextBlock.Text: string</div>
+<div class="tip" id="fs154">property TextBlock.Foreground: Brush</div>
+<div class="tip" id="fs155">Canvas.SetLeft(element: UIElement, length: float) : unit</div>
+<div class="tip" id="fs156">Canvas.SetTop(element: UIElement, length: float) : unit</div>
+<div class="tip" id="fs157">property Panel.Children: UIElementCollection</div>
+<div class="tip" id="fs158">UIElementCollection.Add(element: UIElement) : int</div>
+<div class="tip" id="fs159">val axisXY : scale:float -&gt; env:OGR.Envelope -&gt; renderTransform:string -&gt; canvas:Canvas -&gt; unit<br /><br />Full name: Plot-geometry.axisXY</div>
+<div class="tip" id="fs160">val axisX : OGR.Geometry</div>
+<div class="tip" id="fs161">OGR.Geometry.AddPoint(x: float, y: float, z: float) : unit</div>
+<div class="tip" id="fs162">val axisY : OGR.Geometry</div>
+<div class="tip" id="fs163">val geomcol : OGR.Geometry</div>
+<div class="tip" id="fs164">OGR.Geometry.AddGeometry(other: OGR.Geometry) : int</div>
+<div class="tip" id="fs165">val i : float</div>
+<div class="tip" id="fs166">val step : OGR.Geometry</div>
+<div class="tip" id="fs167">val xi : float</div>
+<div class="tip" id="fs168">val yi : float</div>
+<div class="tip" id="fs169">val xCoord : float</div>
+<div class="tip" id="fs170">type Colors =<br />&#160;&#160;static member AliceBlue : Color<br />&#160;&#160;static member AntiqueWhite : Color<br />&#160;&#160;static member Aqua : Color<br />&#160;&#160;static member Aquamarine : Color<br />&#160;&#160;static member Azure : Color<br />&#160;&#160;static member Beige : Color<br />&#160;&#160;static member Bisque : Color<br />&#160;&#160;static member Black : Color<br />&#160;&#160;static member BlanchedAlmond : Color<br />&#160;&#160;static member Blue : Color<br />&#160;&#160;...<br /><br />Full name: System.Windows.Media.Colors</div>
+<div class="tip" id="fs171">property Colors.Black: Color</div>
+<div class="tip" id="fs172">val yCoord : float</div>
+<div class="tip" id="fs173">val paths : Path list</div>
+<div class="tip" id="fs174">val plot : fileName:string -&gt; geom:OGR.Geometry -&gt; unit<br /><br />Full name: Plot-geometry.plot</div>
+<div class="tip" id="fs175">val maxXYSide : float</div>
+<div class="tip" id="fs176">property FrameworkElement.Width: float</div>
+<div class="tip" id="fs177">property FrameworkElement.Height: float</div>
+<div class="tip" id="fs178">property UIElement.RenderTransformOrigin: Point</div>
+<div class="tip" id="fs179">val originX : float</div>
+<div class="tip" id="fs180">val originY : float</div>
+<div class="tip" id="fs181">val renderTransformAxisXY : string</div>
+<div class="tip" id="fs182">val win : Window</div>
+<div class="tip" id="fs183">Multiple items<br />type Window =<br />&#160;&#160;inherit ContentControl<br />&#160;&#160;new : unit -&gt; Window<br />&#160;&#160;member Activate : unit -&gt; bool<br />&#160;&#160;member AllowsTransparency : bool with get, set<br />&#160;&#160;member Close : unit -&gt; unit<br />&#160;&#160;member DialogResult : Nullable&lt;bool&gt; with get, set<br />&#160;&#160;member DragMove : unit -&gt; unit<br />&#160;&#160;member Hide : unit -&gt; unit<br />&#160;&#160;member Icon : ImageSource with get, set<br />&#160;&#160;member IsActive : bool<br />&#160;&#160;member Left : float with get, set<br />&#160;&#160;...<br /><br />Full name: System.Windows.Window<br /><br />--------------------<br />Window() : unit</div>
+<div class="tip" id="fs184">property ContentControl.Content: obj</div>
+<div class="tip" id="fs185">property Window.Topmost: bool</div>
+<div class="tip" id="fs186">property Window.Title: string</div>
+<div class="tip" id="fs187">Window.Show() : unit</div>
+<div class="tip" id="fs188">val size : Size</div>
+<div class="tip" id="fs189">Multiple items<br />type Size =<br />&#160;&#160;struct<br />&#160;&#160;&#160;&#160;new : width:float * height:float -&gt; Size<br />&#160;&#160;&#160;&#160;member Equals : o:obj -&gt; bool + 1 overload<br />&#160;&#160;&#160;&#160;member GetHashCode : unit -&gt; int<br />&#160;&#160;&#160;&#160;member Height : float with get, set<br />&#160;&#160;&#160;&#160;member IsEmpty : bool<br />&#160;&#160;&#160;&#160;member ToString : unit -&gt; string + 1 overload<br />&#160;&#160;&#160;&#160;member Width : float with get, set<br />&#160;&#160;&#160;&#160;static member Empty : Size<br />&#160;&#160;&#160;&#160;static member Equals : size1:Size * size2:Size -&gt; bool<br />&#160;&#160;&#160;&#160;static member Parse : source:string -&gt; Size<br />&#160;&#160;end<br /><br />Full name: System.Windows.Size<br /><br />--------------------<br />Size()<br />Size(width: float, height: float) : unit</div>
+<div class="tip" id="fs190">UIElement.Measure(availableSize: Size) : unit</div>
+<div class="tip" id="fs191">val rtb : RenderTargetBitmap</div>
+<div class="tip" id="fs192">type PixelFormats =<br />&#160;&#160;static member Bgr101010 : PixelFormat<br />&#160;&#160;static member Bgr24 : PixelFormat<br />&#160;&#160;static member Bgr32 : PixelFormat<br />&#160;&#160;static member Bgr555 : PixelFormat<br />&#160;&#160;static member Bgr565 : PixelFormat<br />&#160;&#160;static member Bgra32 : PixelFormat<br />&#160;&#160;static member BlackWhite : PixelFormat<br />&#160;&#160;static member Cmyk32 : PixelFormat<br />&#160;&#160;static member Default : PixelFormat<br />&#160;&#160;static member Gray16 : PixelFormat<br />&#160;&#160;...<br /><br />Full name: System.Windows.Media.PixelFormats</div>
+<div class="tip" id="fs193">property PixelFormats.Default: PixelFormat</div>
+<div class="tip" id="fs194">RenderTargetBitmap.Render(visual: Visual) : unit</div>
+<div class="tip" id="fs195">Multiple items<br />type Plot =<br />&#160;&#160;new : geom:Geometry -&gt; Plot<br />&#160;&#160;member SaveAsBitmap : fileName:string -&gt; unit<br />&#160;&#160;member Show : unit -&gt; unit<br /><br />Full name: Plot-geometry.Plot<br /><br />--------------------<br />new : geom:OGR.Geometry -&gt; Plot</div>
+<div class="tip" id="fs196">val addPaths : unit</div>
+<div class="tip" id="fs197">val winSize : float</div>
+<div class="tip" id="fs198">val this : Plot</div>
+<div class="tip" id="fs199">member Plot.Show : unit -&gt; unit<br /><br />Full name: Plot-geometry.Plot.Show</div>
+<div class="tip" id="fs200">member Plot.SaveAsBitmap : fileName:string -&gt; unit<br /><br />Full name: Plot-geometry.Plot.SaveAsBitmap</div>
+
+
+          
+        </div>
+
+        <div class="tip" id="fs1">namespace Fsharp.Gdal</div>
+        <div class="span3">
+            <img src="./img/logo.png" alt="F# Project" style="width:150px;margin:10px">
+            <ul class="nav nav-list" id="menu" style="margin-top: 20px;">
+                <li class="nav-header">Fsharp.Gdal</li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/index.html">Home page</a></li>
+                <li class="divider"></li>
+                <li><a href="http://nuget.org/packages/Fsharp.Gdal">Get Library via NuGet</a></li>
+                <li><a href="http://github.com/domasin/Fsharp.Gdal">Source Code on GitHub</a></li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/license.html">License</a></li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/release-notes.html">Release Notes</a></li>
+
+                <li class="nav-header">Getting started</li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/tutorial.html">Sample tutorial</a></li>
+
+                <li class="nav-header">Documentation</li>
+                <li><a href="http://domasin.github.io/Fsharp.Gdal/reference/index.html">API Reference</a></li>
+            </ul>
+        </div>
+        <a href="http://github.com/domasin/Fsharp.Gdal"><img style="position: absolute; top: 0; right: 0; border: 0;" src="./img/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+    </div>
+    <hr style="margin-top:50px;" />
+      <footer class="footer" style="text-align:center">
+        Build with FsLab Journal
+      </footer>
+    </div>
+  </body>
+</html>
