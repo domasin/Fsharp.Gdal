@@ -1,74 +1,46 @@
-﻿#I "../bin/Fsharp.Gdal"
+﻿(*** hide ***)
+#I "../bin/Fsharp.Gdal"
 
 #r "Fsharp.Gdal.dll"
 #r "gdal_csharp.dll"
 #r "gdalconst_csharp.dll"
 #r "ogr_csharp.dll"
 #r "osr_csharp.dll"
-
+//
 #r "PresentationCore"
 #r "WindowsBase"
 #r "presentationframework"
 #r "System.Xaml"
-
+//
 open System
 open System.IO
-open System.Xml
 open System.Windows
 open System.Windows.Media
 open System.Windows.Media.Imaging
 open System.Windows.Markup
 open System.Windows.Shapes
 open System.Windows.Controls
+//
+//open FSharp.Gdal
 
-open FSharp.Gdal
+
+(**
+Plot Geometry
+========================
+This section defines a `plot` function to give a graphical visualization of GDAL geometries 
+in a Xaml Window Page using a Canvas as a Cartesian Plan.
+*)
+
+(**
+The `coordinates` function just extracts a list of tuples 
+made of the longitude and latitude of the corrdinates that consistute 
+the geometry.
+*)
+
 open OSGeo
 
-Configuration.Init() |> ignore
-
-// Define geometries to test the functions
-
-let point = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
-point.AddPoint(200., 200.,0.)
-
-let line = new OGR.Geometry(OGR.wkbGeometryType.wkbLineString)
-line.AddPoint(50., 50., 0.)
-line.AddPoint(100., 120., 0.)
-line.AddPoint(200., 150., 0.)
-line.AddPoint(300., 300., 0.)
-
-let ring = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
-ring.AddPoint(100., 100., 0.)
-ring.AddPoint(200., 100., 0.)
-ring.AddPoint(200., 200., 0.)
-ring.AddPoint(100., 200., 0.)
-ring.AddPoint(100., 100., 0.)
-
-let poly = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
-poly.AddGeometry(ring)
-
-// Create outer ring
-let outRing = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
-outRing.AddPoint(100., 100., 0.)
-outRing.AddPoint(200., 100., 0.)
-outRing.AddPoint(200., 200., 0.)
-outRing.AddPoint(100., 200., 0.)
-outRing.AddPoint(100., 100., 0.)
-
-// Create inner ring
-let innerRing = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
-innerRing.AddPoint(125., 125., 0.)
-innerRing.AddPoint(175., 125., 0.)
-innerRing.AddPoint(175., 175., 0.)
-innerRing.AddPoint(125., 175., 0.)
-innerRing.AddPoint(125., 125., 0.)
-
-// Create polygon
-let polyWithHoles = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
-
-polyWithHoles.AddGeometry(innerRing)
-polyWithHoles.AddGeometry(outRing)
-
+/// Extracts the geometry's coordinates as a list of tuples made of 
+/// longitude and latitude.
 let coordinates (geom:OGR.Geometry) = 
     let last = geom.GetPointCount() - 1
     [
@@ -78,12 +50,39 @@ let coordinates (geom:OGR.Geometry) =
             (p.[0], p.[1])
     ]
 
+(**
+Geometries in the Canvas are rendered as `Paths` whose `Data` property follows 
+the Standard Vector Graphics pattern.
+
+We define functions specific for each shapes type (points, line, 
+polygons) to return their path data as svg strings.
+*)
+
+(**
+Points will be rendered graphically as little squares whose dimension must be choosen 
+in a way appropriate to give a sense of a puntual shape.
+
+Fo this reason the `pointPath` function takes an `OGR.Geometry` argument together with 
+a `scale` argument.
+*)
+
+/// Takes a `scale` argument and an OGR.Geometry of point type and returns the svg 
+/// reppresentation of a little square sized at the given scale as to give a sense 
+/// of a punctual shape.
 let pointPath scale geom = 
     let x,y = geom |> coordinates |> List.head 
-    let x1 = x + (6. / scale)
-    let y1 = y + (6. / scale)
-    sprintf "M %.2f,%.2f %.2f,%.2f %.2f,%.2f %.2f,%.2f %.2f,%.2fz" x y x1 y x1 y1 x y1 x y
+    let x1 = x - (3. / scale)
+    let y1 = y - (3. / scale)
+    let x2 = x + (3. / scale)
+    let y2 = y + (3. / scale)
+    sprintf "M %.2f,%.2f %.2f,%.2f %.2f,%.2f %.2f,%.2f %.2f,%.2fz" x1 y1 x2 y1 x2 y2 x1 y2 x1 y1
 
+(**
+The `linePath` function takes an `OGR.Geometry` which should be of linear type for the function 
+to work appropriately and returns its svg reppresentation.
+*)
+
+/// Takes an OGR.Geometry of linear type and returns its svg reppresentation as a string.
 let linePath geom = 
     geom
     |> coordinates
@@ -95,8 +94,12 @@ let linePath geom =
                 acc + (sprintf " L %.2f,%.2f" x y)
         ) ""
 
-line |> linePath
+(**
+The `ringPath` function takes an `OGR.Geometry` of ring type and returns its 
+svg reppresentation.
+*)
 
+/// Takes an OGR.Geometry of ring type and returns its svg reppresentation as a string.
 let ringPath geom = 
     geom
     |> coordinates
@@ -108,8 +111,13 @@ let ringPath geom =
                 acc + (sprintf " %.2f,%.2f" x y)
         ) ""
 
-ring |> ringPath
+(**
+An OGR Polygon is a complex structure made of one or more rings. The `polygonPath` 
+traverses the polygon structure to find all its rings and then concatenate their 
+svg reppresentation in a single string.
+*)
 
+/// Takes an OGR.Geometry of polygon type and returns its svg reppresentation.
 let polygonPath (geom:OGR.Geometry) = 
     let count = geom.GetGeometryCount()
     [for i in [0..(count-1)] -> 
@@ -117,18 +125,27 @@ let polygonPath (geom:OGR.Geometry) =
     ]
     |> List.fold (fun acc ringPath -> ringPath + " " + acc) ""
 
-polyWithHoles |> polygonPath
+(**
+OGR includes different geometry types that for our purpose can be rendered 
+as the same shape type.
 
-type GeomType = 
+Below we define 5 classes of shapes and then a function that maps an OGR.Geometry 
+to the appropiate shape.
+*)
+
+/// Classes of shapes reppresenting OGR.Geometries
+type Shape = 
     | Point
     | Line
     | Ring
     | Polygon
     | GeometryCollection
 
+/// Just an utility function to more easily get the OGR.Geometry type
 let geomType (geom:OGR.Geometry) = 
     geom.GetGeometryType()
     
+/// Maps an OGR.Geometry to the appropriate shape
 let geometryShape geom = 
     let geomType = geom |> geomType
     match geomType with
@@ -246,7 +263,7 @@ let scale (canvasSize:float) (envSize:float) =
 
 let save fileName (bmp:RenderTargetBitmap)  = 
 
-    let fileName = __SOURCE_DIRECTORY__ + sprintf "\images\%s.png" fileName
+    let fileName = __SOURCE_DIRECTORY__ + sprintf "\output\img\%s.png" fileName
 
     let enc = new PngBitmapEncoder()
     let b = BitmapFrame.Create(bmp)
@@ -255,9 +272,69 @@ let save fileName (bmp:RenderTargetBitmap)  =
     use stm = File.Create(fileName)
     enc.Save(stm)
 
+let steps x y text color renderTransform (canvas:Canvas) = 
+    printfn "x = %f y = %f renderTransform = %s" x y renderTransform
+    let textBlock = new TextBlock()
+    textBlock.Text <- text
+    textBlock.Foreground <- new SolidColorBrush(color)
+    Canvas.SetLeft(textBlock, x)
+    Canvas.SetTop(textBlock, y)
+    textBlock.RenderTransform <- Transform.Parse(renderTransform)
+    canvas.Children.Add(textBlock)
+
+let axisXY scale (env:OGR.Envelope) renderTransform (canvas:Canvas) = 
+    let x,y = env.MinX, env.MinY
+    let x1 = x + (400. / scale)
+    let y1 = y + (400. / scale)
+
+    let axisX = new OGR.Geometry(OGR.wkbGeometryType.wkbLineString)
+    axisX.AddPoint(x,  y,  0.)
+    axisX.AddPoint(x1, y,  0.)
+
+    let axisY = new OGR.Geometry(OGR.wkbGeometryType.wkbLineString)
+    axisY.AddPoint(x, y, 0.)
+    axisY.AddPoint(x,  y1, 0.)
+
+    let geomcol = new OGR.Geometry(OGR.wkbGeometryType.wkbGeometryCollection)
+    geomcol.AddGeometry(axisX) |> ignore
+    geomcol.AddGeometry(axisY) |> ignore
+
+    for i in [0.0..50.0..400.0] do
+        let step = new OGR.Geometry(OGR.wkbGeometryType.wkbLineString)
+        step.AddPoint(x + (i / scale),  y,                  0.)
+        step.AddPoint(x + (i / scale),  y + (10. / scale),  0.)
+        geomcol.AddGeometry(step) |> ignore
+
+    for i in [0.0..50.0..400.0] do
+        let step = new OGR.Geometry(OGR.wkbGeometryType.wkbLineString)
+        step.AddPoint(x,                    y + (i / scale),  0.)
+        step.AddPoint(x + (10. / scale),    y + (i / scale),  0.)
+        geomcol.AddGeometry(step) |> ignore
+
+    printfn "scael = %f" scale
+
+    // draw x steps
+    for i in [0.0..50.0..400.0] do
+        let xi = i
+        let yi = if i % 100. = 0. then 0. else -15.
+        let xCoord = x + (i / scale)
+        canvas |> steps xi yi (sprintf "%.2f" xCoord) Colors.Black renderTransform |> ignore
+
+    // draw y steps
+    for i in [0.0..50.0..400.0] do
+        let yi = i
+        let xi = -70.
+        let yCoord = y + (i / scale)
+        if i > 0.0 then
+            canvas |> steps xi yi (sprintf "%.2f" yCoord) Colors.Black renderTransform |> ignore
+
+    let paths = geomcol |> geometryPaths scale 0 []
+    for path in paths do 
+        canvas.Children.Add(path) |> ignore
+
 let plot fileName (geom:OGR.Geometry) = 
 
-    let env = geom |> env |> resize 1.
+    let env = geom |> env |> resize 0.8
     let maxXYSide = env |> maxSize
 
     printfn "Geometry Properties:"
@@ -278,23 +355,28 @@ let plot fileName (geom:OGR.Geometry) =
 
     let originX = env.MinX * scale * -1.
     let originY = env.MinY * scale
-    let renderTrasnform = sprintf "1 0 0 -1 %.2f %.2f" originX originY
-    canvas.RenderTransform <- Transform.Parse(renderTrasnform)
+    let renderTransform = sprintf "1 0 0 -1 %.2f %.2f" originX originY
     
-    printfn "RenderTrasnform = %s" renderTrasnform |> ignore
+    canvas.RenderTransform <- Transform.Parse(renderTransform)
+    
+    printfn "RenderTrasnform = %s" renderTransform |> ignore
     printfn ""
     
     let paths = geom |> geometryPaths scale 0 []
     for path in paths do 
         canvas.Children.Add(path) |> ignore
 
-    let winSize = 500.
-    let win = new Window()
-    win.Width <- winSize
-    win.Height <- winSize
-    win.Content <- canvas
+    let renderTransformAxisXY = sprintf "1 0 0 -1 %.2f %.2f" -originX originY
+    canvas |> axisXY scale env renderTransformAxisXY
 
-    win.Title <- "F# Geometry Plot"
+//    let winSize = 900.
+    let win = new Window()
+    win.Width <- 600.
+    win.Height <- 550.
+    win.Content <- canvas
+    win.Topmost <- true
+
+    win.Title <- "F# Geometry Plot: " + fileName
 
     win.Show()
 
@@ -304,43 +386,50 @@ let plot fileName (geom:OGR.Geometry) =
     rtb.Render(canvas)
     rtb |> save fileName
 
-//////point |> plot
-//let e = point |> env
-//////line |> plot
-//////poly |> plot
-//////polyWithHoles |> plot
-////
-////let ring2 = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
-//////ring2.AddPoint(1000., 1000., 0.)
-//////ring2.AddPoint(2000., 1000., 0.)
-//////ring2.AddPoint(2000., 2000., 0.)
-//////ring2.AddPoint(1000., 2000., 0.)
-//////ring2.AddPoint(1000., 1000., 0.)
-////
-////ring2.AddPoint(100., 100., 0.)
-////ring2.AddPoint(300., 100., 0.)
-////ring2.AddPoint(200., 200., 0.)
-////ring2.AddPoint(100., 100., 0.)
-////
-////
-////let poly2 = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
-////poly2.AddGeometry(ring2)
-////
-//////poly2 |> shapePath
-//////poly2 |> plot
-//
-//let multipoint = new OGR.Geometry(OGR.wkbGeometryType.wkbMultiPoint)
-//
-//let point1 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
-//point1.AddPoint(1251243.7361610543, 598078.7958668759, 0.)
-//multipoint.AddGeometry(point1)
-//
-//let point2 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
-//point2.AddPoint(1240605.8570339603, 601778.9277371694, 0.)
-//multipoint.AddGeometry(point2)
-//
-//let point3 = new OGR.Geometry(OGR.wkbGeometryType.wkbPoint)
-//point3.AddPoint(1250318.7031934808, 606404.0925750365, 0.)
-//multipoint.AddGeometry(point3)
-//
-//multipoint |> plot "multipoint"
+type Plot(geom:OGR.Geometry) = 
+    let env = geom |> env |> resize 1.
+    let maxXYSide = env |> maxSize
+
+    let canvas = new Canvas()
+    let canvasSize = 400.
+    do canvas.Width <- canvasSize
+    do canvas.Height <- canvasSize
+    do canvas.RenderTransformOrigin <- new Point(0.5,0.5)
+
+    do printfn "Canvas Properties:"
+    let scale = canvasSize / maxXYSide
+    do printfn "Scale shapes: (canvas size = %.2f / envelope size = %.2f) = %.5f" canvasSize maxXYSide scale
+
+    let originX = env.MinX * scale * -1.
+    let originY = env.MinY * scale
+    let renderTrasnform = sprintf "1 0 0 -1 %.2f %.2f" originX originY
+    do canvas.RenderTransform <- Transform.Parse(renderTrasnform)
+    
+    do printfn "RenderTrasnform = %s" renderTrasnform |> ignore
+    do printfn ""
+    
+    let paths = geom |> geometryPaths scale 0 []
+    let addPaths = 
+        for path in paths do 
+            canvas.Children.Add(path) |> ignore
+    do addPaths
+
+    let winSize = 500.
+    let win = new Window()
+    do win.Width <- winSize
+    do win.Height <- winSize
+    do win.Content <- canvas
+
+    do win.Title <- "F# Geometry Plot"
+
+//    do win.Show()
+
+    member this.Show() = 
+        win.Show()
+
+    member this.SaveAsBitmap(fileName) = 
+        let size = new Size(win.Width, win.Height)
+        canvas.Measure(size)
+        let rtb = new RenderTargetBitmap(500, 500, 96., 96., PixelFormats.Default)
+        rtb.Render(canvas)
+        rtb |> save fileName

@@ -55,6 +55,10 @@ printfn "Well Known Text = %s" wktPoint
 point |> plot "point"
 
 (**
+![point](./img/point.png "Point")
+*)
+
+(**
 Create a LineString
 ------------------------
 *)
@@ -69,6 +73,10 @@ let _,lineStringWkt = line.ExportToWkt()
 (*** include-value:lineStringWkt ***)
 
 line |> plot "line"
+
+(**
+![line](./img/line.png "Point")
+*)
 
 (**
 Create a Polygon
@@ -92,6 +100,10 @@ let _,polyStringWkt = poly.ExportToWkt()
 (*** include-value:polyStringWkt ***)
 
 poly |> plot "poly"
+
+(**
+![poly](./img/poly.png "Point")
+*)
 
 (** 
 Create Polygon with holes
@@ -128,6 +140,10 @@ let _,polyWithHolesWkt = polyWithHoles.ExportToWkt()
 polyWithHoles |> plot "polyWithHoles"
 
 (**
+![polyWithHoles](./img/polyWithHoles.png "Point")
+*)
+
+(**
 Create a MultiPoint
 ------------------------
 *)
@@ -152,6 +168,10 @@ let _,multipointWkt = multipoint.ExportToWkt()
 multipoint |> plot "multipoint"
 
 (**
+![multipoint](./img/multipoint.png "Point")
+*)
+
+(**
 Create a MultiLineString
 ------------------------
 *)
@@ -172,6 +192,10 @@ let _,multilineWkt = multiline.ExportToWkt()
 (*** include-value:multilineWkt ***)
 
 multiline |> plot "multiline"
+
+(**
+![multiline](./img/multiline.png "Point")
+*)
 
 (**
 Create a MultiPloygon
@@ -212,6 +236,10 @@ let _,multipolygonWkt = multipolygon.ExportToWkt()
 multipolygon |> plot "multipolygon"
 
 (**
+![multipolygon](./img/multipolygon.png "Point")
+*)
+
+(**
 Create a GeometryCollection
 ------------------------
 *)
@@ -235,6 +263,10 @@ let _,geomcolWkt = geomcol.ExportToWkt()
 geomcol |> plot "geomcol"
 
 (**
+![geomcol](./img/geomcol.png "Point")
+*)
+
+(**
 Create Geometry from WKT
 ------------------------
 *)
@@ -247,6 +279,10 @@ printfn "%f,%f" (point5.GetX(0)) (point5.GetY(0))
 (*** include-output:createFromWKT ***)
 
 point5 |> plot "point5"
+
+(**
+![point5](./img/point5.png "Point")
+*)
 
 (**
 Create Geometry from GeoJSON
@@ -263,6 +299,10 @@ printfn "%f,%f" (point6.GetX(0)) (point6.GetY(0))
 point6 |> plot "point6"
 
 (**
+![point6](./img/point6.png "Point")
+*)
+
+(**
 Create Geometry from GML
 ------------------------
 *)
@@ -275,6 +315,10 @@ printfn "%f,%f" (point7.GetX(0)) (point7.GetY(0))
 (*** include-output:createFromGML ***)
 
 point7 |> plot "point7"
+
+(**
+![point7](./img/point7.png "Point")
+*)
 
 (**
 Create Geometry from WKB
@@ -342,10 +386,14 @@ let bufferDistance = 1000.
 let lineBuffer = line4.Buffer(bufferDistance, 1)
 
 let lineAndBuffer = new OGR.Geometry(OGR.wkbGeometryType.wkbGeometryCollection)
-lineAndBuffer.AddGeometry(line4)
 lineAndBuffer.AddGeometry(lineBuffer)
+lineAndBuffer.AddGeometry(line4)
 
 lineAndBuffer |> plot "lineAndBuffer"
+
+(**
+![lineAndBuffer](./img/lineAndBuffer.png "Point")
+*)
 
 (**
 Calculate Envelope of a Geometry
