@@ -2,9 +2,6 @@
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
 #load "packages/FsLab/FsLab.fsx"
-open FSharp.Charting
-//#load "plot-geometries.fsx"
-//open ``Plot-geometries``
 #load "plot-geometry.fsx"
 open ``Plot-geometry``
 
@@ -24,7 +21,7 @@ Geometry
 ========================
 This is the equivalent of the Python GDAL/OGR Cookbook's Geomtry page for Fsharp.Gdal. 
 To show the shape of geometries we use the `plot` function which is described in the 
-[Plot Geometries](plot-geometries.html) appendix.
+[Plot Geometry](plot-geometry.html) appendix.
 *)
 
 (**

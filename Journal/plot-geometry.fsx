@@ -75,7 +75,7 @@ let pointPath scale geom =
     let y1 = y - (3. / scale)
     let x2 = x + (3. / scale)
     let y2 = y + (3. / scale)
-    sprintf "M %.2f,%.2f %.2f,%.2f %.2f,%.2f %.2f,%.2f %.2f,%.2fz" x1 y1 x2 y1 x2 y2 x1 y2 x1 y1
+    sprintf "M %f,%f %f,%f %f,%f %f,%f %f,%fz" x1 y1 x2 y1 x2 y2 x1 y2 x1 y1
 
 (**
 The `linePath` function takes an `OGR.Geometry` which should be of linear type for the function 
@@ -89,9 +89,9 @@ let linePath geom =
     |> List.fold 
         (fun acc (x,y) -> 
             if acc = "" then
-                acc + (sprintf "M %.2f,%.2f" x y)
+                acc + (sprintf "M %f,%f" x y)
             else
-                acc + (sprintf " L %.2f,%.2f" x y)
+                acc + (sprintf " L %f,%f" x y)
         ) ""
 
 (**
@@ -106,9 +106,9 @@ let ringPath geom =
     |> List.fold 
         (fun acc (x,y) -> 
             if acc = "" then
-                acc + (sprintf "M %.2f,%.2f" x y)
+                acc + (sprintf "M %f,%f" x y)
             else
-                acc + (sprintf " %.2f,%.2f" x y)
+                acc + (sprintf " %f,%f" x y)
         ) ""
 
 (**
@@ -382,7 +382,7 @@ let plot fileName (geom:OGR.Geometry) =
 
     let size = new Size(win.Width, win.Height)
     canvas.Measure(size)
-    let rtb = new RenderTargetBitmap(500, 500, 96., 96., PixelFormats.Default)
+    let rtb = new RenderTargetBitmap(600, 550, 96., 96., PixelFormats.Default)
     rtb.Render(canvas)
     rtb |> save fileName
 
