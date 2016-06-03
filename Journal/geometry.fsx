@@ -49,10 +49,13 @@ printfn "Result = %i" result
 printfn "Well Known Text = %s" wktPoint
 (*** include-output:createAPoint ***)
 
-point |> plot "point"
+let pointPlot = point |> Plot
+
+(*** hide ***)
+pointPlot.SaveAsBitmap("pointPlot")
 
 (**
-![point](./img/point.png "Point")
+![pointPlot](./img/PointPlot.png "pointPlot")
 *)
 
 (**
@@ -69,10 +72,13 @@ line.AddPoint(1281307.30760719, 636467.6640211721, 0.)
 let _,lineStringWkt = line.ExportToWkt()
 (*** include-value:lineStringWkt ***)
 
-line |> plot "line"
+let linePlot = line |> Plot
+
+(*** hide ***)
+linePlot.SaveAsBitmap("linePlot")
 
 (**
-![line](./img/line.png "Point")
+![linePlot](./img/linePlot.png "linePlot")
 *)
 
 (**
@@ -96,10 +102,13 @@ poly.AddGeometry(ring)
 let _,polyStringWkt = poly.ExportToWkt()
 (*** include-value:polyStringWkt ***)
 
-poly |> plot "poly"
+let polyPlot = poly |> Plot
+
+(*** hide ***)
+polyPlot.SaveAsBitmap("polyPlot")
 
 (**
-![poly](./img/poly.png "Point")
+![polyPlot](./img/polyPlot.png "polyPlot")
 *)
 
 (** 
@@ -125,19 +134,19 @@ innerRing.AddPoint(1149490.1097279799, 691044.6091080031, 0.)
 // Create polygon
 let polyWithHoles = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
 
-(** 
-Inner rings must be added before to create a hole
-*)
 polyWithHoles.AddGeometry(innerRing)
 polyWithHoles.AddGeometry(outRing)
 
 let _,polyWithHolesWkt = polyWithHoles.ExportToWkt()
 (*** include-value:polyWithHolesWkt ***)
 
-polyWithHoles |> plot "polyWithHoles"
+let polyWithHolesPlot = polyWithHoles |> Plot
+
+(*** hide ***)
+polyWithHolesPlot.SaveAsBitmap("polyWithHolesPlot")
 
 (**
-![polyWithHoles](./img/polyWithHoles.png "Point")
+![polyWithHolesPlot](./img/polyWithHolesPlot.png "polyWithHolesPlot")
 *)
 
 (**
@@ -162,10 +171,13 @@ multipoint.AddGeometry(point3)
 let _,multipointWkt = multipoint.ExportToWkt()
 (*** include-value:multipointWkt ***)
 
-multipoint |> plot "multipoint"
+let multipointPlot = multipoint |> Plot
+
+(*** hide ***)
+multipointPlot.SaveAsBitmap("multipointPlot")
 
 (**
-![multipoint](./img/multipoint.png "Point")
+![multipointPlot](./img/multipointPlot.png "multipointPlot")
 *)
 
 (**
@@ -188,10 +200,13 @@ multiline.AddGeometry(line2)
 let _,multilineWkt = multiline.ExportToWkt()
 (*** include-value:multilineWkt ***)
 
-multiline |> plot "multiline"
+let multilinePlot = multiline |> Plot
+
+(*** hide ***)
+multilinePlot.SaveAsBitmap("multilinePlot")
 
 (**
-![multiline](./img/multiline.png "Point")
+![multilinePlot](./img/multilinePlot.png "multilinePlot")
 *)
 
 (**
@@ -230,10 +245,13 @@ multipolygon.AddGeometry(poly2)
 let _,multipolygonWkt = multipolygon.ExportToWkt()
 (*** include-value:multipolygonWkt ***)
 
-multipolygon |> plot "multipolygon"
+let multipolygonPlot = multipolygon |> Plot
+
+(*** hide ***)
+multipolygonPlot.SaveAsBitmap("multipolygonPlot")
 
 (**
-![multipolygon](./img/multipolygon.png "Point")
+![multipolygonPlot](./img/multipolygonPlot.png "multipolygonPlot")
 *)
 
 (**
@@ -257,10 +275,13 @@ geomcol.AddGeometry(line3)
 let _,geomcolWkt = geomcol.ExportToWkt()
 (*** include-value:geomcolWkt ***)
 
-geomcol |> plot "geomcol"
+let geomcolPlot = geomcol |> Plot
+
+(*** hide ***)
+geomcolPlot.SaveAsBitmap("geomcolPlot")
 
 (**
-![geomcol](./img/geomcol.png "Point")
+![geomcolPlot](./img/geomcolPlot.png "geomcolPlot")
 *)
 
 (**
@@ -275,10 +296,13 @@ let point5 = OGR.Ogr.CreateGeometryFromWkt(wkt, null)
 printfn "%f,%f" (point5.GetX(0)) (point5.GetY(0))
 (*** include-output:createFromWKT ***)
 
-point5 |> plot "point5"
+let point5Plot = point5 |> Plot
+
+(*** hide ***)
+point5Plot.SaveAsBitmap("point5Plot")
 
 (**
-![point5](./img/point5.png "Point")
+![point5Plot](./img/point5Plot.png "point5Plot")
 *)
 
 (**
@@ -293,10 +317,13 @@ let point6 = OGR.Ogr.CreateGeometryFromJson(geojson)
 printfn "%f,%f" (point6.GetX(0)) (point6.GetY(0))
 (*** include-output:createFromGeoJSON ***)
 
-point6 |> plot "point6"
+let point6Plot = point6 |> Plot
+
+(*** hide ***)
+point6Plot.SaveAsBitmap("point6Plot")
 
 (**
-![point6](./img/point6.png "Point")
+![point6Plot](./img/point6Plot.png "point6Plot")
 *)
 
 (**
@@ -311,10 +338,13 @@ let point7 = OGR.Ogr.CreateGeometryFromGML(gml)
 printfn "%f,%f" (point7.GetX(0)) (point7.GetY(0))
 (*** include-output:createFromGML ***)
 
-point7 |> plot "point7"
+let point7Plot = point7 |> Plot
+
+(*** hide ***)
+point7Plot.SaveAsBitmap("point7Plot")
 
 (**
-![point7](./img/point7.png "Point")
+![point7Plot](./img/point7Plot.png "point7Plot")
 *)
 
 (**
@@ -386,10 +416,13 @@ let lineAndBuffer = new OGR.Geometry(OGR.wkbGeometryType.wkbGeometryCollection)
 lineAndBuffer.AddGeometry(lineBuffer)
 lineAndBuffer.AddGeometry(line4)
 
-lineAndBuffer |> plot "lineAndBuffer"
+let lineAndBufferPlot = lineAndBuffer |> Plot
+
+(*** hide ***)
+lineAndBufferPlot.SaveAsBitmap("lineAndBufferPlot")
 
 (**
-![lineAndBuffer](./img/lineAndBuffer.png "Point")
+![lineAndBufferPlot](./img/lineAndBufferPlot.png "lineAndBufferPlot")
 *)
 
 (**
@@ -406,4 +439,82 @@ line4.GetEnvelope(env)
 printfn "MinX: %f, MinY: %f, MaxX: %f, MaxY: %f" env.MinX env.MinY env.MaxX env.MaxY
 (*** include-output:envelope ***)
 
+(**
+Calculate the Area of a Geometry
+------------------------
+*)
 
+(*** define-output:area ***)
+let wkt4 = ref "POLYGON ((1162440.5712740074 672081.4332727483, 1162440.5712740074 647105.5431482664, 1195279.2416228633 647105.5431482664, 1195279.2416228633 672081.4332727483, 1162440.5712740074 672081.4332727483))"
+let poly3 = OGR.Ogr.CreateGeometryFromWkt(wkt4, null)
+
+printfn "Area = %f" (poly3.GetArea())
+(*** include-output:area ***)
+
+(**
+Calculate the Length of a Geometry
+------------------------
+*)
+
+(*** define-output:length ***)
+let wkt5 = ref "LINESTRING (1181866.263593049 615654.4222507705, 1205917.1207499576 623979.7189589312, 1227192.8790041457 643405.4112779726, 1224880.2965852122 665143.6860159477)"
+let geom2 = OGR.Ogr.CreateGeometryFromWkt(wkt5, null)
+
+printfn "Length = %f" (geom2.Length())
+(*** include-output:length ***)
+
+(**
+Get the geometry type (as a string) from a Geometry
+------------------------
+*)
+
+(*** define-output:geometryName ***)
+let wkts = 
+    [
+        ref "POINT (1198054.34 648493.09)"
+        ref "LINESTRING (1181866.263593049 615654.4222507705, 1205917.1207499576 623979.7189589312, 1227192.8790041457 643405.4112779726, 1224880.2965852122 665143.6860159477)"
+        ref "POLYGON ((1162440.5712740074 672081.4332727483, 1162440.5712740074 647105.5431482664, 1195279.2416228633 647105.5431482664, 1195279.2416228633 672081.4332727483, 1162440.5712740074 672081.4332727483))"
+    ]
+
+for wkt in wkts do
+    let geom = OGR.Ogr.CreateGeometryFromWkt(wkt, null)
+    printfn "%s" (geom.GetGeometryName())
+(*** include-output:geometryName ***)
+
+(**
+Calculate intersection between two Geometries
+------------------------
+*)
+
+let wkt7 = ref "POLYGON ((1208064.271243039 624154.6783778917, 1208064.271243039 601260.9785661874, 1231345.9998651114 601260.9785661874, 1231345.9998651114 624154.6783778917, 1208064.271243039 624154.6783778917))"
+let wkt6 = ref "POLYGON ((1199915.6662253144 633079.3410163528, 1199915.6662253144 614453.958118695, 1219317.1067437078 614453.958118695, 1219317.1067437078 633079.3410163528, 1199915.6662253144 633079.3410163528)))"
+
+let poly4 = OGR.Ogr.CreateGeometryFromWkt(wkt7, null)
+let poly5 = OGR.Ogr.CreateGeometryFromWkt(wkt6, null)
+
+let intersection = poly4.Intersection(poly5)
+
+let _, intersectionStr = intersection.ExportToWkt()
+
+(*** define-output:intersections ***)
+printfn "%s" intersectionStr
+(*** include-output:intersections ***)
+
+(**
+To graphically visualize the intersection we can add all the three geometries 
+in a geometry collection and then plot it:
+*)
+
+let geomcol2 = new OGR.Geometry(OGR.wkbGeometryType.wkbGeometryCollection)
+geomcol2.AddGeometry(poly4)
+geomcol2.AddGeometry(poly5)
+geomcol2.AddGeometry(intersection)
+
+let geomcol2Plot = geomcol2 |> Plot
+
+(*** hide ***)
+geomcol2Plot.SaveAsBitmap("geomcol2Plot")
+
+(**
+![geomcol2Plot](./img/geomcol2Plot.png "geomcol2Plot")
+*)
