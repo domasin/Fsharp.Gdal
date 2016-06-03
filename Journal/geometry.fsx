@@ -55,7 +55,7 @@ let pointPlot = point |> Plot
 pointPlot.SaveAsBitmap("pointPlot")
 
 (**
-![pointPlot](./img/PointPlot.png "pointPlot")
+![pointPlot](./img/pointPlot.png "pointPlot")
 *)
 
 (**
@@ -440,6 +440,11 @@ printfn "MinX: %f, MinY: %f, MaxX: %f, MaxY: %f" env.MinX env.MinY env.MaxX env.
 (*** include-output:envelope ***)
 
 (**
+(In the plot-geometry script I've already defined an utility function `toEnv` to obtain the 
+envelope of a geometry more easily.)
+*)
+
+(**
 Calculate the Area of a Geometry
 ------------------------
 *)
@@ -517,4 +522,291 @@ geomcol2Plot.SaveAsBitmap("geomcol2Plot")
 
 (**
 ![geomcol2Plot](./img/geomcol2Plot.png "geomcol2Plot")
+*)
+
+(**
+Calculate union between two Geometries
+------------------------
+*)
+
+let wkt8 = ref "POLYGON ((1208064.271243039 624154.6783778917, 1208064.271243039 601260.9785661874, 1231345.9998651114 601260.9785661874, 1231345.9998651114 624154.6783778917, 1208064.271243039 624154.6783778917))"
+let wkt9 = ref "POLYGON ((1199915.6662253144 633079.3410163528, 1199915.6662253144 614453.958118695, 1219317.1067437078 614453.958118695, 1219317.1067437078 633079.3410163528, 1199915.6662253144 633079.3410163528)))"
+
+let poly6 = OGR.Ogr.CreateGeometryFromWkt(wkt8, null)
+let poly7 = OGR.Ogr.CreateGeometryFromWkt(wkt9, null)
+
+let geomcol3 = new OGR.Geometry(OGR.wkbGeometryType.wkbGeometryCollection)
+geomcol3.AddGeometry(poly6)
+geomcol3.AddGeometry(poly7)
+
+let geomcol3Plot = geomcol3 |> Plot
+
+(*** hide ***)
+geomcol3Plot.SaveAsBitmap("geomcol3Plot")
+
+(**
+![geomcol3Plot](./img/geomcol3Plot.png "geomcol3Plot")
+*)
+
+let union = poly6.Union(poly7)
+
+let unionPlot = union |> Plot
+
+(*** hide ***)
+unionPlot.SaveAsBitmap("unionPlot")
+
+(**
+![unionPlot](./img/unionPlot.png "unionPlot")
+*)
+
+(**
+Write Geometry to GeoJSON
+------------------------
+Following the Python GDAL/OGR Cookbook we will inspect two options 
+to create a GeoJSON from a geometry.
+
+First option: create a new GeoJSON file:
+*)
+
+(**
+we start from a test polygon:
+*)
+let ring3 = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+ring3.AddPoint(1000., 1000., 0.)
+ring3.AddPoint(3000., 1000., 0.)
+ring3.AddPoint(2000., 2000., 0.)
+ring3.AddPoint(1000., 1000., 0.)
+let poly8 = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
+poly8.AddGeometry(ring3)
+
+(**
+intialize the righ output Driver
+*)
+let outDriver = OGR.Ogr.GetDriverByName("GeoJSON")
+
+(**
+with it we create the new json file, but first we need to be sure that 
+the file is not yet there because the driver can't override it
+*)
+let jsonFileName = __SOURCE_DIRECTORY__ + "\\test.geojson"
+
+if System.IO.File.Exists(jsonFileName) then 
+    System.IO.File.Delete(jsonFileName)
+
+let outDataSource = outDriver.CreateDataSource(jsonFileName, [||])
+let outLayer = outDataSource.CreateLayer(jsonFileName, null, OGR.wkbGeometryType.wkbPolygon, [||])
+
+// Get the output Layer's Feature Definition
+let featureDefn = outLayer.GetLayerDefn()
+
+// create a new feature
+let outFeature = new OGR.Feature(featureDefn)
+
+// Set new geometry
+outFeature.SetGeometry(poly8)
+
+// Add new feature to output Layer
+outLayer.CreateFeature(outFeature)
+
+// destroy the feature
+outFeature.Dispose()
+
+// Close DataSources
+outDataSource.Dispose()
+
+(**
+Taking advantage of the [OgrTypeProvider](gdal-type-provider.html) we can inspect what is inside our 
+newly created json file:
+*)
+
+let newJson = new OgrTypeProvider<"G:/GitHub/Fsharp.Gdal/Journal/test.geojson">()
+
+(*** define-output:jsonFeatures ***)
+for feat in newJson.Features do
+    printfn "Geometry type: %A" (feat.Geometry.GetGeometryType())
+(*** include-output:jsonFeatures ***)
+
+(**
+... ok a wkbPolygon25D so let's plot it:
+*)
+
+let mutable jsonPoly = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon25D)
+
+for feat in newJson.Features do
+    jsonPoly <- feat.Geometry
+
+let jsonPolyPlot = jsonPoly |> Plot
+
+(*** hide ***)
+jsonPolyPlot.SaveAsBitmap("jsonPolyPlot")
+
+(**
+![jsonPolyPlot](./img/jsonPolyPlot.png "jsonPolyPlot")
+*)
+
+(**
+Second option: simply export the geometry to Json and print it
+*)
+
+(*** define-output:exportToJson ***)
+let geojson2 = poly8.ExportToJson([||])
+printfn "%s" geojson2
+(*** include-output:exportToJson ***)
+
+(**
+Write Geometry to WKT
+------------------------
+TODO: not really interesting
+*)
+
+(**
+Write Geometry to KML
+------------------------
+TODO: not really interesting
+*)
+
+(**
+Write Geometry to WKB
+------------------------
+TODO: not really interesting
+*)
+
+(**
+Force polygon to multipolygon
+------------------------
+TODO: not really interesting
+*)
+
+(**
+Quarter polygon and create centroids
+------------------------
+Given a test polygon
+*)
+
+let polyWkt = ref "POLYGON((-107.42631019589980212 40.11971708125970082,-107.42455436683293613 40.12061219666851741,-107.42020981542387403 40.12004414402532859,-107.41789122063043749 40.12149008687303819,-107.41419947746419439 40.11811617239460048,-107.41915181585792993 40.11761695654455906,-107.41998470913324581 40.11894245264452508,-107.42203317637793702 40.1184088144647788,-107.42430674991324224 40.1174448122981957,-107.42430674991324224 40.1174448122981957,-107.42631019589980212 40.11971708125970082))"
+let geomPoly = OGR.Ogr.CreateGeometryFromWkt(polyWkt, null)
+
+let geomPolyPlot = geomPoly |> Plot
+
+(*** hide ***)
+geomPolyPlot.SaveAsBitmap("geomPolyPlot")
+
+(**
+![geomPolyPlot](./img/geomPolyPlot.png "geomPolyPlot")
+*)
+
+(**
+Create 4 square polygons
+*)
+
+let env2 = geomPoly |> toEnv
+let minX = env2.MinX
+let minY = env2.MinY
+let maxX = env2.MaxX
+let maxY = env2.MaxY
+
+// coord0----coord1----coord2
+// |           |           |
+// coord3----coord4----coord5
+// |           |           |
+// coord6----coord7----coord8
+
+let coord0 = minX, maxY
+let coord1 = minX+(maxX-minX)/2., maxY
+let coord2 = maxX, maxY
+let coord3 = minX, minY+(maxY-minY)/2.
+let coord4 = minX+(maxX-minX)/2., minY+(maxY-minY)/2.
+let coord5 = maxX, minY+(maxY-minY)/2.
+let coord6 = minX, minY
+let coord7 = minX+(maxX-minX)/2., minY
+let coord8 = maxX, minY
+
+let ringTopLeft = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+ringTopLeft.AddPoint_2D(coord0)
+ringTopLeft.AddPoint_2D(coord1)
+ringTopLeft.AddPoint_2D(coord4)
+ringTopLeft.AddPoint_2D(coord3)
+ringTopLeft.AddPoint_2D(coord0)
+let polyTopLeft = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
+polyTopLeft.AddGeometry(ringTopLeft)
+
+let ringTopRight = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+ringTopRight.AddPoint_2D(coord1)
+ringTopRight.AddPoint_2D(coord2)
+ringTopRight.AddPoint_2D(coord5)
+ringTopRight.AddPoint_2D(coord4)
+ringTopRight.AddPoint_2D(coord1)
+let polyTopRight = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
+polyTopRight.AddGeometry(ringTopRight)
+
+let ringBottomLeft = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+ringBottomLeft.AddPoint_2D(coord3)
+ringBottomLeft.AddPoint_2D(coord4)
+ringBottomLeft.AddPoint_2D(coord7)
+ringBottomLeft.AddPoint_2D(coord6)
+ringBottomLeft.AddPoint_2D(coord3)
+let polyBottomLeft = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
+polyBottomLeft.AddGeometry(ringBottomLeft)
+
+let ringBottomRight = new OGR.Geometry(OGR.wkbGeometryType.wkbLinearRing)
+ringBottomRight.AddPoint_2D(coord4)
+ringBottomRight.AddPoint_2D(coord5)
+ringBottomRight.AddPoint_2D(coord8)
+ringBottomRight.AddPoint_2D(coord7)
+ringBottomRight.AddPoint_2D(coord4)
+let polyBottomRight = new OGR.Geometry(OGR.wkbGeometryType.wkbPolygon)
+polyBottomRight.AddGeometry(ringBottomRight)
+
+let quartersCol = new OGR.Geometry(OGR.wkbGeometryType.wkbGeometryCollection)
+quartersCol.AddGeometry(polyTopLeft)
+quartersCol.AddGeometry(polyTopRight)
+quartersCol.AddGeometry(polyBottomLeft)
+quartersCol.AddGeometry(polyBottomRight)
+quartersCol.AddGeometry(geomPoly)
+
+let quartersColPlot = quartersCol |> Plot
+
+(*** hide ***)
+quartersColPlot.SaveAsBitmap("quartersColPlot")
+
+(**
+![quartersColPlot](./img/quartersColPlot.png "quartersColPlot")
+*)
+
+(**
+Intersect 4 squares polygons with test polygon
+*)
+
+let quaterPolyTopLeft = polyTopLeft.Intersection(geomPoly)
+let quaterPolyTopRight = polyTopRight.Intersection(geomPoly)
+let quaterPolyBottomLeft = polyBottomLeft.Intersection(geomPoly)
+let quaterPolyBottomRight = polyBottomRight.Intersection(geomPoly)
+
+(**
+Create centroids of each intersected polygon
+*)
+
+let centroidTopLeft = quaterPolyTopLeft.Centroid()
+let centroidTopRight = quaterPolyTopRight.Centroid()
+let centroidBottomLeft = quaterPolyBottomLeft.Centroid()
+let centroidBottomRight = quaterPolyBottomRight.Centroid()
+
+let quartersWithCentroidsCol = new OGR.Geometry(OGR.wkbGeometryType.wkbGeometryCollection)
+quartersWithCentroidsCol.AddGeometry(polyTopLeft)
+quartersWithCentroidsCol.AddGeometry(polyTopRight)
+quartersWithCentroidsCol.AddGeometry(polyBottomLeft)
+quartersWithCentroidsCol.AddGeometry(polyBottomRight)
+quartersWithCentroidsCol.AddGeometry(geomPoly)
+quartersWithCentroidsCol.AddGeometry(centroidTopLeft)
+quartersWithCentroidsCol.AddGeometry(centroidTopRight)
+quartersWithCentroidsCol.AddGeometry(centroidBottomLeft)
+quartersWithCentroidsCol.AddGeometry(centroidBottomRight)
+
+let quartersWithCentroidsColPlot = quartersWithCentroidsCol |> Plot
+
+(*** hide ***)
+quartersWithCentroidsColPlot.SaveAsBitmap("quartersWithCentroidsColPlot")
+
+(**
+![quartersWithCentroidsColPlot](./img/quartersWithCentroidsColPlot.png "quartersWithCentroidsColPlot")
 *)

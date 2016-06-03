@@ -28,7 +28,7 @@ open System.Windows.Controls
 Plot Geometry
 ========================
 This section defines a `Plot` utility to give a graphical visualization of GDAL geometries 
-in a Xaml Window Page using a Canvas as a Cartesian Plan where to put the coorrdinates of 
+in a Xaml Window Page using a Canvas as a Cartesian Plan where to put the coordinates of 
 the geometries.
 *)
 
@@ -231,7 +231,9 @@ let getRandomBrush seed  =
     let randomGen = new Random(seed)
     let randomColorName = brushArray.[randomGen.Next(brushArray.Length)]
     let color = (new BrushConverter()).ConvertFromString(randomColorName) :?> SolidColorBrush
-    color
+    let mutable newColor = new SolidColorBrush(color.Color)
+    newColor.Opacity <- 0.8 // sometimes we will need some transparency
+    newColor
 
 (**
 Since now, the function defined above return paths as strings. The `toPath` function below returns 
@@ -299,7 +301,7 @@ First with `env` we extract the bounding box of the geometry as an
 *)
 
 /// Extracs the bounding box of the geometry.
-let env (geom:OGR.Geometry) = 
+let toEnv (geom:OGR.Geometry) = 
     let res = new OGR.Envelope()
     geom.GetEnvelope(res)
     res
@@ -311,16 +313,16 @@ so in this case we just calculate a margin based on the coordinate's magnitude.
 *)
 
 /// Resizes the envelope based on a choosen zoom.
-let resize zoom (en:OGR.Envelope) = 
-    let dx = en.MaxX - en.MinX
-    let dy = en.MaxY - en.MinY
+let resize zoom (env:OGR.Envelope) = 
+    let dx = env.MaxX - env.MinX
+    let dy = env.MaxY - env.MinY
     let xMargin = if dx = 0. then 200. else ((dx / zoom) - dx) / 2.
     let yMargin = if dy = 0. then 200. else ((dy / zoom) - dy) / 2.
-    en.MaxX <- en.MaxX + xMargin
-    en.MaxY <- en.MaxY + yMargin
-    en.MinX <- en.MinX - xMargin
-    en.MinY <- en.MinY - yMargin
-    en
+    env.MaxX <- env.MaxX + xMargin
+    env.MaxY <- env.MaxY + yMargin
+    env.MinX <- env.MinX - xMargin
+    env.MinY <- env.MinY - yMargin
+    env
 
 (**
 `RenderTranform` can be used to scale, skew, rotate and translate a wpf control.
@@ -450,7 +452,7 @@ to render it flexible enough to add future functionalities we define it as a pla
 /// Plots an OGR.Geometry on a Xaml Window
 type Plot(geom:OGR.Geometry)  = 
 
-    let env = geom |> env |> resize 0.8
+    let env = geom |> toEnv |> resize 0.8
     let maxXYSide = max (env.MaxX - env.MinX) (env.MaxY - env.MinY)
 
 //    do printfn "Geometry Properties:"
