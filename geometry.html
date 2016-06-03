@@ -894,25 +894,6 @@ newly created json file:</p>
 </table>
 <p><img src="./img/geomPolyPlot.png" alt="geomPolyPlot" title="geomPolyPlot" /></p>
 <p>Create 4 square polygons</p>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-<span class="l">5: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs167', 689)" onmouseover="showTip(event, 'fs167', 689)" class="i">env2</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs165', 690)" onmouseover="showTip(event, 'fs165', 690)" class="i">geomPoly</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs168', 691)" onmouseover="showTip(event, 'fs168', 691)" class="f">toEnv</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs169', 692)" onmouseover="showTip(event, 'fs169', 692)" class="i">minX</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs167', 693)" onmouseover="showTip(event, 'fs167', 693)" class="i">env2</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs99', 694)" onmouseover="showTip(event, 'fs99', 694)" class="i">MinX</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs170', 695)" onmouseover="showTip(event, 'fs170', 695)" class="i">minY</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs167', 696)" onmouseover="showTip(event, 'fs167', 696)" class="i">env2</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs100', 697)" onmouseover="showTip(event, 'fs100', 697)" class="i">MinY</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs171', 698)" onmouseover="showTip(event, 'fs171', 698)" class="i">maxX</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs167', 699)" onmouseover="showTip(event, 'fs167', 699)" class="i">env2</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs101', 700)" onmouseover="showTip(event, 'fs101', 700)" class="i">MaxX</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs172', 701)" onmouseover="showTip(event, 'fs172', 701)" class="i">maxY</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs167', 702)" onmouseover="showTip(event, 'fs167', 702)" class="i">env2</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs102', 703)" onmouseover="showTip(event, 'fs102', 703)" class="i">MaxY</span>
-</code></pre></td>
-</tr>
-</table>
-<p>coord0----coord1----coord2
-|           |           |
-coord3----coord4----coord5
-|           |           |
-coord6----coord7----coord8</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -967,8 +948,32 @@ coord6----coord7----coord8</p>
 <span class="l">52: </span>
 <span class="l">53: </span>
 <span class="l">54: </span>
+<span class="l">55: </span>
+<span class="l">56: </span>
+<span class="l">57: </span>
+<span class="l">58: </span>
+<span class="l">59: </span>
+<span class="l">60: </span>
+<span class="l">61: </span>
+<span class="l">62: </span>
+<span class="l">63: </span>
+<span class="l">64: </span>
+<span class="l">65: </span>
+<span class="l">66: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs173', 704)" onmouseover="showTip(event, 'fs173', 704)" class="i">coord0</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs169', 705)" onmouseover="showTip(event, 'fs169', 705)" class="i">minX</span>, <span onmouseout="hideTip(event, 'fs172', 706)" onmouseover="showTip(event, 'fs172', 706)" class="i">maxY</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs167', 689)" onmouseover="showTip(event, 'fs167', 689)" class="i">env2</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs165', 690)" onmouseover="showTip(event, 'fs165', 690)" class="i">geomPoly</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs168', 691)" onmouseover="showTip(event, 'fs168', 691)" class="f">toEnv</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs169', 692)" onmouseover="showTip(event, 'fs169', 692)" class="i">minX</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs167', 693)" onmouseover="showTip(event, 'fs167', 693)" class="i">env2</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs99', 694)" onmouseover="showTip(event, 'fs99', 694)" class="i">MinX</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs170', 695)" onmouseover="showTip(event, 'fs170', 695)" class="i">minY</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs167', 696)" onmouseover="showTip(event, 'fs167', 696)" class="i">env2</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs100', 697)" onmouseover="showTip(event, 'fs100', 697)" class="i">MinY</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs171', 698)" onmouseover="showTip(event, 'fs171', 698)" class="i">maxX</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs167', 699)" onmouseover="showTip(event, 'fs167', 699)" class="i">env2</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs101', 700)" onmouseover="showTip(event, 'fs101', 700)" class="i">MaxX</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs172', 701)" onmouseover="showTip(event, 'fs172', 701)" class="i">maxY</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs167', 702)" onmouseover="showTip(event, 'fs167', 702)" class="i">env2</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs102', 703)" onmouseover="showTip(event, 'fs102', 703)" class="i">MaxY</span>
+
+<span class="c">// coord0----coord1----coord2</span>
+<span class="c">// |           |           |</span>
+<span class="c">// coord3----coord4----coord5</span>
+<span class="c">// |           |           |</span>
+<span class="c">// coord6----coord7----coord8</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs173', 704)" onmouseover="showTip(event, 'fs173', 704)" class="i">coord0</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs169', 705)" onmouseover="showTip(event, 'fs169', 705)" class="i">minX</span>, <span onmouseout="hideTip(event, 'fs172', 706)" onmouseover="showTip(event, 'fs172', 706)" class="i">maxY</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs174', 707)" onmouseover="showTip(event, 'fs174', 707)" class="i">coord1</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs169', 708)" onmouseover="showTip(event, 'fs169', 708)" class="i">minX</span><span class="o">+</span>(<span onmouseout="hideTip(event, 'fs171', 709)" onmouseover="showTip(event, 'fs171', 709)" class="i">maxX</span><span class="o">-</span><span onmouseout="hideTip(event, 'fs169', 710)" onmouseover="showTip(event, 'fs169', 710)" class="i">minX</span>)<span class="o">/</span><span class="n">2.</span>, <span onmouseout="hideTip(event, 'fs172', 711)" onmouseover="showTip(event, 'fs172', 711)" class="i">maxY</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs175', 712)" onmouseover="showTip(event, 'fs175', 712)" class="i">coord2</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs171', 713)" onmouseover="showTip(event, 'fs171', 713)" class="i">maxX</span>, <span onmouseout="hideTip(event, 'fs172', 714)" onmouseover="showTip(event, 'fs172', 714)" class="i">maxY</span>
 <span class="k">let</span> <span onmouseout="hideTip(event, 'fs176', 715)" onmouseover="showTip(event, 'fs176', 715)" class="i">coord3</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs169', 716)" onmouseover="showTip(event, 'fs169', 716)" class="i">minX</span>, <span onmouseout="hideTip(event, 'fs170', 717)" onmouseover="showTip(event, 'fs170', 717)" class="i">minY</span><span class="o">+</span>(<span onmouseout="hideTip(event, 'fs172', 718)" onmouseover="showTip(event, 'fs172', 718)" class="i">maxY</span><span class="o">-</span><span onmouseout="hideTip(event, 'fs170', 719)" onmouseover="showTip(event, 'fs170', 719)" class="i">minY</span>)<span class="o">/</span><span class="n">2.</span>
