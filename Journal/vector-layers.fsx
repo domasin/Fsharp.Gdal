@@ -120,9 +120,11 @@ In this case the attribute "Regione" is the region's name so we can iterate over
 to get all the italian regions' names quering the field with index 1:
 *)
 
+(*** define-output:regionsNames ***)
 for feat in features do 
     let regionName = feat.GetFieldAsString(1)
     printfn "%s" regionName
+(*** include-output:regionsNames ***)
 
 (**
 Get geometries of all features in a layer

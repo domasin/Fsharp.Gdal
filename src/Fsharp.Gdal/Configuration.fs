@@ -1,4 +1,4 @@
-/// Configuration of GDAL/OGR library's environment variabiles
+/// Configuration of GDAL/OGR library's environment variables
 module FSharp.Gdal.Configuration
 
 (*** hide ***)
