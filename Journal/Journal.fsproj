@@ -54,15 +54,13 @@
     <None Include="paket.dependencies" />
     <None Include="build.fsx" />
     <Compile Include="Runner.fs" />
-    <None Include="Tutorial.fsx" />
     <None Include="gdal-type-provider.fsx" />
     <None Include="geometry.fsx" />
     <None Include="extimated-walk-time.fsx" />
-    <None Include="land-cover.fsx" />
     <None Include="plot-geometries.fsx" />
-    <None Include="plot-with-xaml.fsx" />
-    <None Include="svg-plot.fsx" />
     <None Include="plot-geometry.fsx" />
+    <None Include="vector-layers.fsx" />
+    <None Include="land-cover.fsx" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

@@ -14,10 +14,9 @@ open OSGeo.OSR
 open FSharp.Gdal.Vector
 open FSharp.Gdal
 
-// Simple type wrapping vector data
+/// Simple type wrapping vector datasources
 type VectorFile(filename) =
-    // Cache the sequence of all data lines (all lines but the first)
-    let dataset = Vector.openVector filename
+    let dataset = Ogr.OpenShared(filename,0)
     let vlay = dataset.GetLayerByIndex(0)
     let fields = vlay |> Vector.fields
     let features = 
@@ -27,7 +26,6 @@ type VectorFile(filename) =
 
     let data = 
         [
-            
             for feature in features -> 
                 [|feature.GetGeometryRef() :> obj|]
                 |> Array.append 
@@ -63,28 +61,10 @@ type VectorFile(filename) =
             )
         |> List.concat
 
-//        let mutable globalIndex = 0
-//        [
-//            for feature in features -> 
-//                globalIndex <- globalIndex + 1
-//                [globalIndex, "Geometry", feature.GetGeometryRef() :> obj]
-//                |> List.append 
-//                    [
-//                        for fdIndex,fdName,fdType in fields ->
-//                            if fdType.Equals(FieldType.OFTString) then
-//                                globalIndex, fdName, feature.GetFieldAsString(fdIndex) :> obj
-//                            elif fdType.Equals(FieldType.OFTInteger) then
-//                                globalIndex, fdName, feature.GetFieldAsInteger(fdIndex) :> obj
-//                            elif fdType.Equals(FieldType.OFTReal) then
-//                                globalIndex, fdName, feature.GetFieldAsDouble(fdIndex) :> obj
-//                            else
-//                                globalIndex, fdName, "" :> obj
-//                    ] 
-//        ] |> List.concat
-
     member __.Features = data
     member __.Values = values
 
+/// Creates the OgrTypeProvider
 [<TypeProvider>]
 type public CreateOgrTypeProvider(cfg:TypeProviderConfig) as this =
     inherit TypeProviderForNamespaces()
@@ -111,11 +91,7 @@ type public CreateOgrTypeProvider(cfg:TypeProviderConfig) as this =
         // Define a provided type for each row, erasing to a float[].
         let rowTy = ProvidedTypeDefinition("Feature", Some(typeof<obj[]>))
 
-        // Extract header names from the file, splitting on commas.
-        // use Regex matching to get the position in the row at which the field occurs
-//        let headers = Regex.Matches(headerLine, "[^,]+")
-
-        let dataset = Vector.openVector filename
+        let dataset = Ogr.OpenShared(filename,0)
         let vlay = dataset.GetLayerByIndex(0)
         let fields = vlay |> Vector.fields
 
@@ -188,6 +164,10 @@ type public CreateOgrTypeProvider(cfg:TypeProviderConfig) as this =
         ty.AddMember rowTy
         ty)
 
+    let helpText = 
+        """<summary>Typed representation of an OGR data source.</summary>"""
+
+    do shpFlTy.AddXmlDoc helpText
     // Add the type to the namespace.
     do this.AddNamespace(ns, [shpFlTy])
 

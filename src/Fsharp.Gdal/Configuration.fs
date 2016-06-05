@@ -1,5 +1,5 @@
+/// Configuration of GDAL/OGR library's environment variabiles
 module FSharp.Gdal.Configuration
-
 
 (*** hide ***)
 open System
@@ -10,6 +10,7 @@ open OSGeo.GDAL
 open OSGeo.OGR
 open OSGeo.OSR
 
+/// Stores if GDAL/OGR library is already configured in the system
 let configured = ref false
 
 /// Helper function to execute the copy of a directory and its files in a destination folder
@@ -54,6 +55,8 @@ If we work in the intercative shell, the executing assembly is the FSharp.Compil
 FSharp.Compiler.Service dll.)
 *)
 
+/// Copies all the GDAL/OGR dlls in the executing assemly path and set the enivronoment variables it needs.
+/// Then registers all GDAL and OGR drivers.
 let Init() = 
     
     if not !configured then
@@ -107,11 +110,13 @@ let Init() =
 
         configured := true
 
+/// Print GDAL configured drivers
 let printGdalDrivers() = 
     let num = OSGeo.GDAL.Gdal.GetDriverCount()
     for i in 0..(num-1) do 
         printfn "GDAL %i: %s" i (Gdal.GetDriver(i).ShortName) 
 
+/// Print OGR configured drivers
 let printOgrDrivers() = 
     let num = OSGeo.OGR.Ogr.GetDriverCount()
     for i in 0..(num-1) do 

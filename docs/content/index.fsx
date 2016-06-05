@@ -56,7 +56,8 @@ The API reference is automatically generated from Markdown comments in the libra
 
  * FSharp Gdal CookBook: an equivalent of [Python Gdal / Ogr Cookbook](http://pcjericks.github.io/py-gdalogr-cookbook/) for FSharp.Gdal
     - [Geometry](geometry.html): working with geometries with `OGR` functions
-    - [Appendix A: Plot Geometries](plot-geometries.html): a rudimentary `plot` function for geometries
+    - [Vector Layers](vector-layers.html): working with vector `OGR` DataSources
+    - [Appendix A: Plot Geometries](plot-geometry.html): a `Plot` utility for geometries
     - [Appendix B: F# Gdal Type Provider](gdal-type-provider.html): an experimental gdal type provider
  * Applications: 
     - [Extimated Walk Time](extimated-walk-time.html): calculate an extimated time for hiking
