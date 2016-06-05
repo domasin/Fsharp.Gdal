@@ -40,6 +40,8 @@
   <span>Namespace: FSharp.Gdal</span><br />
 </p>
 <div class="xmldoc">
+<p>Utility functions to access GDAL Rasters DataSources</p>
+
 </div>
 
 <!-- Render nested types and modules, if there are any -->
@@ -54,18 +56,20 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
-            getImgValue (...)
+            getImgValue dataset (xPixel, yLine)
           </code>
           <div class="tip" id="6">
-            <strong>Signature:</strong> geotransform:float [] -&gt; dataset:Dataset -&gt; (xPixel:int * yLine:int) -&gt; float option<br />
+            <strong>Signature:</strong> dataset:Dataset -&gt; (xPixel:int * yLine:int) -&gt; float option<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Raster.fs#L27-27" class="github-link">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Raster.fs#L33-33" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Gets the raster value at the specified xPixel and yLine</p>
+
+
         </td>
       </tr>
       <tr>
@@ -79,11 +83,14 @@
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Raster.fs#L20-20" class="github-link">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Raster.fs#L25-25" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Maps raster's geographic coordinates on the image coordinates based on
+a given geotransform</p>
+
+
         </td>
       </tr>
       <tr>
@@ -97,11 +104,14 @@
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Raster.fs#L15-15" class="github-link">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Raster.fs#L18-18" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Maps image coordinates to the raster's geographic coordinates based on
+a given geotransform</p>
+
+
         </td>
       </tr>
     </tbody>
