@@ -57,17 +57,90 @@
 		<div class="span1"></div>
         <div class="span10" id="main">
           <h1>Vector Layers</h1>
-<p>This section will use the <a href="http://www.gdal.org/ogr_apitut.html">OGR API Tutorial</a> as the principal reference
-to show how to use OGR classes to read and write data from a file.</p>
+<p>This section will use the <a href="http://www.gdal.org/ogr_apitut.html">OGR API Tutorial</a> as the first reference
+to show how to use OGR classes to read and write data from a geospatial datasource.</p>
 <h2>Configure gdal</h2>
 <p>Initially it is necessary to register all the format drivers that are desired. The FSharp.Gdal library
 accomplishes this calling the function <code>Configuration.Init()</code>:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs3', 3)" onmouseover="showTip(event, 'fs3', 3)" class="t">Configuration</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs4', 4)" onmouseover="showTip(event, 'fs4', 4)" class="f">Init</span>() <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs5', 5)" onmouseover="showTip(event, 'fs5', 5)" class="f">ignore</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs4', 6)" onmouseover="showTip(event, 'fs4', 6)" class="t">Configuration</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs5', 7)" onmouseover="showTip(event, 'fs5', 7)" class="f">Init</span>()
 </code></pre></td>
 </tr>
 </table>
+<h2>Check registered drivers</h2>
+<p>To check that all OGR drivers are correctly registered we call:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs4', 8)" onmouseover="showTip(event, 'fs4', 8)" class="t">Configuration</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs6', 9)" onmouseover="showTip(event, 'fs6', 9)" class="f">printOgrDrivers</span>()
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td><pre><code>OGR 0: ESRI Shapefile
+OGR 1: MapInfo File
+OGR 2: UK .NTF
+OGR 3: SDTS
+OGR 4: TIGER
+OGR 5: S57
+OGR 6: DGN
+OGR 7: VRT
+OGR 8: REC
+OGR 9: Memory
+OGR 10: BNA
+OGR 11: CSV
+OGR 12: NAS
+OGR 13: GML
+OGR 14: GPX
+OGR 15: LIBKML
+OGR 16: KML
+OGR 17: GeoJSON
+OGR 18: Interlis 1
+OGR 19: Interlis 2
+OGR 20: GMT
+OGR 21: GPKG
+OGR 22: SQLite
+OGR 23: ODBC
+OGR 24: WAsP
+OGR 25: PGeo
+OGR 26: MSSQLSpatial
+OGR 27: PostgreSQL
+OGR 28: MySQL
+OGR 29: PCIDSK
+OGR 30: OpenFileGDB
+OGR 31: XPlane
+OGR 32: AVCBin
+OGR 33: AVCE00
+OGR 34: DXF
+OGR 35: Geoconcept
+OGR 36: GeoRSS
+OGR 37: GPSTrackMaker
+OGR 38: VFK
+OGR 39: PGDump
+OGR 40: OSM
+OGR 41: GPSBabel
+OGR 42: SUA
+OGR 43: OpenAir
+OGR 44: PDS
+OGR 45: WFS
+OGR 46: HTF
+OGR 47: AeronavFAA
+OGR 48: Geomedia
+OGR 49: EDIGEO
+OGR 50: GFT
+OGR 51: GME
+OGR 52: SVG
+OGR 53: CouchDB
+OGR 54: Idrisi
+OGR 55: ARCGEN
+OGR 56: SEGUKOOA
+OGR 57: SEGY
+OGR 58: ODS
+OGR 59: XLSX
+OGR 60: ElasticSearch
+OGR 61: PDF
+OGR 62: Walk
+OGR 63: CartoDB
+OGR 64: SXF</code></pre></td></tr></table>
 <h2>Open the datasource</h2>
 <p>Next we need to open the input OGR datasource. Datasources can be files, RDBMSes, directories full of files,
 or even remote web services depending on the driver being used. However, the datasource name is always a single string.</p>
@@ -80,55 +153,82 @@ containing the administrative limits of italian regions.</p>
 <span class="l">4: </span>
 <span class="l">5: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs6', 6)" onmouseover="showTip(event, 'fs6', 6)" class="i">OSGeo</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs7', 10)" onmouseover="showTip(event, 'fs7', 10)" class="i">OSGeo</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs7', 7)" onmouseover="showTip(event, 'fs7', 7)" class="i">italyShp</span> <span class="o">=</span> <span class="k">__SOURCE_DIRECTORY__</span> <span class="o">+</span> <span class="s">@&quot;\data\reg2001_g\reg2001_g.shp&quot;</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs8', 8)" onmouseover="showTip(event, 'fs8', 8)" class="i">driver</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs9', 9)" onmouseover="showTip(event, 'fs9', 9)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs10', 10)" onmouseover="showTip(event, 'fs10', 10)" class="t">Ogr</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 11)" onmouseover="showTip(event, 'fs11', 11)" class="f">GetDriverByName</span>(<span class="s">&quot;ESRI Shapefile&quot;</span>)
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs12', 12)" onmouseover="showTip(event, 'fs12', 12)" class="i">ds</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs8', 13)" onmouseover="showTip(event, 'fs8', 13)" class="i">driver</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs13', 14)" onmouseover="showTip(event, 'fs13', 14)" class="f">Open</span>(<span onmouseout="hideTip(event, 'fs7', 15)" onmouseover="showTip(event, 'fs7', 15)" class="i">italyShp</span>, <span class="n">0</span>)
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs8', 11)" onmouseover="showTip(event, 'fs8', 11)" class="i">italyShp</span> <span class="o">=</span> <span class="k">__SOURCE_DIRECTORY__</span> <span class="o">+</span> <span class="s">@&quot;\data\reg2001_g\reg2001_g.shp&quot;</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs9', 12)" onmouseover="showTip(event, 'fs9', 12)" class="i">driver</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs10', 13)" onmouseover="showTip(event, 'fs10', 13)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 14)" onmouseover="showTip(event, 'fs11', 14)" class="t">Ogr</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs12', 15)" onmouseover="showTip(event, 'fs12', 15)" class="f">GetDriverByName</span>(<span class="s">&quot;ESRI Shapefile&quot;</span>)
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs13', 16)" onmouseover="showTip(event, 'fs13', 16)" class="i">ds</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs9', 17)" onmouseover="showTip(event, 'fs9', 17)" class="i">driver</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs14', 18)" onmouseover="showTip(event, 'fs14', 18)" class="f">Open</span>(<span onmouseout="hideTip(event, 'fs8', 19)" onmouseover="showTip(event, 'fs8', 19)" class="i">italyShp</span>, <span class="n">0</span>)
 </code></pre></td>
 </tr>
 </table>
 <h2>Inspecting the layers</h2>
 <p>A GDALDataset can potentially have many layers associated with it.</p>
 <p>As a GDALDataset can be viewed as a database, a layer in it can be thought of as
-a database table containing records with the same columns definition.</p>
+a database table containing records (features) with the same columns definition (fields)
+and a particular type of Geometry.</p>
 <p>The number of layers available can be queried with
 <code>GetLayerCount()</code> and individual layers fetched by index using <code>GetLayerByIndex</code>.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs14', 16)" onmouseover="showTip(event, 'fs14', 16)" class="i">layersCount</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs12', 17)" onmouseover="showTip(event, 'fs12', 17)" class="i">ds</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs15', 18)" onmouseover="showTip(event, 'fs15', 18)" class="f">GetLayerCount</span>()
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs15', 20)" onmouseover="showTip(event, 'fs15', 20)" class="i">layersCount</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs13', 21)" onmouseover="showTip(event, 'fs13', 21)" class="i">ds</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs16', 22)" onmouseover="showTip(event, 'fs16', 22)" class="f">GetLayerCount</span>()
 
-<span onmouseout="hideTip(event, 'fs16', 19)" onmouseover="showTip(event, 'fs16', 19)" class="f">printfn</span> <span class="s">&quot;There is </span><span class="pf">%i</span><span class="s"> layer&quot;</span> <span onmouseout="hideTip(event, 'fs14', 20)" onmouseover="showTip(event, 'fs14', 20)" class="i">layersCount</span>
+<span onmouseout="hideTip(event, 'fs17', 23)" onmouseover="showTip(event, 'fs17', 23)" class="f">printfn</span> <span class="s">&quot;There is </span><span class="pf">%i</span><span class="s"> layer&quot;</span> <span onmouseout="hideTip(event, 'fs15', 24)" onmouseover="showTip(event, 'fs15', 24)" class="i">layersCount</span>
 </code></pre></td>
 </tr>
 </table>
 <table class="pre"><tr><td><pre><code>There is 1 layer</code></pre></td></tr></table>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs17', 21)" onmouseover="showTip(event, 'fs17', 21)" class="i">layer0</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs12', 22)" onmouseover="showTip(event, 'fs12', 22)" class="i">ds</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs18', 23)" onmouseover="showTip(event, 'fs18', 23)" class="f">GetLayerByIndex</span>(<span class="n">0</span>)
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs18', 25)" onmouseover="showTip(event, 'fs18', 25)" class="i">layer0</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs13', 26)" onmouseover="showTip(event, 'fs13', 26)" class="i">ds</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs19', 27)" onmouseover="showTip(event, 'fs19', 27)" class="f">GetLayerByIndex</span>(<span class="n">0</span>)
 </code></pre></td>
 </tr>
 </table>
 <p>One of the goals of this project is to develop functions to make it easier
 (and more idiomatic) to work with OGR/GDAL library in F#.</p>
 <p>In this particulare case instead of using the low level GDAL methods we can use an utility
-function <code>layers</code> defined in the <code>FSharp.Gdal.Vector</code> moduel which returns the layers
+function <code>layers</code> defined in the <code>FSharp.Gdal.Vector</code> module which returns the layers
 in a Vector DataSource as a list.</p>
 <p>Below I will use more of these utility functions whose definitions can be viewd directly
 in the source code of the
 <a href="https://github.com/domasin/Fsharp.Gdal/blob/master/src/Fsharp.Gdal/Vector.fs">Vector module</a>.</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs19', 24)" onmouseover="showTip(event, 'fs19', 24)" class="i">layers</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs12', 25)" onmouseover="showTip(event, 'fs12', 25)" class="i">ds</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs20', 26)" onmouseover="showTip(event, 'fs20', 26)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs21', 27)" onmouseover="showTip(event, 'fs21', 27)" class="f">layers</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs20', 28)" onmouseover="showTip(event, 'fs20', 28)" class="i">layers</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs13', 29)" onmouseover="showTip(event, 'fs13', 29)" class="i">ds</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs3', 30)" onmouseover="showTip(event, 'fs3', 30)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs21', 31)" onmouseover="showTip(event, 'fs21', 31)" class="f">layers</span>
 </code></pre></td>
 </tr>
 </table>
 <table class="pre"><tr><td><pre><code>[OSGeo.OGR.Layer]</code></pre></td></tr></table>
+<p>As we can see the output is not very informative and just says that there is one single layer
+in the datasource. The <code>Vector</code> module provides the function <code>contents</code> to immediately inspect
+a layer content:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 32)" onmouseover="showTip(event, 'fs22', 32)" class="i">layerContents</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs20', 33)" onmouseover="showTip(event, 'fs20', 33)" class="i">layers</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 34)" onmouseover="showTip(event, 'fs23', 34)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs24', 35)" onmouseover="showTip(event, 'fs24', 35)" class="f">map</span> (<span class="k">fun</span> <span onmouseout="hideTip(event, 'fs25', 36)" onmouseover="showTip(event, 'fs25', 36)" class="i">ly</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs25', 37)" onmouseover="showTip(event, 'fs25', 37)" class="i">ly</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs3', 38)" onmouseover="showTip(event, 'fs3', 38)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 39)" onmouseover="showTip(event, 'fs26', 39)" class="f">contents</span>)
+</code></pre></td>
+</tr>
+</table>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs22', 28)" onmouseover="showTip(event, 'fs22', 28)" class="i">layer</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs19', 29)" onmouseover="showTip(event, 'fs19', 29)" class="i">layers</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 30)" onmouseover="showTip(event, 'fs23', 30)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs24', 31)" onmouseover="showTip(event, 'fs24', 31)" class="f">head</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs17', 40)" onmouseover="showTip(event, 'fs17', 40)" class="f">printfn</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s">&quot;</span> (<span onmouseout="hideTip(event, 'fs22', 41)" onmouseover="showTip(event, 'fs22', 41)" class="i">layerContents</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs27', 42)" onmouseover="showTip(event, 'fs27', 42)" class="f">ToString</span>())
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td><pre><code>[{Features = 20;
+Geometry = wkbPolygon
+Fields = ["COD_REG"; "REGIONE"; "POP2001"]}]</code></pre></td></tr></table>
+<p>This is better: now we can see that the layer has 20 features in it,
+is a layer of points and has three attributes: COD_REG, REGIONE and POP2001.</p>
+<p>The function is also suitable to add a custom printer for the <code>OGR.Layer</code> type
+if we are working in F# Interactive:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span onmouseout="hideTip(event, 'fs28', 43)" onmouseover="showTip(event, 'fs28', 43)" class="i">fsi</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs29', 44)" onmouseover="showTip(event, 'fs29', 44)" class="f">AddPrintTransformer</span> (<span class="k">fun</span> (<span onmouseout="hideTip(event, 'fs30', 45)" onmouseover="showTip(event, 'fs30', 45)" class="i">layer</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs10', 46)" onmouseover="showTip(event, 'fs10', 46)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs31', 47)" onmouseover="showTip(event, 'fs31', 47)" class="t">Layer</span>) <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs32', 48)" onmouseover="showTip(event, 'fs32', 48)" class="f">box</span> (<span onmouseout="hideTip(event, 'fs30', 49)" onmouseover="showTip(event, 'fs30', 49)" class="i">layer</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs3', 50)" onmouseover="showTip(event, 'fs3', 50)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 51)" onmouseover="showTip(event, 'fs26', 51)" class="f">contents</span>))
 </code></pre></td>
 </tr>
 </table>
@@ -139,8 +239,8 @@ a vector layer as an F# list:</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs25', 32)" onmouseover="showTip(event, 'fs25', 32)" class="i">features</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 33)" onmouseover="showTip(event, 'fs22', 33)" class="i">layer</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs20', 34)" onmouseover="showTip(event, 'fs20', 34)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs26', 35)" onmouseover="showTip(event, 'fs26', 35)" class="f">features</span>
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs27', 36)" onmouseover="showTip(event, 'fs27', 36)" class="i">featuresCount</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs25', 37)" onmouseover="showTip(event, 'fs25', 37)" class="i">features</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs28', 38)" onmouseover="showTip(event, 'fs28', 38)" class="i">Length</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs33', 52)" onmouseover="showTip(event, 'fs33', 52)" class="i">layer</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs20', 53)" onmouseover="showTip(event, 'fs20', 53)" class="i">layers</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 54)" onmouseover="showTip(event, 'fs23', 54)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs34', 55)" onmouseover="showTip(event, 'fs34', 55)" class="f">head</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 56)" onmouseover="showTip(event, 'fs35', 56)" class="i">features</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs33', 57)" onmouseover="showTip(event, 'fs33', 57)" class="i">layer</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs3', 58)" onmouseover="showTip(event, 'fs3', 58)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 59)" onmouseover="showTip(event, 'fs36', 59)" class="f">features</span>
 </code></pre></td>
 </tr>
 </table>
@@ -153,10 +253,10 @@ in the layer's definition.</p>
 <span class="l">3: </span>
 <span class="l">4: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs29', 39)" onmouseover="showTip(event, 'fs29', 39)" class="i">attributes</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs22', 40)" onmouseover="showTip(event, 'fs22', 40)" class="i">layer</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs20', 41)" onmouseover="showTip(event, 'fs20', 41)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs30', 42)" onmouseover="showTip(event, 'fs30', 42)" class="f">fields</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs37', 60)" onmouseover="showTip(event, 'fs37', 60)" class="i">attributes</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs33', 61)" onmouseover="showTip(event, 'fs33', 61)" class="i">layer</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs3', 62)" onmouseover="showTip(event, 'fs3', 62)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs38', 63)" onmouseover="showTip(event, 'fs38', 63)" class="f">fields</span>
 
-<span class="k">for</span> <span onmouseout="hideTip(event, 'fs31', 43)" onmouseover="showTip(event, 'fs31', 43)" class="i">fieldIndex</span>, <span onmouseout="hideTip(event, 'fs32', 44)" onmouseover="showTip(event, 'fs32', 44)" class="i">fieldName</span>, <span onmouseout="hideTip(event, 'fs33', 45)" onmouseover="showTip(event, 'fs33', 45)" class="i">fieldType</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs29', 46)" onmouseover="showTip(event, 'fs29', 46)" class="i">attributes</span> <span class="k">do</span>
-    <span onmouseout="hideTip(event, 'fs16', 47)" onmouseover="showTip(event, 'fs16', 47)" class="f">printfn</span> <span class="s">&quot;Field Index = </span><span class="pf">%i</span><span class="s">; Field Name = </span><span class="pf">%s</span><span class="s">; Field Type = </span><span class="pf">%A</span><span class="s">&quot;</span> <span class="i">fieldIndex</span> <span class="i">fieldName</span> <span onmouseout="hideTip(event, 'fs33', 48)" onmouseover="showTip(event, 'fs33', 48)" class="i">fieldType</span>
+<span class="k">for</span> <span onmouseout="hideTip(event, 'fs39', 64)" onmouseover="showTip(event, 'fs39', 64)" class="i">fieldIndex</span>, <span onmouseout="hideTip(event, 'fs40', 65)" onmouseover="showTip(event, 'fs40', 65)" class="i">fieldName</span>, <span onmouseout="hideTip(event, 'fs41', 66)" onmouseover="showTip(event, 'fs41', 66)" class="i">fieldType</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs37', 67)" onmouseover="showTip(event, 'fs37', 67)" class="i">attributes</span> <span class="k">do</span>
+    <span onmouseout="hideTip(event, 'fs17', 68)" onmouseover="showTip(event, 'fs17', 68)" class="f">printfn</span> <span class="s">&quot;Field Index = </span><span class="pf">%i</span><span class="s">; Field Name = </span><span class="pf">%s</span><span class="s">; Field Type = </span><span class="pf">%A</span><span class="s">&quot;</span> <span class="i">fieldIndex</span> <span class="i">fieldName</span> <span onmouseout="hideTip(event, 'fs41', 69)" onmouseover="showTip(event, 'fs41', 69)" class="i">fieldType</span>
 </code></pre></td>
 </tr>
 </table>
@@ -169,9 +269,9 @@ to get all the italian regions' names quering the field with index 1:</p>
 <span class="l">2: </span>
 <span class="l">3: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">for</span> <span onmouseout="hideTip(event, 'fs34', 49)" onmouseover="showTip(event, 'fs34', 49)" class="i">feat</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs25', 50)" onmouseover="showTip(event, 'fs25', 50)" class="i">features</span> <span class="k">do</span> 
-    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs35', 51)" onmouseover="showTip(event, 'fs35', 51)" class="i">regionName</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs34', 52)" onmouseover="showTip(event, 'fs34', 52)" class="i">feat</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs36', 53)" onmouseover="showTip(event, 'fs36', 53)" class="f">GetFieldAsString</span>(<span class="n">1</span>)
-    <span onmouseout="hideTip(event, 'fs16', 54)" onmouseover="showTip(event, 'fs16', 54)" class="f">printfn</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs35', 55)" onmouseover="showTip(event, 'fs35', 55)" class="i">regionName</span>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">for</span> <span onmouseout="hideTip(event, 'fs42', 70)" onmouseover="showTip(event, 'fs42', 70)" class="i">feat</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs35', 71)" onmouseover="showTip(event, 'fs35', 71)" class="i">features</span> <span class="k">do</span> 
+    <span class="k">let</span> <span onmouseout="hideTip(event, 'fs43', 72)" onmouseover="showTip(event, 'fs43', 72)" class="i">regionName</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs42', 73)" onmouseover="showTip(event, 'fs42', 73)" class="i">feat</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs44', 74)" onmouseover="showTip(event, 'fs44', 74)" class="f">GetFieldAsString</span>(<span class="n">1</span>)
+    <span onmouseout="hideTip(event, 'fs17', 75)" onmouseover="showTip(event, 'fs17', 75)" class="f">printfn</span> <span class="s">&quot;</span><span class="pf">%s</span><span class="s">&quot;</span> <span onmouseout="hideTip(event, 'fs43', 76)" onmouseover="showTip(event, 'fs43', 76)" class="i">regionName</span>
 </code></pre></td>
 </tr>
 </table>
@@ -207,61 +307,691 @@ it to get a map of italy divided by regions:</p>
 <span class="l">5: </span>
 <span class="l">6: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs37', 56)" onmouseover="showTip(event, 'fs37', 56)" class="i">geomcol</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs9', 57)" onmouseover="showTip(event, 'fs9', 57)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs38', 58)" onmouseover="showTip(event, 'fs38', 58)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs9', 59)" onmouseover="showTip(event, 'fs9', 59)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs39', 60)" onmouseover="showTip(event, 'fs39', 60)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs40', 61)" onmouseover="showTip(event, 'fs40', 61)" class="i">wkbGeometryCollection</span>)
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs45', 77)" onmouseover="showTip(event, 'fs45', 77)" class="i">geomcol</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs10', 78)" onmouseover="showTip(event, 'fs10', 78)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs46', 79)" onmouseover="showTip(event, 'fs46', 79)" class="t">Geometry</span>(<span onmouseout="hideTip(event, 'fs10', 80)" onmouseover="showTip(event, 'fs10', 80)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs47', 81)" onmouseover="showTip(event, 'fs47', 81)" class="t">wkbGeometryType</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs48', 82)" onmouseover="showTip(event, 'fs48', 82)" class="i">wkbGeometryCollection</span>)
 
-<span class="k">for</span> <span onmouseout="hideTip(event, 'fs34', 62)" onmouseover="showTip(event, 'fs34', 62)" class="i">feat</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs25', 63)" onmouseover="showTip(event, 'fs25', 63)" class="i">features</span> <span class="k">do</span> 
-    <span onmouseout="hideTip(event, 'fs37', 64)" onmouseover="showTip(event, 'fs37', 64)" class="i">geomcol</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs41', 65)" onmouseover="showTip(event, 'fs41', 65)" class="f">AddGeometry</span>(<span onmouseout="hideTip(event, 'fs34', 66)" onmouseover="showTip(event, 'fs34', 66)" class="i">feat</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs42', 67)" onmouseover="showTip(event, 'fs42', 67)" class="f">GetGeometryRef</span>()) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs5', 68)" onmouseover="showTip(event, 'fs5', 68)" class="f">ignore</span>
+<span class="k">for</span> <span onmouseout="hideTip(event, 'fs42', 83)" onmouseover="showTip(event, 'fs42', 83)" class="i">feat</span> <span class="k">in</span> <span onmouseout="hideTip(event, 'fs35', 84)" onmouseover="showTip(event, 'fs35', 84)" class="i">features</span> <span class="k">do</span> 
+    <span onmouseout="hideTip(event, 'fs45', 85)" onmouseover="showTip(event, 'fs45', 85)" class="i">geomcol</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs49', 86)" onmouseover="showTip(event, 'fs49', 86)" class="f">AddGeometry</span>(<span onmouseout="hideTip(event, 'fs42', 87)" onmouseover="showTip(event, 'fs42', 87)" class="i">feat</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs50', 88)" onmouseover="showTip(event, 'fs50', 88)" class="f">GetGeometryRef</span>()) <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs51', 89)" onmouseover="showTip(event, 'fs51', 89)" class="f">ignore</span>
 
-<span class="k">let</span> <span onmouseout="hideTip(event, 'fs43', 69)" onmouseover="showTip(event, 'fs43', 69)" class="i">italyRegionsPlot</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs37', 70)" onmouseover="showTip(event, 'fs37', 70)" class="i">geomcol</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs44', 71)" onmouseover="showTip(event, 'fs44', 71)" class="t">Plot</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs52', 90)" onmouseover="showTip(event, 'fs52', 90)" class="i">italyRegionsPlot</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs45', 91)" onmouseover="showTip(event, 'fs45', 91)" class="i">geomcol</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs53', 92)" onmouseover="showTip(event, 'fs53', 92)" class="t">Plot</span>
 </code></pre></td>
 </tr>
 </table>
 <p><img src="./img/italyRegionsPlot.png" alt="italyRegionsPlot" title="italyRegionsPlot" /></p>
+<h2>Visualize the non geometric data in a deedle frame</h2>
+<p>To visualize the layers non geometric data the <code>Vector</code> module
+provides the utility function <code>toValues</code> to convert the layer
+in a deedle frame:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs55', 95)" onmouseover="showTip(event, 'fs55', 95)" class="i">Deedle</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs56', 96)" onmouseover="showTip(event, 'fs56', 96)" class="i">fmItalyRegion</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs33', 97)" onmouseover="showTip(event, 'fs33', 97)" class="i">layer</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs57', 98)" onmouseover="showTip(event, 'fs57', 98)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs58', 99)" onmouseover="showTip(event, 'fs58', 99)" class="f">toValues</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs59', 100)" onmouseover="showTip(event, 'fs59', 100)" class="t">Frame</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs60', 101)" onmouseover="showTip(event, 'fs60', 101)" class="f">ofValues</span>
+</code></pre></td>
+</tr>
+</table>
+<div class="deedleframe">
+
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th><p>COD_REG</p></th>
+<th><p>REGIONE</p></th>
+<th><p>POP2001</p></th>
+<th><p>Geometry</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>PIEMONTE</p></td>
+<td><p>4214677</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>1</p></td>
+<td><p>2</p></td>
+<td><p>VALLE D'AOSTA</p></td>
+<td><p>119548</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>2</p></td>
+<td><p>3</p></td>
+<td><p>LOMBARDIA</p></td>
+<td><p>9032554</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>3</p></td>
+<td><p>4</p></td>
+<td><p>TRENTINO-ALTO ADIGE</p></td>
+<td><p>940016</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>4</p></td>
+<td><p>5</p></td>
+<td><p>VENETO</p></td>
+<td><p>4527694</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>5</p></td>
+<td><p>6</p></td>
+<td><p>FRIULI VENEZIA GIULIA</p></td>
+<td><p>1183764</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>6</p></td>
+<td><p>7</p></td>
+<td><p>LIGURIA</p></td>
+<td><p>1571783</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>7</p></td>
+<td><p>8</p></td>
+<td><p>EMILIA-ROMAGNA</p></td>
+<td><p>3983346</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+</tr>
+<tr class="even">
+<td><p>16</p></td>
+<td><p>17</p></td>
+<td><p>BASILICATA</p></td>
+<td><p>597768</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>17</p></td>
+<td><p>18</p></td>
+<td><p>CALABRIA</p></td>
+<td><p>2011466</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>18</p></td>
+<td><p>19</p></td>
+<td><p>SICILIA</p></td>
+<td><p>4968991</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>19</p></td>
+<td><p>20</p></td>
+<td><p>SARDEGNA</p></td>
+<td><p>1631880</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+<h1>Getting and Querying Open Street Map Data</h1>
+<p>As pointed in the beginning GDAL/OGR library has the capabilites of access not only file datasources
+as shapefiles, but also RDBMSes, web services, etc. In this section we can see how to use it to
+get data from the OpenStreetMap.</p>
+<p>OpenStreetMap is one of largest (probably the largest accessible one) source of geospatial data. It
+provides not only a free map accessible from the website <a href="https://www.openstreetmap.org">Openstreetmap.org</a>
+but also an <a href="http://wiki.openstreetmap.org/wiki/API_v0.6">Editing API</a> for fetching and saving raw geodata
+from/to the OpenStreetMap database and
+an <a href="http://wiki.openstreetmap.org/wiki/Overpass_API">Overpass API</a> which provides read-only API access.</p>
+<p>In this section we will see how to</p>
+<ol>
+<li>fetch data from the Overpass API using the methods in the <code>FSharp.Data</code> library</li>
+<li>save the data to a file (standard .NET methods)</li>
+<li>querying the saved data mixing the GDAL/OGR library's methods with F# and in particular with the Deedle library</li>
+</ol>
+<p>The first thing is to download the data. In this case we want all the streets
+in Malesco (one of the "biggest" city centre at the border of the Val Grande National
+Park).</p>
+<p>I won't go much into the deatils of the query syntax here which can be found on the wiki site
+<a href="http://wiki.openstreetmap.org/wiki/Overpass_API">Overpass API</a> but just to be clear
+we are querying for all the ways (streets, waterway, etc.): <code>way[name=*]</code>;in the bounding
+box containing Malesco city: <code>[bbox=8.4872,46.1220,8.5140,46.1331]</code></p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">open</span> <span onmouseout="hideTip(event, 'fs1', 102)" onmouseover="showTip(event, 'fs1', 102)" class="i">FSharp</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs61', 103)" onmouseover="showTip(event, 'fs61', 103)" class="i">Data</span>
+
+<span class="c">//bbox = left, bottom, right, top (min long, min lat, max long, max lat)</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs62', 104)" onmouseover="showTip(event, 'fs62', 104)" class="i">baseUrl</span> <span class="o">=</span> <span class="s">&quot;http://overpass.osm.rambler.ru/cgi/xapi?way[name=*][bbox=8.4872,46.1220,8.5140,46.1331]&quot;</span>
+
+<span class="c">// Download the content</span>
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs63', 105)" onmouseover="showTip(event, 'fs63', 105)" class="i">osm</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs64', 106)" onmouseover="showTip(event, 'fs64', 106)" class="t">Http</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs65', 107)" onmouseover="showTip(event, 'fs65', 107)" class="f">RequestString</span>(<span onmouseout="hideTip(event, 'fs62', 108)" onmouseover="showTip(event, 'fs62', 108)" class="i">baseUrl</span>)
+</code></pre></td>
+</tr>
+</table>
+<p>Then we save the downloaded data to a new file:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs66', 109)" onmouseover="showTip(event, 'fs66', 109)" class="i">fileName</span> <span class="o">=</span> <span class="k">__SOURCE_DIRECTORY__</span> <span class="o">+</span> <span class="s">@&quot;\data\malescoWays.osm&quot;</span>
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs67', 110)" onmouseover="showTip(event, 'fs67', 110)" class="f">save</span>  (<span onmouseout="hideTip(event, 'fs68', 111)" onmouseover="showTip(event, 'fs68', 111)" class="i">fileName</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs69', 112)" onmouseover="showTip(event, 'fs69', 112)" class="t">string</span>) (<span onmouseout="hideTip(event, 'fs70', 113)" onmouseover="showTip(event, 'fs70', 113)" class="i">data</span><span class="o">:</span><span onmouseout="hideTip(event, 'fs69', 114)" onmouseover="showTip(event, 'fs69', 114)" class="t">string</span>) <span class="o">=</span> 
+    <span class="k">use</span> <span onmouseout="hideTip(event, 'fs71', 115)" onmouseover="showTip(event, 'fs71', 115)" class="i">w</span> <span class="o">=</span> <span class="k">new</span> <span onmouseout="hideTip(event, 'fs72', 116)" onmouseover="showTip(event, 'fs72', 116)" class="i">System</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs73', 117)" onmouseover="showTip(event, 'fs73', 117)" class="i">IO</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs74', 118)" onmouseover="showTip(event, 'fs74', 118)" class="t">StreamWriter</span>(<span onmouseout="hideTip(event, 'fs68', 119)" onmouseover="showTip(event, 'fs68', 119)" class="i">fileName</span>)
+    <span onmouseout="hideTip(event, 'fs71', 120)" onmouseover="showTip(event, 'fs71', 120)" class="i">w</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs75', 121)" onmouseover="showTip(event, 'fs75', 121)" class="f">Write</span>(<span onmouseout="hideTip(event, 'fs70', 122)" onmouseover="showTip(event, 'fs70', 122)" class="i">data</span>)
+
+<span onmouseout="hideTip(event, 'fs63', 123)" onmouseover="showTip(event, 'fs63', 123)" class="i">osm</span> <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs67', 124)" onmouseover="showTip(event, 'fs67', 124)" class="f">save</span> <span onmouseout="hideTip(event, 'fs66', 125)" onmouseover="showTip(event, 'fs66', 125)" class="i">fileName</span>
+</code></pre></td>
+</tr>
+</table>
+<p>Now we can inspect the data using the GDAL/OGR library.</p>
+<p>First we open the datasource and get the layers inside it:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs76', 126)" onmouseover="showTip(event, 'fs76', 126)" class="i">osmDataSource</span> <span class="o">=</span> <span onmouseout="hideTip(event, 'fs10', 127)" onmouseover="showTip(event, 'fs10', 127)" class="i">OGR</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs11', 128)" onmouseover="showTip(event, 'fs11', 128)" class="t">Ogr</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs77', 129)" onmouseover="showTip(event, 'fs77', 129)" class="f">Open</span>(<span onmouseout="hideTip(event, 'fs66', 130)" onmouseover="showTip(event, 'fs66', 130)" class="i">fileName</span>, <span class="n">0</span>)
+
+<span class="k">let</span> <span onmouseout="hideTip(event, 'fs78', 131)" onmouseover="showTip(event, 'fs78', 131)" class="i">osmLayers</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs76', 132)" onmouseover="showTip(event, 'fs76', 132)" class="i">osmDataSource</span> 
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs57', 133)" onmouseover="showTip(event, 'fs57', 133)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs21', 134)" onmouseover="showTip(event, 'fs21', 134)" class="f">layers</span>
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td><pre><code>"[{Features = 9;
+  Geometry = wkbPoint;
+  Fields =
+   ["OSM_ID"; "NAME"; "BARRIER"; "HIGHWAY"; "REF"; "ADDRESS"; "IS_IN"; "PLACE";
+    "MAN_MADE"; "OTHER_TAGS"];};
+ {Features = 55;
+  Geometry = wkbLineString;
+  Fields =
+   ["OSM_ID"; "NAME"; "HIGHWAY"; "WATERWAY"; "AERIALWAY"; "BARRIER"; "MAN_MADE";
+    "OTHER_TAGS"];}; {Features = 0;
+                      Geometry = wkbMultiLineString;
+                      Fields = ["OSM_ID"; "NAME"; "TYPE"; "OTHER_TAGS"];};
+ {Features = 3;
+  Geometry = wkbMultiPolygon;
+  Fields =
+   ["OSM_ID"; "OSM_WAY_ID"; "NAME"; "TYPE"; "AEROWAY"; "AMENITY"; "ADMIN_LEVEL";
+    "BARRIER"; "BOUNDARY"; "BUILDING"; "CRAFT"; "GEOLOGICAL"; "HISTORIC";
+    "LAND_AREA"; "LANDUSE"; "LEISURE"; "MAN_MADE"; "MILITARY"; "NATURAL";
+    "OFFICE"; "PLACE"; "SHOP"; "SPORT"; "TOURISM"; "OTHER_TAGS"];};
+ {Features = 0;
+  Geometry = wkbGeometryCollection;
+  Fields = ["OSM_ID"; "NAME"; "TYPE"; "OTHER_TAGS"];}]"</code></pre></td></tr></table>
+<p>We have six layers respectively of wkbPoint, wkbLineString, wkbMultiLineString,
+wkbMultiPolygon, wkbGeometryCollection geometry type and as we can see the
+third and sixth layers are empty.</p>
+<p>We are interested in the streets so let's convert the second wkbLineString layer
+in a deedle frame to see its content:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs82', 146)" onmouseover="showTip(event, 'fs82', 146)" class="i">fmMalescoWays</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs78', 147)" onmouseover="showTip(event, 'fs78', 147)" class="i">osmLayers</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs83', 148)" onmouseover="showTip(event, 'fs83', 148)" class="t">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs84', 149)" onmouseover="showTip(event, 'fs84', 149)" class="f">item</span> <span class="n">1</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs57', 150)" onmouseover="showTip(event, 'fs57', 150)" class="t">Vector</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs58', 151)" onmouseover="showTip(event, 'fs58', 151)" class="f">toValues</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs59', 152)" onmouseover="showTip(event, 'fs59', 152)" class="t">Frame</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs60', 153)" onmouseover="showTip(event, 'fs60', 153)" class="f">ofValues</span>
+</code></pre></td>
+</tr>
+</table>
+<div class="deedleframe">
+
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th><p>OSM_ID</p></th>
+<th><p>NAME</p></th>
+<th><p>HIGHWAY</p></th>
+<th><p> ... </p></th>
+<th><p>MAN_MADE</p></th>
+<th><p>OTHER_TAGS</p></th>
+<th><p>Geometry</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>0</p></td>
+<td><p>8027642</p></td>
+<td><p>Strada statale della Val Vigezzo</p></td>
+<td><p>secondary</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"loc_name"=>"Via per Re","maxspeed"=>"70","ref"=>"SS337"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>1</p></td>
+<td><p>8027643</p></td>
+<td><p>Strada statale della Val Vigezzo</p></td>
+<td><p>secondary</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"ref"=>"SS337"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>2</p></td>
+<td><p>8027644</p></td>
+<td><p>Via Conte Mellerio</p></td>
+<td><p>tertiary</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"ref"=>"SP75"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>3</p></td>
+<td><p>26818816</p></td>
+<td><p>Strada statale della Val Vigezzo</p></td>
+<td><p>secondary</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"loc_name"=>"Via al piano","ref"=>"SS337"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>4</p></td>
+<td><p>88517822</p></td>
+<td><p>Via Laurasca</p></td>
+<td><p>unclassified</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>5</p></td>
+<td><p>88519680</p></td>
+<td><p>Via dei Monti</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>6</p></td>
+<td><p>88810050</p></td>
+<td><p>Torrente Loana</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"boat"=>"no"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>7</p></td>
+<td><p>102418428</p></td>
+<td><p>Melezzo orientale</p></td>
+<td><p></p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"boat"=>"no"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+</tr>
+<tr class="even">
+<td><p>51</p></td>
+<td><p>248999155</p></td>
+<td><p>Via Ortetto</p></td>
+<td><p>footway</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>52</p></td>
+<td><p>265240441</p></td>
+<td><p>Strada statale della Val Vigezzo</p></td>
+<td><p>secondary</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"bridge"=>"yes","layer"=>"1","ref"=>"SS337"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>53</p></td>
+<td><p>265240444</p></td>
+<td><p>Strada statale della Val Vigezzo</p></td>
+<td><p>secondary</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"ref"=>"SS337"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>54</p></td>
+<td><p>366465605</p></td>
+<td><p>Via Giuseppe Verdi</p></td>
+<td><p>service</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+<p>We can see also that this layer contains ways of different kind: only the records
+with the a value in the column HIGHWAY are streets so let's see the list of its
+distinct values:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs85', 154)" onmouseover="showTip(event, 'fs85', 154)" class="i">highways</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs82', 155)" onmouseover="showTip(event, 'fs82', 155)" class="i">fmMalescoWays</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs86', 156)" onmouseover="showTip(event, 'fs86', 156)" class="f">GetColumn</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs69', 157)" onmouseover="showTip(event, 'fs69', 157)" class="t">string</span><span class="o">&gt;</span>(<span class="s">&quot;HIGHWAY&quot;</span>)<span class="o">.</span><span class="i">Values</span> 
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs83', 158)" onmouseover="showTip(event, 'fs83', 158)" class="t">Seq</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs87', 159)" onmouseover="showTip(event, 'fs87', 159)" class="f">distinct</span>
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs23', 160)" onmouseover="showTip(event, 'fs23', 160)" class="t">List</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs88', 161)" onmouseover="showTip(event, 'fs88', 161)" class="f">ofSeq</span>
+</code></pre></td>
+</tr>
+</table>
+<table class="pre"><tr><td><pre><code>["secondary"; "tertiary"; "unclassified"; "residential"; ""; "service"; "track";
+ "path"; "footway"]</code></pre></td></tr></table>
+<p>We can now filter just the streets of residential type:</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">let</span> <span onmouseout="hideTip(event, 'fs89', 162)" onmouseover="showTip(event, 'fs89', 162)" class="i">fmMalescoStreets</span> <span class="o">=</span> 
+    <span onmouseout="hideTip(event, 'fs82', 163)" onmouseover="showTip(event, 'fs82', 163)" class="i">fmMalescoWays</span> 
+    <span class="o">|&gt;</span> <span onmouseout="hideTip(event, 'fs59', 164)" onmouseover="showTip(event, 'fs59', 164)" class="t">Frame</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs90', 165)" onmouseover="showTip(event, 'fs90', 165)" class="f">filterRowValues</span> 
+        (
+            <span class="k">fun</span> <span onmouseout="hideTip(event, 'fs91', 166)" onmouseover="showTip(event, 'fs91', 166)" class="i">row</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs91', 167)" onmouseover="showTip(event, 'fs91', 167)" class="i">row</span><span class="o">.</span><span onmouseout="hideTip(event, 'fs92', 168)" onmouseover="showTip(event, 'fs92', 168)" class="f">GetAs</span><span class="o">&lt;</span><span onmouseout="hideTip(event, 'fs69', 169)" onmouseover="showTip(event, 'fs69', 169)" class="t">string</span><span class="o">&gt;</span>(<span class="s">&quot;HIGHWAY&quot;</span>) <span class="o">=</span> <span class="s">&quot;residential&quot;</span>
+        )
+</code></pre></td>
+</tr>
+</table>
+<div class="deedleframe">
+
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th><p>OSM_ID</p></th>
+<th><p>NAME</p></th>
+<th><p>HIGHWAY</p></th>
+<th><p> ... </p></th>
+<th><p>MAN_MADE</p></th>
+<th><p>OTHER_TAGS</p></th>
+<th><p>Geometry</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>5</p></td>
+<td><p>88519680</p></td>
+<td><p>Via dei Monti</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>8</p></td>
+<td><p>107843286</p></td>
+<td><p>Via Stazione</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"oneway"=>"yes"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>9</p></td>
+<td><p>107843287</p></td>
+<td><p>Via tre acque</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>12</p></td>
+<td><p>107843292</p></td>
+<td><p>Piazza XV Martiri</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"oneway"=>"yes"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>13</p></td>
+<td><p>108279883</p></td>
+<td><p>Via pittori Sotta</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"noexit"=>"yes"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>17</p></td>
+<td><p>108279887</p></td>
+<td><p>Via alla Cascata</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"noexit"=>"yes"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>21</p></td>
+<td><p>108279895</p></td>
+<td><p>Via per Re</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>23</p></td>
+<td><p>114567044</p></td>
+<td><p>Via Roma</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+<td><p> ... </p></td>
+</tr>
+<tr class="even">
+<td><p>42</p></td>
+<td><p>246795646</p></td>
+<td><p>Piazza XV Martiri</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>46</p></td>
+<td><p>247420064</p></td>
+<td><p>Via Stazione</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="even">
+<td><p>49</p></td>
+<td><p>248015289</p></td>
+<td><p>Via dei Monti</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p>"bridge"=>"yes","layer"=>"1"</p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+<tr class="odd">
+<td><p>50</p></td>
+<td><p>248015290</p></td>
+<td><p>Via dei Monti</p></td>
+<td><p>residential</p></td>
+<td><p> ... </p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p>OSGeo.OGR.Geometry</p></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
 <div class="tip" id="fs1">Multiple items<br />namespace FSharp<br /><br />--------------------<br />namespace Microsoft.FSharp</div>
 <div class="tip" id="fs2">namespace FSharp.Gdal</div>
-<div class="tip" id="fs3">module Configuration<br /><br />from FSharp.Gdal</div>
-<div class="tip" id="fs4">val Init : unit -&gt; unit<br /><br />Full name: FSharp.Gdal.Configuration.Init</div>
-<div class="tip" id="fs5">val ignore : value:&#39;T -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Operators.ignore</div>
-<div class="tip" id="fs6">namespace OSGeo</div>
-<div class="tip" id="fs7">val italyShp : string<br /><br />Full name: Vector-layers.italyShp</div>
-<div class="tip" id="fs8">val driver : OGR.Driver<br /><br />Full name: Vector-layers.driver</div>
-<div class="tip" id="fs9">namespace OSGeo.OGR</div>
-<div class="tip" id="fs10">Multiple items<br />type Ogr =<br />&#160;&#160;new : unit -&gt; Ogr<br />&#160;&#160;static val wkb25DBit : int<br />&#160;&#160;static val ogrZMarker : int<br />&#160;&#160;static val OGRNullFID : int<br />&#160;&#160;static val OGRUnsetMarker : int<br />&#160;&#160;static val OLCRandomRead : string<br />&#160;&#160;static val OLCSequentialWrite : string<br />&#160;&#160;static val OLCRandomWrite : string<br />&#160;&#160;static val OLCFastSpatialFilter : string<br />&#160;&#160;static val OLCFastFeatureCount : string<br />&#160;&#160;...<br />&#160;&#160;nested type GDALErrorHandlerDelegate<br />&#160;&#160;nested type GDALProgressFuncDelegate<br /><br />Full name: OSGeo.OGR.Ogr<br /><br />--------------------<br />OGR.Ogr() : unit</div>
-<div class="tip" id="fs11">OGR.Ogr.GetDriverByName(name: string) : OGR.Driver</div>
-<div class="tip" id="fs12">val ds : OGR.DataSource<br /><br />Full name: Vector-layers.ds</div>
-<div class="tip" id="fs13">OGR.Driver.Open(utf8_path: string, update: int) : OGR.DataSource</div>
-<div class="tip" id="fs14">val layersCount : int<br /><br />Full name: Vector-layers.layersCount</div>
-<div class="tip" id="fs15">OGR.DataSource.GetLayerCount() : int</div>
-<div class="tip" id="fs16">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
-<div class="tip" id="fs17">val layer0 : OGR.Layer<br /><br />Full name: Vector-layers.layer0</div>
-<div class="tip" id="fs18">OGR.DataSource.GetLayerByIndex(index: int) : OGR.Layer</div>
-<div class="tip" id="fs19">val layers : OGR.Layer list<br /><br />Full name: Vector-layers.layers</div>
-<div class="tip" id="fs20">module Vector<br /><br />from FSharp.Gdal</div>
+<div class="tip" id="fs3">module Vector<br /><br />from FSharp.Gdal</div>
+<div class="tip" id="fs4">module Configuration<br /><br />from FSharp.Gdal</div>
+<div class="tip" id="fs5">val Init : unit -&gt; unit<br /><br />Full name: FSharp.Gdal.Configuration.Init</div>
+<div class="tip" id="fs6">val printOgrDrivers : unit -&gt; unit<br /><br />Full name: FSharp.Gdal.Configuration.printOgrDrivers</div>
+<div class="tip" id="fs7">namespace OSGeo</div>
+<div class="tip" id="fs8">val italyShp : string<br /><br />Full name: Vector-layers.italyShp</div>
+<div class="tip" id="fs9">val driver : OGR.Driver<br /><br />Full name: Vector-layers.driver</div>
+<div class="tip" id="fs10">namespace OSGeo.OGR</div>
+<div class="tip" id="fs11">Multiple items<br />type Ogr =<br />&#160;&#160;new : unit -&gt; Ogr<br />&#160;&#160;static val wkb25DBit : int<br />&#160;&#160;static val ogrZMarker : int<br />&#160;&#160;static val OGRNullFID : int<br />&#160;&#160;static val OGRUnsetMarker : int<br />&#160;&#160;static val OLCRandomRead : string<br />&#160;&#160;static val OLCSequentialWrite : string<br />&#160;&#160;static val OLCRandomWrite : string<br />&#160;&#160;static val OLCFastSpatialFilter : string<br />&#160;&#160;static val OLCFastFeatureCount : string<br />&#160;&#160;...<br />&#160;&#160;nested type GDALErrorHandlerDelegate<br />&#160;&#160;nested type GDALProgressFuncDelegate<br /><br />Full name: OSGeo.OGR.Ogr<br /><br />--------------------<br />OGR.Ogr() : unit</div>
+<div class="tip" id="fs12">OGR.Ogr.GetDriverByName(name: string) : OGR.Driver</div>
+<div class="tip" id="fs13">val ds : OGR.DataSource<br /><br />Full name: Vector-layers.ds</div>
+<div class="tip" id="fs14">OGR.Driver.Open(utf8_path: string, update: int) : OGR.DataSource</div>
+<div class="tip" id="fs15">val layersCount : int<br /><br />Full name: Vector-layers.layersCount</div>
+<div class="tip" id="fs16">OGR.DataSource.GetLayerCount() : int</div>
+<div class="tip" id="fs17">val printfn : format:Printf.TextWriterFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.printfn</div>
+<div class="tip" id="fs18">val layer0 : OGR.Layer<br /><br />Full name: Vector-layers.layer0</div>
+<div class="tip" id="fs19">OGR.DataSource.GetLayerByIndex(index: int) : OGR.Layer</div>
+<div class="tip" id="fs20">val layers : OGR.Layer list<br /><br />Full name: Vector-layers.layers</div>
 <div class="tip" id="fs21">val layers : ds:OGR.DataSource -&gt; OGR.Layer list<br /><br />Full name: FSharp.Gdal.Vector.layers</div>
-<div class="tip" id="fs22">val layer : OGR.Layer<br /><br />Full name: Vector-layers.layer</div>
+<div class="tip" id="fs22">val layerContents : LayerContent list<br /><br />Full name: Vector-layers.layerContents</div>
 <div class="tip" id="fs23">Multiple items<br />module List<br /><br />from Microsoft.FSharp.Collections<br /><br />--------------------<br />type List&lt;&#39;T&gt; =<br />&#160;&#160;| ( [] )<br />&#160;&#160;| ( :: ) of Head: &#39;T * Tail: &#39;T list<br />&#160;&#160;interface IEnumerable<br />&#160;&#160;interface IEnumerable&lt;&#39;T&gt;<br />&#160;&#160;member GetSlice : startIndex:int option * endIndex:int option -&gt; &#39;T list<br />&#160;&#160;member Head : &#39;T<br />&#160;&#160;member IsEmpty : bool<br />&#160;&#160;member Item : index:int -&gt; &#39;T with get<br />&#160;&#160;member Length : int<br />&#160;&#160;member Tail : &#39;T list<br />&#160;&#160;static member Cons : head:&#39;T * tail:&#39;T list -&gt; &#39;T list<br />&#160;&#160;static member Empty : &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List&lt;_&gt;</div>
-<div class="tip" id="fs24">val head : list:&#39;T list -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Collections.List.head</div>
-<div class="tip" id="fs25">val features : OGR.Feature list<br /><br />Full name: Vector-layers.features</div>
-<div class="tip" id="fs26">val features : layer:OGR.Layer -&gt; OGR.Feature list<br /><br />Full name: FSharp.Gdal.Vector.features</div>
-<div class="tip" id="fs27">val featuresCount : int<br /><br />Full name: Vector-layers.featuresCount</div>
-<div class="tip" id="fs28">property List.Length: int</div>
-<div class="tip" id="fs29">val attributes : (int * string * OGR.FieldType) list<br /><br />Full name: Vector-layers.attributes</div>
-<div class="tip" id="fs30">val fields : layer:OGR.Layer -&gt; (int * string * OGR.FieldType) list<br /><br />Full name: FSharp.Gdal.Vector.fields</div>
-<div class="tip" id="fs31">val fieldIndex : int</div>
-<div class="tip" id="fs32">val fieldName : string</div>
-<div class="tip" id="fs33">val fieldType : OGR.FieldType</div>
-<div class="tip" id="fs34">val feat : OGR.Feature</div>
-<div class="tip" id="fs35">val regionName : string</div>
-<div class="tip" id="fs36">OGR.Feature.GetFieldAsString(name: string) : string<br />OGR.Feature.GetFieldAsString(id: int) : string</div>
-<div class="tip" id="fs37">val geomcol : OGR.Geometry<br /><br />Full name: Vector-layers.geomcol</div>
-<div class="tip" id="fs38">Multiple items<br />type Geometry =<br />&#160;&#160;new : type:wkbGeometryType -&gt; Geometry + 2 overloads<br />&#160;&#160;member AddGeometry : other:Geometry -&gt; int<br />&#160;&#160;member AddGeometryDirectly : other_disown:Geometry -&gt; int<br />&#160;&#160;member AddPoint : x:float * y:float * z:float -&gt; unit<br />&#160;&#160;member AddPoint_2D : x:float * y:float -&gt; unit<br />&#160;&#160;member Area : unit -&gt; float<br />&#160;&#160;member AssignSpatialReference : reference:SpatialReference -&gt; unit<br />&#160;&#160;member Boundary : unit -&gt; Geometry<br />&#160;&#160;member Buffer : distance:float * quadsecs:int -&gt; Geometry<br />&#160;&#160;member Centroid : unit -&gt; Geometry<br />&#160;&#160;...<br /><br />Full name: OSGeo.OGR.Geometry<br /><br />--------------------<br />OGR.Geometry(type: OGR.wkbGeometryType) : unit<br />OGR.Geometry(cPtr: nativeint, cMemoryOwn: bool, parent: obj) : unit<br />OGR.Geometry(type: OGR.wkbGeometryType, wkt: string, wkb: int, wkb_buf: nativeint, gml: string) : unit</div>
-<div class="tip" id="fs39">type wkbGeometryType =<br />&#160;&#160;| wkbUnknown = 0<br />&#160;&#160;| wkbPoint = 1<br />&#160;&#160;| wkbLineString = 2<br />&#160;&#160;| wkbPolygon = 3<br />&#160;&#160;| wkbMultiPoint = 4<br />&#160;&#160;| wkbMultiLineString = 5<br />&#160;&#160;| wkbMultiPolygon = 6<br />&#160;&#160;| wkbGeometryCollection = 7<br />&#160;&#160;| wkbNone = 100<br />&#160;&#160;| wkbLinearRing = 101<br />&#160;&#160;...<br /><br />Full name: OSGeo.OGR.wkbGeometryType</div>
-<div class="tip" id="fs40">field OGR.wkbGeometryType.wkbGeometryCollection = 7</div>
-<div class="tip" id="fs41">OGR.Geometry.AddGeometry(other: OGR.Geometry) : int</div>
-<div class="tip" id="fs42">OGR.Feature.GetGeometryRef() : OGR.Geometry</div>
-<div class="tip" id="fs43">val italyRegionsPlot : Plot<br /><br />Full name: Vector-layers.italyRegionsPlot</div>
-<div class="tip" id="fs44">Multiple items<br />type Plot =<br />&#160;&#160;new : geom:Geometry -&gt; Plot<br />&#160;&#160;member SaveAsBitmap : fileName:string -&gt; unit<br /><br />Full name: Plot-geometry.Plot<br /><em><br /><br />&#160;Plots an OGR.Geometry on a Xaml Window</em><br /><br />--------------------<br />new : geom:OGR.Geometry -&gt; Plot</div>
-<div class="tip" id="fs45">member Plot.SaveAsBitmap : fileName:string -&gt; unit</div>
+<div class="tip" id="fs24">val map : mapping:(&#39;T -&gt; &#39;U) -&gt; list:&#39;T list -&gt; &#39;U list<br /><br />Full name: Microsoft.FSharp.Collections.List.map</div>
+<div class="tip" id="fs25">val ly : OGR.Layer</div>
+<div class="tip" id="fs26">val contents : layer:OGR.Layer -&gt; LayerContent<br /><br />Full name: FSharp.Gdal.Vector.contents</div>
+<div class="tip" id="fs27">System.Object.ToString() : string</div>
+<div class="tip" id="fs28">val fsi : Compiler.Interactive.InteractiveSession<br /><br />Full name: Microsoft.FSharp.Compiler.Interactive.Settings.fsi</div>
+<div class="tip" id="fs29">member Compiler.Interactive.InteractiveSession.AddPrintTransformer : (&#39;T -&gt; obj) -&gt; unit</div>
+<div class="tip" id="fs30">val layer : OGR.Layer</div>
+<div class="tip" id="fs31">Multiple items<br />type Layer =<br />&#160;&#160;new : cPtr:nativeint * cMemoryOwn:bool * parent:obj -&gt; Layer<br />&#160;&#160;member AlterFieldDefn : iField:int * field_def:FieldDefn * nFlags:int -&gt; int<br />&#160;&#160;member Clip : method_layer:Layer * result_layer:Layer * options:string[] * callback:GDALProgressFuncDelegate * callback_data:string -&gt; int<br />&#160;&#160;member CommitTransaction : unit -&gt; int<br />&#160;&#160;member CreateFeature : feature:Feature -&gt; int<br />&#160;&#160;member CreateField : field_def:FieldDefn * approx_ok:int -&gt; int<br />&#160;&#160;member CreateGeomField : field_def:GeomFieldDefn * approx_ok:int -&gt; int<br />&#160;&#160;member DeleteFeature : fid:int -&gt; int<br />&#160;&#160;member DeleteField : iField:int -&gt; int<br />&#160;&#160;member Dispose : unit -&gt; unit<br />&#160;&#160;...<br /><br />Full name: OSGeo.OGR.Layer<br /><br />--------------------<br />OGR.Layer(cPtr: nativeint, cMemoryOwn: bool, parent: obj) : unit</div>
+<div class="tip" id="fs32">val box : value:&#39;T -&gt; obj<br /><br />Full name: Microsoft.FSharp.Core.Operators.box</div>
+<div class="tip" id="fs33">val layer : OGR.Layer<br /><br />Full name: Vector-layers.layer</div>
+<div class="tip" id="fs34">val head : list:&#39;T list -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Collections.List.head</div>
+<div class="tip" id="fs35">val features : OGR.Feature list<br /><br />Full name: Vector-layers.features</div>
+<div class="tip" id="fs36">val features : layer:OGR.Layer -&gt; OGR.Feature list<br /><br />Full name: FSharp.Gdal.Vector.features</div>
+<div class="tip" id="fs37">val attributes : (int * string * OGR.FieldType) list<br /><br />Full name: Vector-layers.attributes</div>
+<div class="tip" id="fs38">val fields : layer:OGR.Layer -&gt; (int * string * OGR.FieldType) list<br /><br />Full name: FSharp.Gdal.Vector.fields</div>
+<div class="tip" id="fs39">val fieldIndex : int</div>
+<div class="tip" id="fs40">val fieldName : string</div>
+<div class="tip" id="fs41">val fieldType : OGR.FieldType</div>
+<div class="tip" id="fs42">val feat : OGR.Feature</div>
+<div class="tip" id="fs43">val regionName : string</div>
+<div class="tip" id="fs44">OGR.Feature.GetFieldAsString(name: string) : string<br />OGR.Feature.GetFieldAsString(id: int) : string</div>
+<div class="tip" id="fs45">val geomcol : OGR.Geometry<br /><br />Full name: Vector-layers.geomcol</div>
+<div class="tip" id="fs46">Multiple items<br />type Geometry =<br />&#160;&#160;new : type:wkbGeometryType -&gt; Geometry + 2 overloads<br />&#160;&#160;member AddGeometry : other:Geometry -&gt; int<br />&#160;&#160;member AddGeometryDirectly : other_disown:Geometry -&gt; int<br />&#160;&#160;member AddPoint : x:float * y:float * z:float -&gt; unit<br />&#160;&#160;member AddPoint_2D : x:float * y:float -&gt; unit<br />&#160;&#160;member Area : unit -&gt; float<br />&#160;&#160;member AssignSpatialReference : reference:SpatialReference -&gt; unit<br />&#160;&#160;member Boundary : unit -&gt; Geometry<br />&#160;&#160;member Buffer : distance:float * quadsecs:int -&gt; Geometry<br />&#160;&#160;member Centroid : unit -&gt; Geometry<br />&#160;&#160;...<br /><br />Full name: OSGeo.OGR.Geometry<br /><br />--------------------<br />OGR.Geometry(type: OGR.wkbGeometryType) : unit<br />OGR.Geometry(cPtr: nativeint, cMemoryOwn: bool, parent: obj) : unit<br />OGR.Geometry(type: OGR.wkbGeometryType, wkt: string, wkb: int, wkb_buf: nativeint, gml: string) : unit</div>
+<div class="tip" id="fs47">type wkbGeometryType =<br />&#160;&#160;| wkbUnknown = 0<br />&#160;&#160;| wkbPoint = 1<br />&#160;&#160;| wkbLineString = 2<br />&#160;&#160;| wkbPolygon = 3<br />&#160;&#160;| wkbMultiPoint = 4<br />&#160;&#160;| wkbMultiLineString = 5<br />&#160;&#160;| wkbMultiPolygon = 6<br />&#160;&#160;| wkbGeometryCollection = 7<br />&#160;&#160;| wkbNone = 100<br />&#160;&#160;| wkbLinearRing = 101<br />&#160;&#160;...<br /><br />Full name: OSGeo.OGR.wkbGeometryType</div>
+<div class="tip" id="fs48">field OGR.wkbGeometryType.wkbGeometryCollection = 7</div>
+<div class="tip" id="fs49">OGR.Geometry.AddGeometry(other: OGR.Geometry) : int</div>
+<div class="tip" id="fs50">OGR.Feature.GetGeometryRef() : OGR.Geometry</div>
+<div class="tip" id="fs51">val ignore : value:&#39;T -&gt; unit<br /><br />Full name: Microsoft.FSharp.Core.Operators.ignore</div>
+<div class="tip" id="fs52">val italyRegionsPlot : Plot<br /><br />Full name: Vector-layers.italyRegionsPlot</div>
+<div class="tip" id="fs53">Multiple items<br />type Plot =<br />&#160;&#160;new : geom:Geometry -&gt; Plot<br />&#160;&#160;member SaveAsBitmap : fileName:string -&gt; unit<br /><br />Full name: Plot-geometry.Plot<br /><em><br /><br />&#160;Plots an OGR.Geometry on a Xaml Window</em><br /><br />--------------------<br />new : geom:OGR.Geometry -&gt; Plot</div>
+<div class="tip" id="fs54">member Plot.SaveAsBitmap : fileName:string -&gt; unit</div>
+<div class="tip" id="fs55">namespace Deedle</div>
+<div class="tip" id="fs56">val fmItalyRegion : Frame&lt;int,string&gt;<br /><br />Full name: Vector-layers.fmItalyRegion</div>
+<div class="tip" id="fs57">Multiple items<br />module Vector<br /><br />from FSharp.Gdal<br /><br />--------------------<br />type Vector =<br />&#160;&#160;static member ofOptionalValues : data:seq&lt;OptionalValue&lt;&#39;T&gt;&gt; -&gt; IVector&lt;&#39;T&gt;<br />&#160;&#160;static member ofOptionalValues : data:seq&lt;&#39;T option&gt; -&gt; IVector&lt;&#39;T&gt;<br />&#160;&#160;static member ofValues : data:seq&lt;&#39;T&gt; -&gt; IVector&lt;&#39;T&gt;<br />&#160;&#160;static member ofValues : data:&#39;T [] -&gt; IVector&lt;&#39;T&gt;<br /><br />Full name: Deedle.F# Vector extensions.Vector</div>
+<div class="tip" id="fs58">val toValues : layer:OGR.Layer -&gt; (int * string * obj) list<br /><br />Full name: FSharp.Gdal.Vector.toValues</div>
+<div class="tip" id="fs59">Multiple items<br />module Frame<br /><br />from Deedle<br /><br />--------------------<br />type Frame =<br />&#160;&#160;static member ReadReader : reader:IDataReader -&gt; Frame&lt;int,string&gt;<br />&#160;&#160;static member CustomExpanders : Dictionary&lt;Type,Func&lt;obj,seq&lt;string * Type * obj&gt;&gt;&gt;<br />&#160;&#160;static member NonExpandableInterfaces : List&lt;Type&gt;<br />&#160;&#160;static member NonExpandableTypes : HashSet&lt;Type&gt;<br /><br />Full name: Deedle.Frame<br /><br />--------------------<br />type Frame&lt;&#39;TRowKey,&#39;TColumnKey (requires equality and equality)&gt; =<br />&#160;&#160;interface IDynamicMetaObjectProvider<br />&#160;&#160;interface INotifyCollectionChanged<br />&#160;&#160;interface IFsiFormattable<br />&#160;&#160;interface IFrame<br />&#160;&#160;new : names:seq&lt;&#39;TColumnKey&gt; * columns:seq&lt;ISeries&lt;&#39;TRowKey&gt;&gt; -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />&#160;&#160;new : rowIndex:IIndex&lt;&#39;TRowKey&gt; * columnIndex:IIndex&lt;&#39;TColumnKey&gt; * data:IVector&lt;IVector&gt; * indexBuilder:IIndexBuilder * vectorBuilder:IVectorBuilder -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />&#160;&#160;member AddColumn : column:&#39;TColumnKey * series:ISeries&lt;&#39;TRowKey&gt; -&gt; unit<br />&#160;&#160;member AddColumn : column:&#39;TColumnKey * series:seq&lt;&#39;V&gt; -&gt; unit<br />&#160;&#160;member AddColumn : column:&#39;TColumnKey * series:ISeries&lt;&#39;TRowKey&gt; * lookup:Lookup -&gt; unit<br />&#160;&#160;member AddColumn : column:&#39;TColumnKey * series:seq&lt;&#39;V&gt; * lookup:Lookup -&gt; unit<br />&#160;&#160;...<br /><br />Full name: Deedle.Frame&lt;_,_&gt;<br /><br />--------------------<br />new : names:seq&lt;&#39;TColumnKey&gt; * columns:seq&lt;ISeries&lt;&#39;TRowKey&gt;&gt; -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;<br />new : rowIndex:Indices.IIndex&lt;&#39;TRowKey&gt; * columnIndex:Indices.IIndex&lt;&#39;TColumnKey&gt; * data:IVector&lt;IVector&gt; * indexBuilder:Indices.IIndexBuilder * vectorBuilder:Vectors.IVectorBuilder -&gt; Frame&lt;&#39;TRowKey,&#39;TColumnKey&gt;</div>
+<div class="tip" id="fs60">static member Frame.ofValues : values:seq&lt;&#39;R * &#39;C * &#39;V&gt; -&gt; Frame&lt;&#39;R,&#39;C&gt; (requires equality and equality)</div>
+<div class="tip" id="fs61">Multiple items<br />namespace FSharp.Data<br /><br />--------------------<br />namespace Microsoft.FSharp.Data</div>
+<div class="tip" id="fs62">val baseUrl : string<br /><br />Full name: Vector-layers.baseUrl</div>
+<div class="tip" id="fs63">val osm : string<br /><br />Full name: Vector-layers.osm</div>
+<div class="tip" id="fs64">type Http =<br />&#160;&#160;private new : unit -&gt; Http<br />&#160;&#160;static member private AppendQueryToUrl : url:string * query:(string * string) list -&gt; string<br />&#160;&#160;static member AsyncRequest : url:string * ?query:(string * string) list * ?headers:seq&lt;string * string&gt; * ?httpMethod:string * ?body:HttpRequestBody * ?cookies:seq&lt;string * string&gt; * ?cookieContainer:CookieContainer * ?silentHttpErrors:bool * ?responseEncodingOverride:string * ?customizeHttpRequest:(HttpWebRequest -&gt; HttpWebRequest) -&gt; Async&lt;HttpResponse&gt;<br />&#160;&#160;static member AsyncRequestStream : url:string * ?query:(string * string) list * ?headers:seq&lt;string * string&gt; * ?httpMethod:string * ?body:HttpRequestBody * ?cookies:seq&lt;string * string&gt; * ?cookieContainer:CookieContainer * ?silentHttpErrors:bool * ?customizeHttpRequest:(HttpWebRequest -&gt; HttpWebRequest) -&gt; Async&lt;HttpResponseWithStream&gt;<br />&#160;&#160;static member AsyncRequestString : url:string * ?query:(string * string) list * ?headers:seq&lt;string * string&gt; * ?httpMethod:string * ?body:HttpRequestBody * ?cookies:seq&lt;string * string&gt; * ?cookieContainer:CookieContainer * ?silentHttpErrors:bool * ?responseEncodingOverride:string * ?customizeHttpRequest:(HttpWebRequest -&gt; HttpWebRequest) -&gt; Async&lt;string&gt;<br />&#160;&#160;static member private InnerRequest : url:string * toHttpResponse:(string -&gt; int -&gt; string -&gt; string -&gt; string -&gt; &#39;a0 option -&gt; Map&lt;string,string&gt; -&gt; Map&lt;string,string&gt; -&gt; Stream -&gt; Async&lt;&#39;a1&gt;) * ?query:(string * string) list * ?headers:seq&lt;string * string&gt; * ?httpMethod:string * ?body:HttpRequestBody * ?cookies:seq&lt;string * string&gt; * ?cookieContainer:CookieContainer * ?silentHttpErrors:bool * ?responseEncodingOverride:&#39;a0 * ?customizeHttpRequest:(HttpWebRequest -&gt; HttpWebRequest) -&gt; Async&lt;&#39;a1&gt;<br />&#160;&#160;static member Request : url:string * ?query:(string * string) list * ?headers:seq&lt;string * string&gt; * ?httpMethod:string * ?body:HttpRequestBody * ?cookies:seq&lt;string * string&gt; * ?cookieContainer:CookieContainer * ?silentHttpErrors:bool * ?responseEncodingOverride:string * ?customizeHttpRequest:(HttpWebRequest -&gt; HttpWebRequest) -&gt; HttpResponse<br />&#160;&#160;static member RequestStream : url:string * ?query:(string * string) list * ?headers:seq&lt;string * string&gt; * ?httpMethod:string * ?body:HttpRequestBody * ?cookies:seq&lt;string * string&gt; * ?cookieContainer:CookieContainer * ?silentHttpErrors:bool * ?customizeHttpRequest:(HttpWebRequest -&gt; HttpWebRequest) -&gt; HttpResponseWithStream<br />&#160;&#160;static member RequestString : url:string * ?query:(string * string) list * ?headers:seq&lt;string * string&gt; * ?httpMethod:string * ?body:HttpRequestBody * ?cookies:seq&lt;string * string&gt; * ?cookieContainer:CookieContainer * ?silentHttpErrors:bool * ?responseEncodingOverride:string * ?customizeHttpRequest:(HttpWebRequest -&gt; HttpWebRequest) -&gt; string<br /><br />Full name: FSharp.Data.Http</div>
+<div class="tip" id="fs65">static member Http.RequestString : url:string * ?query:(string * string) list * ?headers:seq&lt;string * string&gt; * ?httpMethod:string * ?body:HttpRequestBody * ?cookies:seq&lt;string * string&gt; * ?cookieContainer:System.Net.CookieContainer * ?silentHttpErrors:bool * ?responseEncodingOverride:string * ?customizeHttpRequest:(System.Net.HttpWebRequest -&gt; System.Net.HttpWebRequest) -&gt; string</div>
+<div class="tip" id="fs66">val fileName : string<br /><br />Full name: Vector-layers.fileName</div>
+<div class="tip" id="fs67">val save : fileName:string -&gt; data:string -&gt; unit<br /><br />Full name: Vector-layers.save</div>
+<div class="tip" id="fs68">val fileName : string</div>
+<div class="tip" id="fs69">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />Full name: Microsoft.FSharp.Core.Operators.string<br /><br />--------------------<br />type string = System.String<br /><br />Full name: Microsoft.FSharp.Core.string</div>
+<div class="tip" id="fs70">val data : string</div>
+<div class="tip" id="fs71">val w : System.IO.StreamWriter</div>
+<div class="tip" id="fs72">namespace System</div>
+<div class="tip" id="fs73">namespace System.IO</div>
+<div class="tip" id="fs74">Multiple items<br />type StreamWriter =<br />&#160;&#160;inherit TextWriter<br />&#160;&#160;new : stream:Stream -&gt; StreamWriter + 6 overloads<br />&#160;&#160;member AutoFlush : bool with get, set<br />&#160;&#160;member BaseStream : Stream<br />&#160;&#160;member Close : unit -&gt; unit<br />&#160;&#160;member Encoding : Encoding<br />&#160;&#160;member Flush : unit -&gt; unit<br />&#160;&#160;member Write : value:char -&gt; unit + 3 overloads<br />&#160;&#160;static val Null : StreamWriter<br /><br />Full name: System.IO.StreamWriter<br /><br />--------------------<br />System.IO.StreamWriter(stream: System.IO.Stream) : unit<br />System.IO.StreamWriter(path: string) : unit<br />System.IO.StreamWriter(stream: System.IO.Stream, encoding: System.Text.Encoding) : unit<br />System.IO.StreamWriter(path: string, append: bool) : unit<br />System.IO.StreamWriter(stream: System.IO.Stream, encoding: System.Text.Encoding, bufferSize: int) : unit<br />System.IO.StreamWriter(path: string, append: bool, encoding: System.Text.Encoding) : unit<br />System.IO.StreamWriter(path: string, append: bool, encoding: System.Text.Encoding, bufferSize: int) : unit</div>
+<div class="tip" id="fs75">System.IO.TextWriter.Write(value: obj) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />System.IO.TextWriter.Write(value: decimal) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />System.IO.TextWriter.Write(value: float) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />System.IO.TextWriter.Write(value: float32) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />System.IO.TextWriter.Write(value: uint64) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />System.IO.TextWriter.Write(value: int64) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />System.IO.TextWriter.Write(value: uint32) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />System.IO.TextWriter.Write(value: int) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />System.IO.TextWriter.Write(value: bool) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em><br />System.IO.StreamWriter.Write(value: string) : unit<br />&#160;&#160;&#160;<em>(+0 other overloads)</em></div>
+<div class="tip" id="fs76">val osmDataSource : OGR.DataSource<br /><br />Full name: Vector-layers.osmDataSource</div>
+<div class="tip" id="fs77">OGR.Ogr.Open(utf8_path: string, update: int) : OGR.DataSource</div>
+<div class="tip" id="fs78">val osmLayers : OGR.Layer list<br /><br />Full name: Vector-layers.osmLayers</div>
+<div class="tip" id="fs79">val osmLayersContents : LayerContent list<br /><br />Full name: Vector-layers.osmLayersContents</div>
+<div class="tip" id="fs80">val printOsmLayersContents : string<br /><br />Full name: Vector-layers.printOsmLayersContents</div>
+<div class="tip" id="fs81">val sprintf : format:Printf.StringFormat&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Core.ExtraTopLevelOperators.sprintf</div>
+<div class="tip" id="fs82">val fmMalescoWays : Frame&lt;int,string&gt;<br /><br />Full name: Vector-layers.fmMalescoWays</div>
+<div class="tip" id="fs83">module Seq<br /><br />from Microsoft.FSharp.Collections</div>
+<div class="tip" id="fs84">val item : index:int -&gt; source:seq&lt;&#39;T&gt; -&gt; &#39;T<br /><br />Full name: Microsoft.FSharp.Collections.Seq.item</div>
+<div class="tip" id="fs85">val highways : string list<br /><br />Full name: Vector-layers.highways</div>
+<div class="tip" id="fs86">member Frame.GetColumn : column:&#39;TColumnKey -&gt; Series&lt;&#39;TRowKey,&#39;R&gt;<br />member Frame.GetColumn : column:&#39;TColumnKey * lookup:Lookup -&gt; Series&lt;&#39;TRowKey,&#39;R&gt;</div>
+<div class="tip" id="fs87">val distinct : source:seq&lt;&#39;T&gt; -&gt; seq&lt;&#39;T&gt; (requires equality)<br /><br />Full name: Microsoft.FSharp.Collections.Seq.distinct</div>
+<div class="tip" id="fs88">val ofSeq : source:seq&lt;&#39;T&gt; -&gt; &#39;T list<br /><br />Full name: Microsoft.FSharp.Collections.List.ofSeq</div>
+<div class="tip" id="fs89">val fmMalescoStreets : Frame&lt;int,string&gt;<br /><br />Full name: Vector-layers.fmMalescoStreets</div>
+<div class="tip" id="fs90">val filterRowValues : f:(ObjectSeries&lt;&#39;C&gt; -&gt; bool) -&gt; frame:Frame&lt;&#39;R,&#39;C&gt; -&gt; Frame&lt;&#39;R,&#39;C&gt; (requires equality and equality)<br /><br />Full name: Deedle.Frame.filterRowValues</div>
+<div class="tip" id="fs91">val row : ObjectSeries&lt;string&gt;</div>
+<div class="tip" id="fs92">member ObjectSeries.GetAs : column:&#39;K -&gt; &#39;R<br />member ObjectSeries.GetAs : column:&#39;K * fallback:&#39;R -&gt; &#39;R</div>
 
 
           
