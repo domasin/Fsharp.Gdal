@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>SymbolKind - Fsharp.Gdal</title>
+    <title>LayerContent - Fsharp.Gdal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Domenico Masini"/>
@@ -35,138 +35,73 @@
 
 
 
-<h1>SymbolKind</h1>
+<h1>LayerContent</h1>
 <p>
-  <span>Namespace: ProviderImplementation.ProvidedTypes</span><br />
+  <span>Namespace: FSharp.Gdal</span><br />
+  <span>Parent Module: <a href="fsharp-gdal-vector.html">Vector</a></span>
 </p>
 <div class="xmldoc">
-<p>Represents the type constructor in a provided symbol type.</p>
+<p>Type to store layer's structure and number of features in it</p>
 
 </div>
-  <h3>Union Cases</h3>
+  <h3>Record Fields</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Union Case</td><td>Description</td></tr>
+      <tr><td>Record Field</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '151', 151)" onmouseover="showTip(event, '151', 151)">
-            Array(int)
+          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
+            Features
           </code>
-          <div class="tip" id="151">
+          <div class="tip" id="23">
             <strong>Signature:</strong> int<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fsi#L235-235" class="github-link">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L40-40" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Indicates that the type constructor is for a multi-dimensional array</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '152', 152)" onmouseover="showTip(event, '152', 152)">
-            ByRef
+          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
+            Fields
           </code>
-          <div class="tip" id="152">
-            <strong>Signature:</strong> <br />
+          <div class="tip" id="24">
+            <strong>Signature:</strong> string list<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fsi#L239-239" class="github-link">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L42-42" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Indicates that the type constructor is for byref types</p>
-
-
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '153', 153)" onmouseover="showTip(event, '153', 153)">
-            FSharpTypeAbbreviation(...)
+          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
+            Geometry
           </code>
-          <div class="tip" id="153">
-            <strong>Signature:</strong> Assembly * string * string []<br />
+          <div class="tip" id="25">
+            <strong>Signature:</strong> wkbGeometryType<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fsi#L243-243" class="github-link">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L41-41" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Indicates that the type constructor is for abbreviated types</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '154', 154)" onmouseover="showTip(event, '154', 154)">
-            Generic(Type)
-          </code>
-          <div class="tip" id="154">
-            <strong>Signature:</strong> Type<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fsi#L241-241" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Indicates that the type constructor is for named generic types</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '155', 155)" onmouseover="showTip(event, '155', 155)">
-            Pointer
-          </code>
-          <div class="tip" id="155">
-            <strong>Signature:</strong> <br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fsi#L237-237" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Indicates that the type constructor is for pointer types</p>
-
-
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '156', 156)" onmouseover="showTip(event, '156', 156)">
-            SDArray
-          </code>
-          <div class="tip" id="156">
-            <strong>Signature:</strong> <br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fsi#L233-233" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          <p>Indicates that the type constructor is for a single-dimensional array</p>
-
-
+          
         </td>
       </tr>
     </tbody>

@@ -45,6 +45,25 @@
 </div>
 
 <!-- Render nested types and modules, if there are any -->
+  <h2>Nested types and modules</h2>
+  <div>
+      <table class="table table-bordered type-list">
+    <thead>
+      <tr><td>Type</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="type-name">
+            <a href="fsharp-gdal-vector-layercontent.html">LayerContent</a>
+          </td>
+          <td class="xmldoc"><p>Type to store layer's structure and number of features in it</p>
+
+</td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
 
   <h3>Functions and values</h3>
   <table class="table table-bordered member-list">
@@ -56,9 +75,30 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
-            features layer
+            contents layer
           </code>
           <div class="tip" id="18">
+            <strong>Signature:</strong> layer:Layer -&gt; LayerContent<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L50-50" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Returns the contents of the layer: function suitable to use a custom printer for
+layers in fsharp interactive</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+            features layer
+          </code>
+          <div class="tip" id="19">
             <strong>Signature:</strong> layer:Layer -&gt; Feature list<br />
                       </div>
         </td>
@@ -75,15 +115,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
             fields layer
           </code>
-          <div class="tip" id="19">
+          <div class="tip" id="20">
             <strong>Signature:</strong> layer:Layer -&gt; (int * string * FieldType) list<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L19-19" class="github-link">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L28-28" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -95,10 +135,10 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
             layers ds
           </code>
-          <div class="tip" id="20">
+          <div class="tip" id="21">
             <strong>Signature:</strong> ds:DataSource -&gt; Layer list<br />
                       </div>
         </td>
@@ -108,6 +148,27 @@
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           <p>Get all layers in an OGR.DataSource</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+            toValues layer
+          </code>
+          <div class="tip" id="22">
+            <strong>Signature:</strong> layer:Layer -&gt; (int * string * obj) list<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L62-62" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Returns a list of values for each feature that can be converted in
+a deedle frame</p>
 
 
         </td>
