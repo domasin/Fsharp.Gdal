@@ -17,28 +17,45 @@ open ``Plot-geometry``
 #r "osr_csharp.dll"
 
 open FSharp.Gdal
-open FSharp.Gdal.Vector
 
 (**
 Vector Layers
 ========================
-This section will use the [OGR API Tutorial](http://www.gdal.org/ogr_apitut.html) as the first reference 
-to show how to use OGR classes to read and write data from a geospatial datasource.
+
+1. [Configure the library](#configure)
+2. [Supported formats](#formats)
+3. [Open datasources](#datasource)
+4. [Inspecting layers](#layers)
+5. [Get layers features](#features)
+6. [Get layers fields](#fields)
+7. [Get features geometries](#geometries)
+8. [Layer Spatial Referece Systems](#spatialReference)
+9. [Visualize the non geometric data in a deedle frame](#deedleFrame)
+10. [Getting and Querying Open Street Map Data](#osm)
+
+[References](#references)
 *)
 
 (**
-Configure gdal
+The OGR part of GDAL/OGR Library provides a single vector abstract data model to the calling application 
+for a variety of different supported formats including among others the well known ESRI Shapefile, but 
+also RDBMSes, directories full of files, or even remote web services depending on the driver being used.
+*)
+
+(**
+<a name="configure"></a>Configure the library
 ------------------------
-Initially it is necessary to register all the format drivers that are desired. The FSharp.Gdal library 
-accomplishes this calling the function `Configuration.Init()`:
+Initially it is necessary to configure the library and register all the format drivers that are desired. 
+The FSharp.Gdal library accomplishes this calling the function `Configuration.Init()`:
 *)
 
 Configuration.Init()
 
 (**
-Check registered drivers
+<a name="formats"></a>Supported formats
 ------------------------
-To check that all OGR drivers are correctly registered we call:
+The list of the supported formats is very big: to check that the library is correctly configured and 
+all OGR drivers are properly registered we call:
 *)
 
 (*** define-output:ogrDrivers ***)
@@ -46,10 +63,10 @@ Configuration.printOgrDrivers()
 (*** include-output:ogrDrivers ***)
 
 (**
-Open the datasource
+<a name="datasource"></a>Open datasources
 ------------------------
-Next we need to open the input OGR datasource. Datasources can be files, RDBMSes, directories full of files, 
-or even remote web services depending on the driver being used. However, the datasource name is always a single string. 
+Next we need to open the input OGR datasource. Despite the varietry of formats 
+the datasource name is always a single string. 
 
 In this case we will open a shapefile provided by the 
 [Italian National Institute of Statistics (Istat)](http://www.istat.it/it/archivio/24613/) 
@@ -62,17 +79,47 @@ let italyShp = __SOURCE_DIRECTORY__ + @"\data\reg2001_g\reg2001_g.shp"
 let driver = OGR.Ogr.GetDriverByName("ESRI Shapefile")
 let ds = driver.Open(italyShp, 0)
 
+(*** include-value:ds ***)
+
 (**
-Inspecting the layers
+An `OGR.DataSource` contains a set of `OGR.Layer`s each of which in turn contains a 
+set of `OGR.Feature`s and an `OGR.FeatureDefn`.
+
+Globally we can though of the datasource as a database, a layer as a table in the database 
+and the layer's features as its records while the feature definition provides its columns.
+
+From the output above this structure is not visbile. The aim of `FSharp.Gdal` is to improve 
+the use of the standard OGR/GDAL library within the fsharp interactive shell and to 
+provide utility functions to make it easier (and more idiomatic) writing F# scripts 
+to process geospatial data.
+
+To this aim the first thing that we want is to get immediately from the output an overview 
+of the objects we're dealing with and an hint to successive inspections. The first of this functions 
+is `datasourceInfo` implemented in the `FSharp.Gdal.Vector` module (below we will use more of 
+these functions the implementation of which can be viewed directly in the source code of the 
+[Vector module](https://github.com/domasin/Fsharp.Gdal/blob/master/src/Fsharp.Gdal/Vector.fs) ).
+*)
+
+let dsInfo = ds |> Vector.datasourceInfo
+(*** include-value:dsInfo ***)
+
+(**
+Not only we can call directly the `datasourceInfo` function but we can also use it to define a 
+custom printer for the `OGR.DataSource`:
+*)
+
+fsi.AddPrintTransformer (fun (datasource:OGR.DataSource) -> box (datasource |> Vector.datasourceInfo))
+
+(**
+In the sequel we will inspect the layer's structure and define a custom printer also for the `OGR.Layer` after that 
+whenever we will open again a new datasource we will get all the infos describing its structure.
+*)
+
+(**
+<a name="layers"></a>Inspecting layers
 ------------------------
-A GDALDataset can potentially have many layers associated with it. 
-
-As a GDALDataset can be viewed as a database, a layer in it can be thought of as 
-a database table containing records (features) with the same columns definition (fields) 
-and a particular type of Geometry.
-
-The number of layers available can be queried with 
-`GetLayerCount()` and individual layers fetched by index using `GetLayerByIndex`.
+As pointed out above an `OGR.DataSource` can potentially have many layers associated with it. The number 
+of available layers can be queried with `GetLayerCount()` and individual layers fetched by index using `GetLayerByIndex`.
 *)
 
 (*** define-output:layersCount ***)
@@ -84,63 +131,52 @@ printfn "There is %i layer" layersCount
 let layer0 = ds.GetLayerByIndex(0)
 
 (**
-One of the goals of this project is to develop functions to make it easier 
-(and more idiomatic) to work with OGR/GDAL library in F#.
-
-In this particulare case instead of using the low level GDAL methods we can use an utility 
-function `layers` defined in the `FSharp.Gdal.Vector` module which returns the layers 
-in a Vector DataSource as a list.
-
-Below I will use more of these utility functions whose definitions can be viewd directly 
-in the source code of the 
-[Vector module](https://github.com/domasin/Fsharp.Gdal/blob/master/src/Fsharp.Gdal/Vector.fs).
+instead of using these low level GDAL/OGR methods however the `Vector` module provides the 
+function `layers` which returns the layers in a Vector DataSource as an F# list.
 *)
 
 let layers = ds |> Vector.layers
 (*** include-value:layers ***)
 
 (**
-As we can see the output is not very informative and just says that there is one single layer 
-in the datasource. The `Vector` module provides the function `contents` to immediately inspect 
-a layer content:
+As we can see the output is still not very informative so we call the function 
+`layerInfo` to immediately inspect the layer's content:
 *)
 
-let layerContents = 
+let layerInfo = 
     layers
-    |> List.map (fun ly -> ly |> Vector.contents)
+    |> List.map (fun ly -> ly |> Vector.layerInfo)
 
 (*** define-output:printLayerContents ***)
-printfn "%s" (layerContents.ToString())
+printfn "%s" (layerInfo.ToString())
 (*** include-output:printLayerContents ***)
 
 (**
-This is better: now we can see that the layer has 20 features in it, 
-is a layer of points and has three attributes: COD_REG, REGIONE and POP2001.
+This is better: now we can see that the layer has 20 features (records) in it, 
+is a layer of geometry type polygon and all features in it provide three non geometric 
+informations (attributes or fields): COD_REG, REGIONE and POP2001.
 
-The function is also suitable to add a custom printer for the `OGR.Layer` type 
-if we are working in F# Interactive:
+To complete the configuration of the F# interactive shell we use the function 
+to define the custom printer for the `OGR.Layer` type:
 *)
 
-fsi.AddPrintTransformer (fun (layer:OGR.Layer) -> box (layer |> Vector.contents))
+fsi.AddPrintTransformer (fun (layer:OGR.Layer) -> box (layer |> Vector.layerInfo))
 
 (**
-Get layers features
+<a name="features"></a>Get layers features
 ------------------------
 A layer contains a set of features that can be viewed as records of a database table.
-
-Again, I will use an utility function `features` that returns the features stored in 
-a vector layer as an F# list:
+To get them just call `features` to obtain an F# list:
 *)
 
 let layer = layers |> List.head
 let features = layer |> Vector.features
 
 (**
-Get layers attributes
+<a name="fields"></a>Get layers fields
 ------------------------
-A layer has a definition containing attributes that can be viewed as columns of a table. 
-
-Here the function `fields` returns a tuple of all the index, name and type of the field 
+The feature definition is globally associated to the containing layer. Here the function to use 
+is `fields` which returns a tuple of all the index, name and type of the fields 
 in the layer's definition.
 *)
 
@@ -163,13 +199,12 @@ for feat in features do
 (*** include-output:regionsNames ***)
 
 (**
-Get geometries of all features in a layer
+<a name="geometries"></a>Get features geometries
 ------------------------
-In addition to attributes a feature contains a geometry field.
-
-In this case each feature corresponds to an italian region. 
-So We can collect all features' geometries in a geometry collection and plot 
-it to get a map of italy divided by regions:
+In addition to attributes a feature contains a geometry field. In this example each feature 
+corresponds to an italian region. To graphically plot them we can collect all features' geometries 
+in a geometry collection and call the `Plot` utility (see [Plot Geometry](plot-geometry.html)) to get 
+a map of Italy divided by regions:
 *)
 
 let geomcol = new OGR.Geometry(OGR.wkbGeometryType.wkbGeometryCollection)
@@ -187,11 +222,25 @@ italyRegionsPlot.SaveAsBitmap("italyRegionsPlot")
 *)
 
 (**
-Visualize the non geometric data in a deedle frame
+<a name="spatialReference"></a>Spatial reference system
 ------------------------
-To visualize the layers non geometric data the `Vector` module 
-provides the utility function `toValues` to convert the layer 
-in a deedle frame:
+A geometry is always defined in a coordinate system but in the case of geospatial 
+data we talk more properly of Spatial Referece Systems:
+*)
+
+let _,sr = layer.GetSpatialRef().ExportToWkt()
+
+(*** define-output:printSr ***)
+printfn "%s" sr
+(*** include-output:printSr ***)
+
+(**
+<a name="deedleFrame"></a>Visualize the non geometric data in a deedle frame
+------------------------
+[Deedle](http://bluemountaincapital.github.io/Deedle/) is an F# library for data 
+exploration and manipulation. FSharp.Gdal wants to be deedle friendly and while 
+it does not reference directly this library it provides the function `toValues` 
+to immediately convert vector geospatial data in a deedle frame:
 *)
 
 open Deedle
@@ -203,7 +252,13 @@ let fmItalyRegion =
 (*** include-value:fmItalyRegion ***)
 
 (**
-Getting and Querying Open Street Map Data
+As we can see the data converted in a deedle frame are more readable and we can take 
+advantage of the library capabilities to make aggregations, pivoting and scientific 
+and statistical calculations on the data.
+*)
+
+(**
+<a name="osm"></a>Getting and Querying Open Street Map Data
 ========================
 As pointed in the beginning GDAL/OGR library has the capabilites of access not only file datasources 
 as shapefiles, but also RDBMSes, web services, etc. In this section we can see how to use it to 
@@ -262,26 +317,26 @@ First we open the datasource and get the layers inside it:
 
 let osmDataSource = OGR.Ogr.Open(fileName, 0)
 
-let osmLayers = 
-    osmDataSource 
-    |> Vector.layers
-
 (*** hide ***)
-let osmLayersContents = 
-    osmLayers
-    |> List.map (fun ly -> ly |> Vector.contents)
+let osmDataSourceContents = 
+    osmDataSource
+    |> Vector.datasourceInfo
 
-let printOsmLayersContents = sprintf "%A" osmLayersContents
-(*** include-value:printOsmLayersContents ***)
+let printOsmDataSourceContents = sprintf "%A" osmDataSourceContents
+(*** include-value:printOsmDataSourceContents ***)
 
 (**
-We have six layers respectively of wkbPoint, wkbLineString, wkbMultiLineString, 
+We have five layers respectively of wkbPoint, wkbLineString, wkbMultiLineString, 
 wkbMultiPolygon, wkbGeometryCollection geometry type and as we can see the 
-third and sixth layers are empty.
+third and fifth layers are empty.
 
 We are interested in the streets so let's convert the second wkbLineString layer 
 in a deedle frame to see its content:
 *)
+
+let osmLayers = 
+    osmDataSource 
+    |> Vector.layers
 
 let fmMalescoWays = 
     osmLayers
@@ -314,3 +369,15 @@ let fmMalescoStreets =
         )
 (*** include-value:fmMalescoStreets ***)
 
+(**
+<a name="references"></a>References
+------------------------
+
+- [Deedle](http://bluemountaincapital.github.io/Deedle/)
+- [Italian National Institute of Statistics (Istat)](http://www.istat.it/it/archivio/24613/) 
+- [OGR API Tutorial](http://www.gdal.org/ogr_apitut.html)
+- [Openstreetmap.org](https://www.openstreetmap.org) 
+- [Overpass API](http://wiki.openstreetmap.org/wiki/Overpass_API)
+- [Python GDAL/OGR Cookbook](http://pcjericks.github.io/py-gdalogr-cookbook/vector_layers.html)
+
+*)

@@ -34,8 +34,8 @@ let fields (layer:Layer) =
             fdIndex, fd.GetName().ToUpperInvariant(), fd.GetFieldType()
     ]
 
-/// Type to store layer's structure and number of features in it
-type LayerContent = 
+/// Type to store layer's infos and number of features in it
+type LayerInfo = 
     {
         Features : int
         Geometry : wkbGeometryType
@@ -45,9 +45,9 @@ type LayerContent =
         override this.ToString() = 
             sprintf "{Features = %i;\nGeometry = %A\nFields = %A}" this.Features this.Geometry this.Fields
 
-/// Returns the contents of the layer: function suitable to use a custom printer for 
+/// Returns layer's infos: function suitable to use a custom printer for 
 /// layers in fsharp interactive
-let contents (layer:Layer) = 
+let layerInfo (layer:Layer) = 
     {
         Features = layer |> features |> List.length
         Geometry = layer.GetGeomType()
@@ -57,8 +57,32 @@ let contents (layer:Layer) =
             |> List.map (fun (_,name,_) -> name)
     }
 
-/// Returns a list of values for each feature that can be converted in 
-/// a deedle frame
+/// Type to store datasource's infos as the layers inside it
+type DatasourceInfo = 
+    {
+        Index : int
+        Layer : LayerInfo
+    }
+    with
+        override this.ToString() = 
+            sprintf "{Index = %i;\Layers = %A}" this.Index this.Layer
+
+/// Returns layer's infos: function suitable to use a custom printer for 
+/// layers in fsharp interactive
+let datasourceInfo (datasource:DataSource) = 
+    datasource 
+    |> layers
+    |> List.mapi 
+        (
+            fun i layer -> 
+                {
+                    Index = i
+                    Layer = layer |> layerInfo
+                }
+        )
+
+/// Returns a list of values for each feature 
+/// suitable to be converted in a deedle frame
 let toValues (layer:Layer) = 
     let fields = layer |> fields
     let features = layer |> features  
