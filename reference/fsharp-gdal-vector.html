@@ -54,9 +54,17 @@
     <tbody>
         <tr>
           <td class="type-name">
-            <a href="fsharp-gdal-vector-layercontent.html">LayerContent</a>
+            <a href="fsharp-gdal-vector-datasourceinfo.html">DatasourceInfo</a>
           </td>
-          <td class="xmldoc"><p>Type to store layer's structure and number of features in it</p>
+          <td class="xmldoc"><p>Type to store datasource's infos as the layers inside it</p>
+
+</td>
+        </tr>
+        <tr>
+          <td class="type-name">
+            <a href="fsharp-gdal-vector-layerinfo.html">LayerInfo</a>
+          </td>
+          <td class="xmldoc"><p>Type to store layer's infos and number of features in it</p>
 
 </td>
         </tr>
@@ -75,18 +83,18 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
-            contents layer
+            datasourceInfo datasource
           </code>
           <div class="tip" id="18">
-            <strong>Signature:</strong> layer:Layer -&gt; LayerContent<br />
+            <strong>Signature:</strong> datasource:DataSource -&gt; DatasourceInfo list<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L50-50" class="github-link">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L72-72" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Returns the contents of the layer: function suitable to use a custom printer for
+          <p>Returns layer's infos: function suitable to use a custom printer for
 layers in fsharp interactive</p>
 
 
@@ -136,9 +144,30 @@ layers in fsharp interactive</p>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
-            layers ds
+            layerInfo layer
           </code>
           <div class="tip" id="21">
+            <strong>Signature:</strong> layer:Layer -&gt; LayerInfo<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L50-50" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>Returns layer's infos: function suitable to use a custom printer for
+layers in fsharp interactive</p>
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+            layers ds
+          </code>
+          <div class="tip" id="22">
             <strong>Signature:</strong> ds:DataSource -&gt; Layer list<br />
                       </div>
         </td>
@@ -155,20 +184,20 @@ layers in fsharp interactive</p>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
             toValues layer
           </code>
-          <div class="tip" id="22">
+          <div class="tip" id="23">
             <strong>Signature:</strong> layer:Layer -&gt; (int * string * obj) list<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L62-62" class="github-link">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L86-86" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Returns a list of values for each feature that can be converted in
-a deedle frame</p>
+          <p>Returns a list of values for each feature
+suitable to be converted in a deedle frame</p>
 
 
         </td>

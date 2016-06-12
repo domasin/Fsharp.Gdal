@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8"/>
-    <title>ProvidedSymbolType - Fsharp.Gdal</title>
+    <title>DatasourceInfo - Fsharp.Gdal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content="Domenico Masini"/>
@@ -35,62 +35,55 @@
 
 
 
-<h1>ProvidedSymbolType</h1>
+<h1>DatasourceInfo</h1>
 <p>
-  <span>Namespace: ProviderImplementation.ProvidedTypes</span><br />
+  <span>Namespace: FSharp.Gdal</span><br />
+  <span>Parent Module: <a href="fsharp-gdal-vector.html">Vector</a></span>
 </p>
 <div class="xmldoc">
-<p>Represents an array or other symbolic type involving a provided type as the argument.
-See the type provider spec for the methods that must be implemented.
-Note that the type provider specification does not require us to implement pointer-equality for provided types.</p>
+<p>Type to store datasource's infos as the layers inside it</p>
 
 </div>
-  <h3>Instance members</h3>
+  <h3>Record Fields</h3>
   <table class="table table-bordered member-list">
     <thead>
-      <tr><td>Instance member</td><td>Description</td></tr>
+      <tr><td>Record Field</td><td>Description</td></tr>
     </thead>
     <tbody>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '117', 117)" onmouseover="showTip(event, '117', 117)">
-            Args
+          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
+            Index
           </code>
-          <div class="tip" id="117">
-            <strong>Signature:</strong> Type list<br />
+          <div class="tip" id="24">
+            <strong>Signature:</strong> int<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L1110-1110" class="github-link">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L63-63" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Return the provided types used as arguments of this symbolic type</p>
-
-
-              <p>CompiledName: <code>get_Args</code></p>
+          
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '118', 118)" onmouseover="showTip(event, '118', 118)">
-            Kind
+          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
+            Layer
           </code>
-          <div class="tip" id="118">
-            <strong>Signature:</strong> SymbolKind<br />
+          <div class="tip" id="25">
+            <strong>Signature:</strong> LayerInfo<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/ProvidedTypes.fs#L1109-1109" class="github-link">
+            <a href="http://github.com/domasin/Fsharp.Gdal/tree/master/src/Fsharp.Gdal/Vector.fs#L64-64" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          <p>Returns the kind of this symbolic type</p>
-
-
-              <p>CompiledName: <code>get_Kind</code></p>
+          
         </td>
       </tr>
     </tbody>
